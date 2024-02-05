@@ -8,7 +8,7 @@ body, html {
     font-family: Outfit;
 }
 
-.sidebar {
+#sidebar {
     width: 25vw;
     height: 100vh;
     background-color: #8BD3DD;
@@ -27,7 +27,7 @@ body, html {
     top: 5vh;
 }
 
-.sidebar .nav {
+#sidebar .nav {
     left: 2.5%;
     width: 20%;
 
@@ -42,6 +42,7 @@ body, html {
     height: 83%;
     margin: 10% 2% 2% 2%;
     border: 1px solid black;
+    text-align: center;
 }
 
 .non-desktop {
@@ -52,7 +53,7 @@ body, html {
 
 @media only screen and (max-width: 768px) {
 
-    .sidebar {
+    #sidebar {
         display: none;
     }
 
@@ -81,14 +82,25 @@ body, html {
         display: flex;
         flex-direction: column;
         gap: 6px;
+        width: max-content;
+        cursor: pointer;
+        z-index: 2;
+    }
+
+    #sidebar-closed-hamburger::before, #sidebar-closed-hamburger::after, #sidebar-closed-hamburger input {
+        background-color: #8BD3DD;
+    }
+
+    #sidebar-open-hamburger::before, #sidebar-open-hamburger::after, #sidebar-open-hamburger input {
+        background-color: #f582ae;
     }
 
     .hamburger-menu::before, .hamburger-menu::after, .hamburger-menu input {
         content: "";
         width: 60px;
         height: 6px;
-        background-color: #8BD3DD;
         border-radius: 9999px;
+        transform-origin: left center;
     }
 
     .hamburger-menu input {
@@ -98,6 +110,7 @@ body, html {
         outline: none;
         pointer-events: none;
     }
+    
 
 }
 
