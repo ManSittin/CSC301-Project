@@ -4,15 +4,16 @@ include ('db_info.php');
 
     
 class Model {
-    public function newDeadline($user_id, $course, $deadline_name, $due_date) {
+    public function newDeadline($username, $course, $deadline_name, $due_date) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
 
         if ($conn->connect_error) {
             die("Connection to database failed: " . $conn->connect_error);
+            return false;
         }
         
-        $stmt = $conn->prepare("INSERT INTO Deadlines (user_id, course, deadline_name, due_date) VALUES (?,?,?,?)");
-        $stmt->bind_param("ssss", $user_id, $course, $deadline_name, $due_date);
+        $stmt = $conn->prepare("INSERT INTO Deadlines (username, course, deadline_name, due_date) VALUES (?,?,?,?)");
+        $stmt->bind_param("ssss", $username, $course, $deadline_name, $due_date);
         $result = $stmt->execute();
         $stmt->close();
 
@@ -24,31 +25,39 @@ class Model {
 
         if ($conn->connect_error) {
             die("Connection to database failed: " . $conn->connect_error);
-            return ; // TODO
+            return false;
         }
 
         $stmt = $conn->prepare("SELECT * FROM Deadlines WHERE Deadlines.username = ?");
         $stmt->bind_param("s", $username);
         $result = $stmt->execute();
-        $stmt->close();
-
-        return $result;
+        
+        if ($result) {
+            $stmt->bind_result($id, $username, $course, $deadline_name, $duedate);
+    
+            $results = [];
+            while ($stmt->fetch()) {
+                $results[] = ['id' => $id, 'username' => $username, 'course' => $course, 'deadline_name' => $deadline_name, 'duedate', $duedate];
+            }
+            $stmt->close();
+            return $results;
+        } else {
+            return false;
+        }
     }
 
-    public function newNote($user_id, $content) {
+    public function newNote($username, $title, $content) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
 
         if ($conn->connect_error) {
             die("Connection to database failed: " . $conn->connect_error);
-            return "Connection Error"; // TODO
+            return false;
         }
 
-        $stmt = $conn->prepare("INSERT INTO Notes (user_id, content) VALUES (?,?)");
-        $stmt->bind_param("ss", $user_id, $content);
+        $stmt = $conn->prepare("INSERT INTO Notes (username, title, content) VALUES (?,?,?)");
+        $stmt->bind_param("sss", $username, $title, $content);
         $result = $stmt->execute(); // check if query worked
-        $stmt->close();
         return $result;
-      
     }
 
     public function getNotes($username) {
