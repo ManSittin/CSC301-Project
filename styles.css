@@ -42,6 +42,11 @@ body, html {
     gap: 20px;
 }
 
+.assignment-info, .note-info {
+    display: flex;
+    gap: 5px;
+}
+
 .not-sidebar .nav {
     right: 0px;
     width: 40%;
