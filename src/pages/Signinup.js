@@ -1,5 +1,6 @@
 import React, { useContext  , useState } from 'react';
 import './Signinup.css';
+import  "./Home.js";
 import axios from "axios";
 import TokenContext from './TokenContext';
 
@@ -53,7 +54,7 @@ const Signupin = () => {
 
   const handlePassword = () => {
     // Redirect the user to the desired email address
-    window.location.href = '/ForgotPassword';
+    window.location.href = '/';
   };
 
   const handleLogOutClick = () => {
@@ -93,7 +94,7 @@ const Signupin = () => {
           </button>
         </form>
         <span className='forgotpassword' onClick={handlePassword}>
-          Forgot your password?
+          Home
         </span>
       </div>
   
