@@ -1,13 +1,13 @@
 <?php
-    // include_once 'dbh.php';
+    include_once 'dbh.php';
 
-    // // sidebar database info
-    // $deadlineQuery = "SELECT * FROM Deadlines;";
-    // $deadlines = mysqli_query($conn, $deadlineQuery);
-    // $numDeadlines = mysqli_num_rows($deadlines);
-    // $notesQuery = "SELECT * FROM Notes;";
-    // $notes = mysqli_query($conn, $notesQuery);
-    // $numNotes = mysqli_num_rows($notes);
+    // sidebar database info
+    $deadlineQuery = "SELECT * FROM Deadlines;";
+    $deadlines = mysqli_query($conn, $deadlineQuery);
+    $numDeadlines = mysqli_num_rows($deadlines);
+    $notesQuery = "SELECT * FROM Notes;";
+    $notes = mysqli_query($conn, $notesQuery);
+    $numNotes = mysqli_num_rows($notes);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -32,23 +32,23 @@
                 <h2>Assignments</h2>
                 <!-- <div class="info-block">Test</div> -->
                 <?php
-                    // if ($numDeadlines > 0) {
-                    //     while ($deadline = mysqli_fetch_assoc($deadlines)) {
-                    //         echo '<div class="info-block">' . $deadline["deadline_name"]
-                    //         . ' : ' . $deadline['due_date'] . '</div>';
-                    //     }
-                    // }
+                    if ($numDeadlines > 0) {
+                        while ($deadline = mysqli_fetch_assoc($deadlines)) {
+                            echo '<div class="info-block">' . $deadline["deadline_name"]
+                            . ' : ' . $deadline['due_date'] . '</div>';
+                        }
+                    }
                 ?>
             </div>
             <div id="note info">
                 <h2>Recent Notes</h2>
                 <!-- <div class="info-block">Test</div> -->
                 <?php
-                    // if ($numNotes > 0) {
-                    //     while ($note = mysqli_fetch_assoc($notes)) {
-                    //         echo '<div class="info-block">' . $note["title"] . '</div>';
-                    //     }
-                    // }
+                    if ($numNotes > 0) {
+                        while ($note = mysqli_fetch_assoc($notes)) {
+                            echo '<div class="info-block">' . $note["title"] . '</div>';
+                        }
+                    }
                 ?>
             </div>
         </div>
