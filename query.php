@@ -76,18 +76,5 @@ class Model {
         }
         return true;
     }
-    
-    public function checkForTest() {
-        global $conn, $database;
-        $sql = "SHOW TABLES LIKE 'test'";
-        $result = $conn->query($sql);
-    
-        if ($result) {
-            echo "Table test exists\n";
-            $result->free();
-        } else {
-            echo "Error: " . $conn->error;
-        }
-    }
 }
 ?>
