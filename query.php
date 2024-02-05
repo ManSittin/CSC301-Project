@@ -4,6 +4,39 @@ include ('db_info.php');
 
     
 class Model {
+
+    private function checkUsernameTaken($conn, $username) {
+        $stmt = $conn->prepare("SELECT id FROM Users WHERE username = ?");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $stmt->store_result();
+
+        $usernameTaken = $stmt->num_rows > 0;
+        $stmt->close();
+        return $usernameTaken;
+    }
+    public function newUser($username, $email, $first_name, $last_name, $password) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+        }
+
+        if ($this->checkUsernameTaken($conn, $username)) {
+            return false; // username is taken
+        }
+
+        $passwordHash = password_hash($password, PASSWORD_BCRYPT);
+        
+        $stmt = $conn->prepare("INSERT INTO Users (username, email, first_name, last_name, password) VALUES (?,?,?,?,?)");
+        $stmt->bind_param("sssss", $username, $email, $first_name, $last_name, $passwordHash);
+        $result = $stmt->execute();
+        $stmt->close();
+
+        return $result;
+    }
+
+
     public function newDeadline($username, $course, $deadline_name, $due_date) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
 

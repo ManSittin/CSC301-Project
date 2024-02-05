@@ -45,6 +45,16 @@ class Controller {
                 $result = $model->newDeadline($username, $course, $name, $duedate);
 
                 break;
+            case ('users'):
+                $username = $_POST['username'];
+                $email = $_POST['email'];
+                $first_name = $_POST['first_name'];
+                $last_name = $_POST['last_name'];
+                $password = $_POST['password'];
+
+                $model = new Model();
+                $result = $model->newUser($username, $email, $first_name, $last_name, $password);
+
             default:
                 http_response_code(400);
                 header('Content-Type: application/json');
@@ -62,29 +72,8 @@ class Controller {
             echo json_encode(['status' => "Failure " . $command, 'message' => $command . " was unable to be created"]);
             exit();
         }
-
-
-        $username = $_POST['username'];
-        $email = $_POST['email'];
-        $first_name = $_POST['first_name'];
-        $last_name = $_POST['last_name'];
-        $password = $_POST['password'];
-
-        $model = new Model();
-        $result = $model->newUser($username, $email, $first_name, $last_name, $password);
-        if ($result == 'Connection error') {
-            http_response_code(500);
-            header('Content-Type: application/json');
-            echo json_encode(['status' => "Failure", 'message' => $result]); 
-            exit();
-        } else {
-            // separate internal error and username taken TODO
-            http_response_code(200);
-            header('Content-Type: application/json');
-            echo json_encode(['status' => 'Success: ', 'message' => 'User successfully registered']);
-            exit();
-        }
     }
+    
     private function handleGet() {
         $command = $_GET['command'];
         switch ($command) {

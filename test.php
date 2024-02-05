@@ -4,6 +4,11 @@ include('server.php');
 $model = new Model();
 
 $testUsername = "test1";
+$testEmail = "test1@email.com";
+$testFirstName = "First";
+$testLastName = "Last";
+$testPassword = "password";
+
 $testTitle = "Title 1";
 $testContent = "Note content";
 
@@ -14,6 +19,12 @@ $testDuedate = "2029-12-31";
 
 $model->initDatabase();
 $model->initTables();
+
+if ($model->newUser($testUsername, $testEmail, $testFirstName, $testLastName, $testPassword)) {
+    echo "User registered";
+} else {
+    echo "Username taken";
+}
 
 if ($model->newNote($testUsername, $testTitle, $testContent)) {
     echo "Note created";
@@ -35,7 +46,6 @@ switch ($command) {
         $controller = new Controller();
         $controller->handle();
         break;
-    case 'deadlines':
     default:
         break;
 }
