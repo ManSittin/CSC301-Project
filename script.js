@@ -27,6 +27,7 @@ toggle_closed.addEventListener('change', (event) => {
 
 window.addEventListener('resize', event => {
     closed_ham.style.transform = "translate(0)";
+
     if (window.innerWidth > 768){
         sidebar.style.display = "inline-block";
         closed_ham.checked = false;
