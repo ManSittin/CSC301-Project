@@ -1,8 +1,14 @@
 <?php
-    include_once 'dbh.php';
+    // include_once 'dbh.php';
+
+    // // sidebar database info
+    // $deadlineQuery = "SELECT * FROM Deadlines;";
+    // $deadlines = mysqli_query($conn, $deadlineQuery);
+    // $numDeadlines = mysqli_num_rows($deadlines);
+    // $notesQuery = "SELECT * FROM Notes;";
+    // $notes = mysqli_query($conn, $notesQuery);
+    // $numNotes = mysqli_num_rows($notes);
 ?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,6 +27,31 @@
             <a>profile</a>
             <a>settings</a>
         </div>
+        <div id="sidebar-info">
+            <div id="assignment info">
+                <h2>Assignments</h2>
+                <!-- <div class="info-block">Test</div> -->
+                <?php
+                    // if ($numDeadlines > 0) {
+                    //     while ($deadline = mysqli_fetch_assoc($deadlines)) {
+                    //         echo '<div class="info-block">' . $deadline["deadline_name"]
+                    //         . ' : ' . $deadline['due_date'] . '</div>';
+                    //     }
+                    // }
+                ?>
+            </div>
+            <div id="note info">
+                <h2>Recent Notes</h2>
+                <!-- <div class="info-block">Test</div> -->
+                <?php
+                    // if ($numNotes > 0) {
+                    //     while ($note = mysqli_fetch_assoc($notes)) {
+                    //         echo '<div class="info-block">' . $note["title"] . '</div>';
+                    //     }
+                    // }
+                ?>
+            </div>
+        </div>
     </div>
     <div class="not-sidebar">
         <div class="nav" id="pages-nav">
@@ -38,18 +69,7 @@
             </h1>
         </div>
     </div>
-
-    <?php 
-        $sql = "SELECT * FROM Users;";
-        $result = mysqli_query($conn, $sql);
-        $resultCheck = mysqli_num_rows($result);
-
-        if ($resultCheck > 0) {
-            while ($row = mysqli_fetch_assoc($result)) {
-                echo $row['username'] . "<br>";
-            }
-        }
-    ?>
+    
 </body>
 <script src="script.js">
 </script>
