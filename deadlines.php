@@ -1,3 +1,14 @@
+<?php
+    include_once 'dbh.php';
+
+    // sidebar database info
+    $deadlineQuery = "SELECT * FROM Deadlines;";
+    $deadlines = mysqli_query($conn, $deadlineQuery);
+    $numDeadlines = mysqli_num_rows($deadlines);
+    $notesQuery = "SELECT * FROM Notes;";
+    $notes = mysqli_query($conn, $notesQuery);
+    $numNotes = mysqli_num_rows($notes);
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,8 +27,33 @@
             <label class="non-desktop hamburger-menu" id="sidebar-open-hamburger">
                 <input type="checkbox" id="toggle-closed">
             </label>
-            <a href="#">profile</a>
-            <a href="#">settings</a>
+            <a>profile</a>
+            <a>settings</a>
+        </div>
+        <div id="sidebar-info">
+            <div id="assignment info">
+                <h2>Assignments</h2>
+                <!-- <div class="info-block">Test</div> -->
+                <?php
+                    if ($numDeadlines > 0) {
+                        while ($deadline = mysqli_fetch_assoc($deadlines)) {
+                            echo '<div class="info-block">' . $deadline["deadline_name"]
+                            . ' : ' . $deadline['due_date'] . '</div>';
+                        }
+                    }
+                ?>
+            </div>
+            <div id="note info">
+                <h2>Recent Notes</h2>
+                <!-- <div class="info-block">Test</div> -->
+                <?php
+                    if ($numNotes > 0) {
+                        while ($note = mysqli_fetch_assoc($notes)) {
+                            echo '<div class="info-block">' . $note["title"] . '</div>';
+                        }
+                    }
+                ?>
+            </div>
         </div>
     </div>
     <div class="not-sidebar">
@@ -25,7 +61,7 @@
             <label class="non-desktop hamburger-menu" id="sidebar-closed-hamburger">
                 <input type="checkbox" id="toggle-open">
             </label>
-            <a href="#">notes</a>
+            <a href="notes.php">notes</a>
             <a href="#">flashcards</a>
             <a href="#">assignments</a>
             <a href="#">schedule</a>

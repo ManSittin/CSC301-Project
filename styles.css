@@ -27,11 +27,14 @@ body, html {
     top: 5vh;
 }
 
+a {
+    text-decoration: none;
+    all: unset;
+}
+
 #sidebar .nav {
     left: 2.5%;
     width: 20%;
-}
-
 }
 
 #sidebar-info {
