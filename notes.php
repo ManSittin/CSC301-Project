@@ -74,10 +74,9 @@
             <div class="textbox-section">
                 <h2>Enter a new note</h2>
                 <form id="addNoteForm">
-                    <p>Select category:</p>
-                    <textarea rows="4" cols="50" name="category" id="category" placeholder="Type your category here..."></textarea>
+                    <p>Enter title:</p>
+                    <textarea rows="4" cols="50" name="title" id="title" placeholder="Type your title here..."></textarea>
                     <br>
-                    <input type="button" value="Add Category" onclick="setCategory()">
                         <!-- Planning to give the user freedom to create their own category -->
                     </select>
                     <p>Enter your note:</p>
@@ -107,11 +106,6 @@
                 body: formData,
             });
             alert('Note added!');
-        }
-        function setCategory() {
-            // Add logic to send the note to the server and store it in the database
-
-            alert('Note s!');
         }
     </script>
 </body>
