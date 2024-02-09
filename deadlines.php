@@ -108,24 +108,7 @@
         </div>
     </div>
 
-    <script>
-        function submit() {
-            // need to collect all data and send to db..
-            
-            var formData = new FormData();
-            formData.append('command', 'deadlines');
-            formData.append('username', 'userAA');
-            console.log(document.getElementById("addDeadlineForm").elements[0].value);
-            formData.append('course', document.getElementById("addDeadlineForm").elements[0].value);
-            formData.append('deadline_name', document.getElementById("addDeadlineForm").elements[1].value);
-            //formData.append('description', document.getElementById("addDeadlineForm").elements[2].value);
-            formData.append('duedate', document.getElementById("addDeadlineForm").elements[3].value);
-            fetch('/server.php', {
-                method: 'POST',
-                body: formData,
-            });
-            alert('Deadline submitted.');
-        }
+    <script src="script.js">
     </script>
 </body>
 </html>

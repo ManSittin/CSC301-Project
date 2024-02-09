@@ -24,10 +24,10 @@ class Model {
             return false; // username is taken
         }
 
-        $passwordHash = password_hash($password, PASSWORD_BCRYPT);
+        // $passwordHash = password_hash($password, PASSWORD_BCRYPT); temp change
         
         $stmt = $conn->prepare("INSERT INTO Users (username, email, first_name, last_name, password) VALUES (?,?,?,?,?)");
-        $stmt->bind_param("sssss", $username, $email, $first_name, $last_name, $passwordHash);
+        $stmt->bind_param("sssss", $username, $email, $first_name, $last_name, $password); // temp change
         $result = $stmt->execute();
         $stmt->close();
 
