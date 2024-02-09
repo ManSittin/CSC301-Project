@@ -1,8 +1,6 @@
 <?php
-
 include ('db_info.php');
 
-    
 class Model {
 
     private function checkUsernameTaken($conn, $username) {
@@ -118,7 +116,7 @@ class Model {
     }
 
     public function initDatabase() {
-        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+        $conn = new mysqli(HOST, USERNAME, PASSWORD);
 
         if ($conn->connect_error) {
             die("Connection to database failed: " . $conn->connect_error);

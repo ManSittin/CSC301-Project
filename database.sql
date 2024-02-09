@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS Notes (
     content VARCHAR(255),
     FOREIGN KEY (username) REFERENCES Users(username)
 );
---Create table to store Deadlines created by Users
+-- Create table to store Deadlines created by Users
 CREATE TABLE IF NOT EXISTS Deadlines (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(16),

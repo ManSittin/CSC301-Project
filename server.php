@@ -21,27 +21,26 @@ class Controller {
     }
 
     private function handlePost() {
-        
+        file_put_contents('post_data.log', print_r($_POST, true));
         $command = $_POST['command'];
-
+        $model = new Model();
+        
         switch ($command) {
             case ('notes'):
                 $username = $_POST['username'];
                 $title = $_POST['title'];
                 $content = $_POST['content'];
                 
-                $model = new Model();
                 $result = $model->newNote($username, $title, $content);
 
                 break;
 
             case ('deadlines'):
-                $usernmame = $_POST['username'];
+                $username = $_POST['username'];
                 $course = $_POST['course'];
                 $name = $_POST['deadline_name'];
                 $duedate = $_POST['duedate'];
 
-                $model = new Model();
                 $result = $model->newDeadline($username, $course, $name, $duedate);
 
                 break;
@@ -52,7 +51,6 @@ class Controller {
                 $last_name = $_POST['last_name'];
                 $password = $_POST['password'];
 
-                $model = new Model();
                 $result = $model->newUser($username, $email, $first_name, $last_name, $password);
 
             default:
@@ -76,10 +74,11 @@ class Controller {
     
     private function handleGet() {
         $command = $_GET['command'];
+        $model = new Model();
+
         switch ($command) {
             case 'notes':
                 $username = $_GET['username'];
-                $model = new Model();
                 $results = $model->getNotes($username);
                 if($results) {
                     http_response_code(200);
@@ -96,7 +95,6 @@ class Controller {
             case 'deadlines':
                 $username = $_GET['username'];
     
-                $model = new Model();
                 $results = $model->getDeadlines($username);
                 if($results == "Failure") {
                     http_response_code(500);
@@ -130,4 +128,7 @@ class Controller {
         }
     }
 }
+
+$controller = new Controller();
+$controller->handle();
 ?>

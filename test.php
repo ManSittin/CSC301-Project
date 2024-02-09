@@ -1,6 +1,5 @@
 <?php
-include('server.php');
-
+include('query.php');
 $model = new Model();
 
 $testUsername = "test1";
@@ -39,14 +38,4 @@ if ($model->newDeadline($testUsername, $testCourse, $testName, $testDuedate)) {
 }
 unset($model);
 
-$command = isset($_GET['command']) ? $_GET['command'] : 'test';
-
-switch ($command) {
-    case 'notes':
-        $controller = new Controller();
-        $controller->handle();
-        break;
-    default:
-        break;
-}
 ?>

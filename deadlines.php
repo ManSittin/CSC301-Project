@@ -72,22 +72,22 @@
             <!-- Add a Textbox Feature -->
             <div class="textbox-section">
                 <h2>Enter a new deadline below</h2>
-                <form id="addNoteForm">
+                <form id="addDeadlineForm">
                     <p>Select tags:</p>
                     <textarea rows="4" cols="50" name="tags" id="tags" placeholder="Type your tags here..."></textarea>
                     <br>
                     </select>
                     <p>Enter the title:</p>
-                    <textarea rows="1" cols="50" name="title" id="title" placeholder="Ender your title here..."></textarea>
+                    <textarea rows="1" cols="50" name="title" id="title" placeholder="Enter your title here..."></textarea>
                     <br>
                     <p>Enter a description:</p>
-                    <textarea rows="4" cols="50" name="datetime" id="datetime" placeholder="Type a description here..."></textarea>
+                    <textarea rows="4" cols="50" name="description" id="description" placeholder="Type a description here..."></textarea>
                     <br>
                     <p>Enter a date and time:</p>
                     <input
                         type="datetime-local"
-                        id="meeting-time"
-                        name="meeting-time"
+                        id="date"
+                        name="date"
                         value="2024-02-05T15:00"
                         min="0000-00-00T00:00"
                         max="9999-12-31T23:59"
@@ -96,9 +96,9 @@
                     <!--<textarea rows="4" cols="50" name="datetime" id="datetime" placeholder="Enter your date and time here..."></textarea> this is the original format
                     <br>
                     <input type="button" value="Add Datetime" onclick="setDateTime()"> -->
-                    <input type="button" value="Submit deadline" onclick="submit()">
                     </select>
                 </form>
+                <input type="button" value="Submit deadline" onclick="submit()">
             </div>
 
             <!-- Placeholder for displaying deadlines by tag -->
@@ -111,7 +111,19 @@
     <script>
         function submit() {
             // need to collect all data and send to db..
-
+            
+            var formData = new FormData();
+            formData.append('command', 'deadlines');
+            formData.append('username', 'userAA');
+            console.log(document.getElementById("addDeadlineForm").elements[0].value);
+            formData.append('course', document.getElementById("addDeadlineForm").elements[0].value);
+            formData.append('deadline_name', document.getElementById("addDeadlineForm").elements[1].value);
+            //formData.append('description', document.getElementById("addDeadlineForm").elements[2].value);
+            formData.append('duedate', document.getElementById("addDeadlineForm").elements[3].value);
+            fetch('/server.php', {
+                method: 'POST',
+                body: formData,
+            });
             alert('Deadline submitted.');
         }
     </script>
