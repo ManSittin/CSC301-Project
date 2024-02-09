@@ -53,6 +53,24 @@ class Controller {
 
                 $result = $model->newUser($username, $email, $first_name, $last_name, $password);
 
+                break;
+            case ('connect'):
+                    $email = $_POST['email'];
+                    $password = $_POST['password'];
+                    $results = $model->getUser($email,  $password);
+                        if(!$results) {
+                            http_response_code(500);
+                            header('Content-Type: application/json');
+                            echo json_encode(['status' => 'Failure: ' . $command, 'message' => ""]);
+                            exit();
+                        } else {
+                            http_response_code(200);
+                            header('Content-Type: application/json');
+                            echo json_encode(['status' => 'Success' . $command, 'message' => $results]);
+                            exit();
+                        }
+                        break;
+
             default:
                 http_response_code(400);
                 header('Content-Type: application/json');
@@ -108,7 +126,9 @@ class Controller {
                     exit();
                 }
                 break;
+            // here is user code for get
             default:
+            
                 // handle incorrect command, bad request?
                 http_response_code(400);
                 header('Content-Type: application/json');

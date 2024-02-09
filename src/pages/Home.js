@@ -58,11 +58,10 @@ const Home = () => {
 
 
 
-  return <html lang="en">
+  return( <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./pages/Home.css" />
     <link href='https://fonts.googleapis.com/css?family=Outfit' rel='stylesheet' />
     <title>CourseBind</title>
   </head>
@@ -98,7 +97,7 @@ const Home = () => {
       </div>
     </div>
   </body>
-</html>
+</html>)
 };
 // oh i changed the css sorry let me put the sameyou have nah let me do it 
 export default Home;

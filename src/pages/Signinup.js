@@ -1,6 +1,7 @@
 import React, { useContext  , useState } from 'react';
 import './Signinup.css';
 import  "./Home.js";
+import "./Content_notes.js";
 import axios from "axios";
 import TokenContext from './TokenContext';
 
@@ -48,8 +49,8 @@ const Signupin = () => {
   };
 
   const handleSignUpClick = () => {
-    // Redirect the user to the desired email address
-    window.location.href = '/SignUpDetails';
+
+    window.location.href = '/Notes';
   };
 
   const handlePassword = () => {

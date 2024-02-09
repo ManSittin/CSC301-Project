@@ -3,7 +3,6 @@ body, html {
   height: 100%;
   margin: 0;
   padding: 0;
-  display: flex;
   font: #001858;
   font-family: Outfit;
 }

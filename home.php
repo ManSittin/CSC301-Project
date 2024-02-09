@@ -24,7 +24,7 @@
             <label class="non-desktop hamburger-menu" id="sidebar-open-hamburger">
                 <input type="checkbox" id="toggle-closed">
             </label>
-            <a>profile</a>
+            <a href = "profile.php" > profile</a>
             <a>settings</a>
         </div>
         <div id="sidebar-info">
