@@ -24,7 +24,7 @@
             <label class="non-desktop hamburger-menu" id="sidebar-open-hamburger">
                 <input type="checkbox" id="toggle-closed">
             </label>
-            <a>profile</a>
+            <a href = "profile.php" > profile</a>
             <a>settings</a>
         </div>
         <div id="sidebar-info">
@@ -58,9 +58,9 @@
             <label class="non-desktop hamburger-menu" id="sidebar-closed-hamburger">
                 <input type="checkbox" id="toggle-open">
             </label>
-            <a>notes</a>
+            <a href="notes.php">notes</a>
             <a>flashcards</a>
-            <a>assignments</a>
+            <a href="deadlines.php">assignments</a>
             <a>schedule</a>
         </div>
         <div class="main">

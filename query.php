@@ -1,8 +1,6 @@
 <?php
-
 include ('db_info.php');
 
-    
 class Model {
 
     private function checkUsernameTaken($conn, $username) {
@@ -26,10 +24,10 @@ class Model {
             return false; // username is taken
         }
 
-        $passwordHash = password_hash($password, PASSWORD_BCRYPT);
+        // $passwordHash = password_hash($password, PASSWORD_BCRYPT); temp change
         
         $stmt = $conn->prepare("INSERT INTO Users (username, email, first_name, last_name, password) VALUES (?,?,?,?,?)");
-        $stmt->bind_param("sssss", $username, $email, $first_name, $last_name, $passwordHash);
+        $stmt->bind_param("sssss", $username, $email, $first_name, $last_name, $password); // temp change
         $result = $stmt->execute();
         $stmt->close();
 
@@ -79,6 +77,35 @@ class Model {
         }
     }
 
+    public function getUser($email, $pass) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false;
+        }
+
+        $stmt = $conn->prepare("SELECT * FROM Users WHERE Users.email = ?");
+        $stmt->bind_param("s", $email);
+        $result = $stmt->execute();
+        if ($result) {
+            $stmt->bind_result($id, $username, $email, $first_name, $last_name, $password);
+    
+            if ($stmt->fetch()) {
+                // Now $password should contain the password fetched from the database
+                file_put_contents('post_data.log', print_r($password, true));
+                if (strcmp($password, $pass) === 0) {
+                    $stmt->close();
+                    return true;
+                }
+            }
+
+           
+        }
+            return false;
+        
+    }
+
     public function newNote($username, $title, $content) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
 
@@ -118,7 +145,7 @@ class Model {
     }
 
     public function initDatabase() {
-        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+        $conn = new mysqli(HOST, USERNAME, PASSWORD);
 
         if ($conn->connect_error) {
             die("Connection to database failed: " . $conn->connect_error);
