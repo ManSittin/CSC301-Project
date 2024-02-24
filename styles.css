@@ -128,6 +128,11 @@ a {
     display: flex;
     align-items: center;
     justify-content: center;
+
+.note-body {
+    width: 95%;
+    height: 280px;
+    resize: none;
 }
 
 
