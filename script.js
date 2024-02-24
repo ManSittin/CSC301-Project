@@ -207,5 +207,65 @@ updateNoteBtn.addEventListener('click', function(){ // reveal response
   updateNote(4); // hard-coded right now...
 });
 
+// FLASHCARDS
+
+// Front-end flashcard reivew elements
+const cue = document.querySelector('.cue');
+const response = document.querySelector('.response');
+const reveal = document.querySelector('.reveal');
+const next = document.querySelector('.next');
+
+// button click listeners
+reveal.addEventListener('click', function(){ // reveal response
+  response.style.display = 'flex';
+});
+
+next.addEventListener('click', function(){ // populate cue, response with a random flashcard
+  getRandomFlashcard();
+  response.style.display = 'none';
+});
+
+// flashcard data 
+function getFlashcards() { // get all the user's flashcards as (cue, response) objects
+  return fetch('/server.php?command=flashcards&username=userAA')
+    .then(response => response.json())
+    .then(json => {
+      return json.message.map(entry => {
+        return {
+          cue: entry.cue,
+          response: entry.response
+        };
+      });
+    })
+    .catch(error => {
+      console.error('Error fetching flashcards:', error);
+      throw error;
+    });
+}
+
+function getRandomFlashcard() {
+  getFlashcards()
+  .then(data => {
+    randomFlashcard = data[Math.floor(Math.random() * data.length)];
+    cue.innerHTML = `<h3>${randomFlashcard.cue}</h3>`;
+    response.innerHTML = `<h3>${randomFlashcard.response}</h3>`;
+    alert('Flashcards Loaded!');
+  })
+  .catch(error => {
+    // Handle errors
+    console.error('Error:', error);
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
