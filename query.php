@@ -128,7 +128,7 @@ class Model {
             return false;
         }
         $stmt = $conn->prepare("UPDATE Notes SET title = ?, content = ? WHERE Notes.id = ? AND Notes.username = ?;");
-        $stmt->bind_param("sss", $title, $content, $id, $username);
+        $stmt->bind_param("ssis", $title, $content, $id, $username);
         $result = $stmt->execute(); // check if query worked
         return $result;
     }
