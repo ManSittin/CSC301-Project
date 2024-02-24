@@ -122,4 +122,16 @@ function addNote() {
   alert('Note added!');
 }
 
+function handleNoteDelete(event) {
+    var id = event.target.getAttribute('id');
+
+    fetch('server.php/notes/' + id, {
+        method: 'DELETE'
+    });
+
+    // this is where the http req is made
+
+    alert('Note successfully deleted!');
+}
+
 

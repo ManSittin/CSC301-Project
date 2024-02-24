@@ -120,6 +120,19 @@ class Model {
         return $result;
     }
 
+    public function deleteNote($note_id) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+    
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false;
+        }
+        $stmt = $conn->prepare("DELETE FROM Notes WHERE id = ?"); 
+        $stmt->bind_param("s", $note_id);
+        $result = $stmt->execute(); // check if query worked
+        return $result;
+    }
+
     public function getNotes($username) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
 
