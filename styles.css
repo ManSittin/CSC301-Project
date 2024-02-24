@@ -88,13 +88,43 @@ a {
     height: 76%;
 }
 
-.textbox-section a {
+.review-section {
+    display: flex;
+    align-items: space-between;
+    justify-content: space-around;
+    flex-direction: row;
+    height: 76%;
+}
+
+.textbox-section a, .textbox-section button {
     background-color: #f582ae;
     border: none;
     border-radius: 15px;
     padding: 20px;
     font-weight: bold;
     cursor: pointer;
+}
+
+.textbox-section h2 {
+    margin: 0;
+    padding: 0;
+}
+
+.flashcard-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.cue, .response {
+    border: 2px solid #001858;
+    width: 80%;
+    margin: auto;
+    margin-bottom: 20px;
+    height: 80px;
+    background-color: #fef6e4;
+    border-radius: 15px;
+    line-height: 80px;
 }
 
 

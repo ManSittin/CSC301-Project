@@ -72,8 +72,8 @@
 
             <!-- Add a Textbox Feature -->
             <div class="textbox-section">
-                <div class="cue"><a href="flashcard-insertion.php">Add Flashcards</a></div>
-                <div class="response"><a href="flashcard-review.php">Review Flashcards</a></div>
+                <div><a href="flashcard-insertion.php">Add Flashcards</a></div>
+                <div><a href="flashcard-review.php">Review Flashcards</a></div>
             </div>
 
         </div>

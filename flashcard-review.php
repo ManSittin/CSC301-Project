@@ -73,6 +73,18 @@
             <!-- Add a Textbox Feature -->
             <div class="textbox-section">
                 <h2>Review Flashcards</h2>
+                <div class="flashcards">
+                    <div class="cue">Cue</div>
+                    <div class="response">Response</div>
+                </div>
+
+                <div class="flashcard-buttons">
+                    <div class="reveal"><button>Reveal Response</button></div>
+                    <div class="next"><button>Next Cue</button></div>
+                </div>
+
+            </div>
+
 
             </div>
 
