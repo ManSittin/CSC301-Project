@@ -152,6 +152,7 @@ reveal.addEventListener('click', function(){ // reveal response
 
 next.addEventListener('click', function(){ // populate cue, response with a random flashcard
   getRandomFlashcard();
+  response.style.display = 'none';
 });
 
 // flashcard data 
