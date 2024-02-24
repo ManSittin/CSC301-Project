@@ -90,17 +90,15 @@ window.location.href = "signup.php";
 
 }
 
-function submit() { // insert a deadline
+function addDeadline() { // insert a deadline
   // need to collect all data and send to db..
   
   var formData = new FormData();
   formData.append('command', 'deadlines');
   formData.append('username', 'userAA');
-  console.log(document.getElementById("addDeadlineForm").elements[0].value);
   formData.append('course', document.getElementById("addDeadlineForm").elements[0].value);
   formData.append('deadline_name', document.getElementById("addDeadlineForm").elements[1].value);
-  //formData.append('description', document.getElementById("addDeadlineForm").elements[2].value);
-  formData.append('duedate', document.getElementById("addDeadlineForm").elements[3].value);
+  formData.append('duedate', document.getElementById("addDeadlineForm").elements[2].value);
   fetch('/server.php', {
       method: 'POST',
       body: formData,
@@ -203,9 +201,12 @@ function updateNote($noteID) {
 }
 
 // button click listener
-updateNoteBtn.addEventListener('click', function(){ // reveal response
-  updateNote(4); // hard-coded right now...
-});
+if (updateNoteBtn){
+  updateNoteBtn.addEventListener('click', function(){ // reveal response
+    updateNote(4); // hard-coded right now...
+  });
+}
+
 
 // FLASHCARDS
 
@@ -216,14 +217,20 @@ const reveal = document.querySelector('.reveal');
 const next = document.querySelector('.next');
 
 // button click listeners
-reveal.addEventListener('click', function(){ // reveal response
-  response.style.display = 'flex';
-});
 
-next.addEventListener('click', function(){ // populate cue, response with a random flashcard
-  getRandomFlashcard();
-  response.style.display = 'none';
-});
+if (reveal){
+  reveal.addEventListener('click', function(){ // reveal response
+    response.style.display = 'flex';
+  });
+}
+
+if (next){
+  next.addEventListener('click', function(){ // populate cue, response with a random flashcard
+    getRandomFlashcard();
+    response.style.display = 'none';
+  });
+}
+
 
 // flashcard data 
 function getFlashcards() { // get all the user's flashcards as (cue, response) objects

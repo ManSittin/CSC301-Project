@@ -73,14 +73,12 @@
             <div class="textbox-section">
                 <h2>Enter a new deadline below</h2>
                 <form id="addDeadlineForm">
-                    <p>Select tags:</p>
-                    <textarea rows="1" cols="50" name="tags" id="tags" placeholder="Type your tags here..."></textarea>
+                    <p>Enter Course: </p>
+                    <textarea rows="1" cols="50" name="tags" id="tags" placeholder="Type your course here..."></textarea>
                     </select>
-                    <p>Enter the title:</p>
-                    <textarea rows="1" cols="50" name="title" id="title" placeholder="Enter your title here..."></textarea>
+                    <p>Enter Deadline Name:</p>
+                    <textarea rows="1" cols="50" name="title" id="title" placeholder="Enter the name of your deadline here..."></textarea>
                     <p>Enter a description:</p>
-                    <textarea rows="2" cols="50" name="description" id="description" placeholder="Type a description here..."></textarea>
-                    <p>Enter a date and time:</p>
                     <input
                         type="datetime-local"
                         id="date"
@@ -90,7 +88,7 @@
                         max="9999-12-31T23:59"
                      />
                     <br><br>
-                    <input type="button" value="Submit deadline" onclick="submit()">
+                    <input type="button" value="Submit deadline" onclick="addDeadline()">
                 </form>
             </div>
         </div>
