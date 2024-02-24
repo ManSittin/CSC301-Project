@@ -21,7 +21,7 @@
         /* Existing style here */
     </style>
 </head>
-<body>
+<body onload="loadNote(4)">
     <div id="sidebar">
         <div class="nav" id="sidebar-nav">
             <label class="non-desktop hamburger-menu" id="sidebar-open-hamburger">
@@ -67,6 +67,7 @@
             <a href="deadlines.php">assignments</a>
             <a href="#">schedule</a>
         </div>
+        <!-- hard-coded note for now; will pull this in when a note is selected -->
         <div class="main">
             <h1>Welcome to the notes page. Here you can add new notes or view the ones you have already added.</h1>
             <div class="textbox-section">
@@ -75,7 +76,7 @@
                 <form id="editNoteForm">
                     <textarea rows="4" cols="50" name="note" class="note-body"></textarea>
                     <br>
-                    <input type="button" value="Update Note" onclick="updateNote()">
+                    <input type="button" value="Update Note" class="update-note">
                 </form>
         </div>
     </div>

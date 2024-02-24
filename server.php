@@ -53,6 +53,15 @@ class Controller {
                 $result = $model->newFlashcard($username, $cue, $response);
 
                 break;
+
+            case ('note-update'):
+                $id = $_POST['id'];
+                $username = $_POST['username'];
+                $title = $_POST['title'];
+                $content = $_POST['content'];
+                $result = $model->updateNote($id, $username, $title, $content);
+
+                break;
                 
             case ('users'):
                 $username = $_POST['username'];

@@ -120,6 +120,19 @@ class Model {
         return $result;
     }
 
+    public function updateNote($id, $username, $title, $content) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false;
+        }
+        $stmt = $conn->prepare("UPDATE Notes SET title = ?, content = ? WHERE Notes.id = ? AND Notes.username = ?;");
+        $stmt->bind_param("sss", $title, $content, $id, $username);
+        $result = $stmt->execute(); // check if query worked
+        return $result;
+    }
+
     public function getNotes($username) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
 

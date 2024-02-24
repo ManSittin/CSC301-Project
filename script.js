@@ -138,21 +138,74 @@ function addFlashcard() { // insert a flashcard
 
 // NOTE UPDATES
 
-// given a note id, load its information from the DB, returning an object with (title, content) attributes
-function getNote($noteID){
+// Front-end note view elements
+const title = document.querySelector('.note-title');
+const body = document.querySelector('.note-body');
+const updateNoteBtn = document.querySelector('.update-note');
 
+// note data 
+function getNotes() { // get all the user's notes as (id, title, content) objects
+  return fetch('/server.php?command=notes&username=userAA')
+    .then(response => response.json())
+    .then(json => {
+      return json.message.map(entry => {
+        return {
+          id: entry.id,
+          title: entry.title,
+          content: entry.content
+        };
+      });
+    })
+    .catch(error => {
+      console.error('Error fetching notes:', error);
+      throw error;
+    });
+}
+
+// given a note id, load its information from the DB, returning an object with (title, content) attributes
+async function getNote($noteID){
+  try {
+    const notes = await getNotes();
+    const note = notes.find(note => note.id == $noteID);
+    return note || null;
+  } catch (error) {
+    console.error('Error fetching note by ID:', error);
+    throw error;
+  }
 }
 
 // given a note object, display its title in the note-title section and content in the note-body section
-function loadNote($noteObject){
-
+async function loadNote($noteID){
+  try {
+    const data = await getNote($noteID);
+    title.innerHTML = `${data.title}`;
+    body.innerHTML = `${data.content}`;
+    alert('Note Loaded!');
+  } catch (error) {
+    // Handle errors
+    console.error('Error:', error);
+  }
 }
 
 // update the user's note in the DB with this noteID based on the info stored in note-title and note-body
 function updateNote($noteID) {
-
+  var formData = new FormData();
+  formData.append('command', 'note-update');
+  formData.append('id', $noteID);
+  formData.append('username', 'userAA');
+  formData.append('title', title.innerText);
+  formData.append('content', body.value);
+  fetch('/server.php', {
+      method: 'POST',
+      body: formData,
+  });
+  alert('Note updated!');
 }
 
+// button click listener
+updateNoteBtn.addEventListener('click', function(){ // reveal response
+  updateNote(4); // hard-coded right now...
+});
 
 
 
