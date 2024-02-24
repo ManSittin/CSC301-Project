@@ -97,6 +97,12 @@ a {
     cursor: pointer;
 }
 
+.note-body {
+    width: 95%;
+    height: 280px;
+    resize: none;
+}
+
 
 
 /* tablet view */
