@@ -80,6 +80,25 @@ a {
     word-wrap: break-word;
 }
 
+.textbox-section {
+    display: flex;
+    align-items: space-between;
+    justify-content: space-around;
+    flex-direction: column;
+    height: 76%;
+}
+
+.textbox-section a {
+    background-color: #f582ae;
+    border: none;
+    border-radius: 15px;
+    padding: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+
+
 /* tablet view */
 
 @media only screen and (max-width: 768px) {
@@ -157,6 +176,10 @@ a {
         text-align: center;
         width: 15vw;
         height: 15%;
+    }
+
+    .textbox-section {
+        height: 60%;
     }
 }
 

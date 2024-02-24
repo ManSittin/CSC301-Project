@@ -144,6 +144,44 @@ class Model {
         }
     }
 
+    public function newFlashcard($username, $cue, $response) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false;
+        }
+
+        $stmt = $conn->prepare("INSERT INTO Flashcards (username, cue, response) VALUES (?,?,?)");
+        $stmt->bind_param("sss", $username, $cue, $response);
+        $result = $stmt->execute(); // check if query worked
+        return $result;
+    }
+
+    public function getFlashcards($username) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false; // TODO
+        }
+        $stmt = $conn->prepare("SELECT * FROM Flashcards WHERE Flashcards.username = ?");
+        $stmt->bind_param("s", $username);
+        $result = $stmt->execute();
+        if ($result) {
+            $stmt->bind_result($id, $username, $cue, $response);
+
+            $results = [];
+            while ($stmt->fetch()) {
+                $results[] = ['id' => $id, 'username' => $username, 'cue' => $cue, 'response' => $response];
+            }
+            $stmt->close();
+            return $results;
+        } else {
+            return false;
+        }
+    }
+
     public function initDatabase() {
         $conn = new mysqli(HOST, USERNAME, PASSWORD);
 

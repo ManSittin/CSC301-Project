@@ -90,7 +90,7 @@ window.location.href = "signup.php";
 
 }
 
-function submit() {
+function submit() { // insert a deadline
   // need to collect all data and send to db..
   
   var formData = new FormData();
@@ -108,7 +108,7 @@ function submit() {
   alert('Deadline submitted.');
 }
 
-function addNote() {
+function addNote() { // insert a note
   // Add logic to send the note to the server and store it in the database
   var formData = new FormData();
   formData.append('command', 'notes');
@@ -121,5 +121,21 @@ function addNote() {
   });
   alert('Note added!');
 }
+
+function addFlashcard() { // insert a flashcard
+  // Add logic to send the note to the server and store it in the database
+  var formData = new FormData();
+  formData.append('command', 'flashcards');
+  formData.append('username', 'userAA');
+  formData.append('cue', document.getElementById("addFlashcardForm").elements[0].value);
+  formData.append('response', document.getElementById("addFlashcardForm").elements[1].value);
+  fetch('/server.php', {
+      method: 'POST',
+      body: formData,
+  });
+  alert('Flashcard added!');
+}
+
+
 
 

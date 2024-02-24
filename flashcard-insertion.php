@@ -68,27 +68,22 @@
             <a href="#">schedule</a>
         </div>
         <div class="main">
-            <h1>Welcome to the notes page. Here you can keep track of your assignments, deadlines, or simply put reminders.</h1>
+            <h1>Welcome to the flashcards page. Here you can add new flashcards or review the ones you have already added. </h1>
 
             <!-- Add a Textbox Feature -->
             <div class="textbox-section">
-                <h2>Enter a new note</h2>
-                <form id="addNoteForm">
-                    <p>Enter title:</p>
-                    <textarea rows="4" cols="50" name="title" id="title" placeholder="Type your title here..."></textarea>
+                <h2>Add a new flashcard</h2>
+                <form id="addFlashcardForm">
+                    <p>Cue:</p>
+                    <textarea rows="2" cols="50" name="cue" id="enter-cue" placeholder="Type your cue here..."></textarea>
                     <br>
                         <!-- Planning to give the user freedom to create their own category -->
                     </select>
-                    <p>Enter your note:</p>
-                    <textarea rows="4" cols="50" name="note" id="note" placeholder="Type your note here..."></textarea>
+                    <p>Response:</p>
+                    <textarea rows="4" cols="50" name="response" id="enter-response" placeholder="Type your response here..."></textarea>
                     <br>
-                    <input type="button" value="Add Note" onclick="addNote()">
+                    <input type="button" value="Add Flashcard" onclick="addFlashcard()">
                 </form>
-            </div>
-
-            <!-- Placeholder for displaying notes by category -->
-            <div class="notes-by-category" id="notesByCategory">
-                <!-- Display notes here based on the selected category -->
             </div>
         </div>
     </div>
