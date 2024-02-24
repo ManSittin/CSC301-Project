@@ -26,3 +26,11 @@ CREATE TABLE IF NOT EXISTS Deadlines (
     due_date date NOT NULL,
     FOREIGN KEY (username) REFERENCES Users(username)
 );
+-- Create table to store Flashcards created by Users
+CREATE TABLE IF NOT EXISTS Flashcards (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(16),
+    cue VARCHAR(50) NOT NULL,
+    response VARCHAR(255) NOT NULL,
+    FOREIGN KEY (username) REFERENCES Users(username)
+);

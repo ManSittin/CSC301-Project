@@ -125,15 +125,15 @@ function addNote() { // insert a note
 function addFlashcard() { // insert a flashcard
   // Add logic to send the note to the server and store it in the database
   var formData = new FormData();
-  formData.append('command', 'notes');
+  formData.append('command', 'flashcards');
   formData.append('username', 'userAA');
-  formData.append('title', document.getElementById("addNoteForm").elements[0].value);
-  formData.append('content', document.getElementById("addNoteForm").elements[1].value);
+  formData.append('cue', document.getElementById("addFlashcardForm").elements[0].value);
+  formData.append('response', document.getElementById("addFlashcardForm").elements[1].value);
   fetch('/server.php', {
       method: 'POST',
       body: formData,
   });
-  alert('Note added!');
+  alert('Flashcard added!');
 }
 
 

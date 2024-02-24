@@ -44,6 +44,16 @@ class Controller {
                 $result = $model->newDeadline($username, $course, $name, $duedate);
 
                 break;
+            
+            case ('flashcards'):
+                $username = $_POST['username'];
+                $cue = $_POST['cue'];
+                $response = $_POST['response'];
+                
+                $result = $model->newFlashcard($username, $cue, $response);
+
+                break;
+                
             case ('users'):
                 $username = $_POST['username'];
                 $email = $_POST['email'];
@@ -123,6 +133,21 @@ class Controller {
                     http_response_code(200);
                     header('Content-Type: application/json');
                     echo json_encode(['status' => 'Success' . $command, 'message' => $results]);
+                    exit();
+                }
+                break;
+            case 'flashcards':
+                $username = $_GET['username'];
+                $results = $model->getFlashcards($username);
+                if($results) {
+                    http_response_code(200);
+                    header('Content-Type: application/json');
+                    echo json_encode(['status' => 'Success: ' . $command, 'message' => $results]);
+                    exit();
+                } else {
+                    http_response_code(500);
+                    header('Content-Type: application/json');
+                    echo json_encode(['status' => 'Failure: ' . $command, 'message' => ""]);
                     exit();
                 }
                 break;
