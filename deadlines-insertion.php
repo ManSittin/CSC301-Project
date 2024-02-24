@@ -78,7 +78,6 @@
                     </select>
                     <p>Enter Deadline Name:</p>
                     <textarea rows="1" cols="50" name="title" id="title" placeholder="Enter the name of your deadline here..."></textarea>
-                    <p>Enter a description:</p>
                     <input
                         type="datetime-local"
                         id="date"

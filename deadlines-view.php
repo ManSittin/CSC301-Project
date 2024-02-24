@@ -21,7 +21,7 @@
         /* Existing style here */
     </style>
 </head>
-<body onload="loadNote(4)">
+<body onload="loadDeadline(3)">
     <div id="sidebar">
         <div class="nav" id="sidebar-nav">
             <label class="non-desktop hamburger-menu" id="sidebar-open-hamburger">
@@ -71,12 +71,25 @@
         <div class="main">
             <h1>Welcome to the deadlines page. Here you can add new deadlines or view the ones you have already added. </h1>
             <div class="textbox-section">
-                <!-- Loaded note info preloads here... -->
-                <h2 class="note-title">Your Note</h2> 
-                <form id="editNoteForm">
-                    <textarea rows="4" cols="50" name="note" class="note-body"></textarea>
-                    <br>
-                    <input type="button" value="Update Note" class="update-note">
+                <!-- Loaded deadline info preloads here... -->
+                <h2>Edit Deadline</h2> 
+                <form id="editDeadlineForm">
+                    <p>Edit Course: </p>
+                    <textarea rows="1" cols="50" class="deadline_course"></textarea>
+                    <p>Edit Deadline Name:</p>
+                    <textarea rows="1" cols="50" name="title" class="deadline_name"></textarea>
+                    <p>Edit Date:</p>
+                    <input
+                        type="datetime-local"
+                        id="date"
+                        name="date"
+                        value="2024-02-05T15:00"
+                        min="0000-00-00T00:00"
+                        max="9999-12-31T23:59"
+                        class="deadline_date"
+                     />
+                     <br><br>
+                    <input type="button" value="Update Deadline" class="update-deadline">
                 </form>
         </div>
     </div>
