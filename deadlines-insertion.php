@@ -27,7 +27,7 @@
             <label class="non-desktop hamburger-menu" id="sidebar-open-hamburger">
                 <input type="checkbox" id="toggle-closed">
             </label>
-            <a href = "profile.php">profile</a>
+            <a>profile</a>
             <a>settings</a>
         </div>
         <div id="sidebar-info">
@@ -56,7 +56,6 @@
             </div>
         </div>
     </div>
-    </div>
     <div class="not-sidebar">
         <div class="nav" id="pages-nav">
             <label class="non-desktop hamburger-menu" id="sidebar-closed-hamburger">
@@ -72,10 +71,28 @@
 
             <!-- Add a Textbox Feature -->
             <div class="textbox-section">
-                <div><a href="deadlines-insertion.php">Add Deadline</a></div>
-                <div><a href="deadlines-view.php">View Deadlines</a></div>
+                <h2>Enter a new deadline below</h2>
+                <form id="addDeadlineForm">
+                    <p>Select tags:</p>
+                    <textarea rows="1" cols="50" name="tags" id="tags" placeholder="Type your tags here..."></textarea>
+                    </select>
+                    <p>Enter the title:</p>
+                    <textarea rows="1" cols="50" name="title" id="title" placeholder="Enter your title here..."></textarea>
+                    <p>Enter a description:</p>
+                    <textarea rows="2" cols="50" name="description" id="description" placeholder="Type a description here..."></textarea>
+                    <p>Enter a date and time:</p>
+                    <input
+                        type="datetime-local"
+                        id="date"
+                        name="date"
+                        value="2024-02-05T15:00"
+                        min="0000-00-00T00:00"
+                        max="9999-12-31T23:59"
+                     />
+                    <br><br>
+                    <input type="button" value="Submit deadline" onclick="submit()">
+                </form>
             </div>
-
         </div>
     </div>
 
