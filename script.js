@@ -122,4 +122,14 @@ function addNote() {
   alert('Note added!');
 }
 
+function handleDeadlineDelete(event) {
+    var id = event.target.getAttribute('id');
 
+    fetch('server.php/deadlines/' + id, {
+        method: 'DELETE'
+    });
+
+    // this is where the http req is made
+
+    alert('Deadline successfully deleted!');
+}
