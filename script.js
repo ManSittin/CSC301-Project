@@ -136,6 +136,23 @@ function addFlashcard() { // insert a flashcard
   alert('Flashcard added!');
 }
 
+// NOTE UPDATES
+
+// given a note id, load its information from the DB, returning an object with (title, content) attributes
+function getNote($noteID){
+
+}
+
+// given a note object, display its title in the note-title section and content in the note-body section
+function loadNote($noteObject){
+
+}
+
+// update the user's note in the DB with this noteID based on the info stored in note-title and note-body
+function updateNote($noteID) {
+
+}
+
 
 
 

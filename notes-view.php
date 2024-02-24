@@ -68,14 +68,15 @@
             <a href="#">schedule</a>
         </div>
         <div class="main">
-            <h1>Welcome to the notes page. Here you can add new notes or view the ones you have already added. </h1>
-
-            <!-- Add a Textbox Feature -->
+            <h1>Welcome to the notes page. Here you can add new notes or view the ones you have already added.</h1>
             <div class="textbox-section">
-                <div><a href="notes-insertion.php">Add Notes</a></div>
-                <div><a href="notes-view.php">View Notes</a></div>
-            </div>
-
+                <!-- Loaded note info preloads here... -->
+                <h2 class="note-title">Your Note</h2> 
+                <form id="editNoteForm">
+                    <textarea rows="4" cols="50" name="note" class="note-body"></textarea>
+                    <br>
+                    <input type="button" value="Update Note" onclick="updateNote()">
+                </form>
         </div>
     </div>
 
