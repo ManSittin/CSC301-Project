@@ -137,5 +137,22 @@ function addFlashcard() { // insert a flashcard
 }
 
 
+// FLASHCARD DATA CODE
+
+// Front-end flashcard reivew elements
+const cue = document.querySelector('.cue');
+const response = document.querySelector('.response');
+const reveal = document.querySelector('.reveal');
+const next = document.querySelector('.next');
+
+// button click listeners
+reveal.addEventListener('click', function(){
+  response.style.display = 'block';
+});
+
+
+
+
+
 
 
