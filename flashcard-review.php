@@ -74,8 +74,8 @@
             <div class="textbox-section">
                 <h2>Review Flashcards</h2>
                 <div class="flashcards">
-                    <div class="cue">Cue</div>
-                    <div class="response">Response</div>
+                    <div class="cue"><h3>Cue</h3></div>
+                    <div class="response"><h3>Response</h3></div>
                 </div>
 
                 <div class="flashcard-buttons">

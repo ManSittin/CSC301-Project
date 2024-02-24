@@ -125,7 +125,11 @@ a {
     background-color: #fef6e4;
     border-radius: 15px;
     line-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+
 
 .response {
     display: none;
