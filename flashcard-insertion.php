@@ -37,7 +37,8 @@
                 <?php
                     if ($numDeadlines > 0) {
                         while ($deadline = mysqli_fetch_assoc($deadlines)) {
-                            echo '<div class="info-block">' . $deadline["deadline_name"] . ' : ' . $deadline['due_date'] . '<button class="del-button" id="' . $deadline["id"] . '"onclick="handleDeadlineDelete(event)">✖</button></div>';
+                            echo '<div class="info-block">' . $deadline["deadline_name"]
+                            . ' : ' . $deadline['due_date'] . '</div>';
                         }
                     }
                 ?>
@@ -48,7 +49,7 @@
                 <?php
                     if ($numNotes > 0) {
                         while ($note = mysqli_fetch_assoc($notes)) {
-                            echo '<div class="info-block">' . $note["title"] . '<button class="del-button" id="' . $note["id"] . '" onclick="handleNoteDelete(event)">✖</button></div>';
+                            echo '<div class="info-block">' . $note["title"] . '</div>';
                         }
                     }
                 ?>
@@ -67,14 +68,23 @@
             <a href="#">schedule</a>
         </div>
         <div class="main">
-            <h1>Welcome to the notes page. Here you can add new notes or view the ones you have already added. </h1>
+            <h1>Welcome to the flashcards page. Here you can add new flashcards or review the ones you have already added. </h1>
 
             <!-- Add a Textbox Feature -->
             <div class="textbox-section">
-                <div><a href="notes-insertion.php">Add Notes</a></div>
-                <div><a href="notes-all.php">View Notes</a></div>
+                <h2>Add a new flashcard</h2>
+                <form id="addFlashcardForm">
+                    <p>Cue:</p>
+                    <textarea rows="2" cols="50" name="cue" id="enter-cue" placeholder="Type your cue here..."></textarea>
+                    <br>
+                        <!-- Planning to give the user freedom to create their own category -->
+                    </select>
+                    <p>Response:</p>
+                    <textarea rows="4" cols="50" name="response" id="enter-response" placeholder="Type your response here..."></textarea>
+                    <br>
+                    <input type="button" value="Add Flashcard" onclick="addFlashcard()">
+                </form>
             </div>
-
         </div>
     </div>
 

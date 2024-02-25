@@ -21,7 +21,7 @@
         /* Existing style here */
     </style>
 </head>
-<body>
+<body onload="loadNote(4)">
     <div id="sidebar">
         <div class="nav" id="sidebar-nav">
             <label class="non-desktop hamburger-menu" id="sidebar-open-hamburger">
@@ -37,7 +37,8 @@
                 <?php
                     if ($numDeadlines > 0) {
                         while ($deadline = mysqli_fetch_assoc($deadlines)) {
-                            echo '<div class="info-block">' . $deadline["deadline_name"] . ' : ' . $deadline['due_date'] . '<button class="del-button" id="' . $deadline["id"] . '"onclick="handleDeadlineDelete(event)">✖</button></div>';
+                            echo '<div class="info-block">' . $deadline["deadline_name"]
+                            . ' : ' . $deadline['due_date'] . '</div>';
                         }
                     }
                 ?>
@@ -48,7 +49,7 @@
                 <?php
                     if ($numNotes > 0) {
                         while ($note = mysqli_fetch_assoc($notes)) {
-                            echo '<div class="info-block">' . $note["title"] . '<button class="del-button" id="' . $note["id"] . '" onclick="handleNoteDelete(event)">✖</button></div>';
+                            echo '<div class="info-block">' . $note["title"] . '</div>';
                         }
                     }
                 ?>
@@ -66,19 +67,44 @@
             <a href="deadlines.php">assignments</a>
             <a href="#">schedule</a>
         </div>
-        <div class="main">
-            <h1>Welcome to the notes page. Here you can add new notes or view the ones you have already added. </h1>
-
-            <!-- Add a Textbox Feature -->
-            <div class="textbox-section">
-                <div><a href="notes-insertion.php">Add Notes</a></div>
-                <div><a href="notes-all.php">View Notes</a></div>
-            </div>
-
+        <!-- hard-coded note for now; will pull this in when a note is selected -->
+                
+        <div id="note info">
+        <h2>Recent Notes</h2>
+        <?php
+            if ($numNotes > 0) {
+                while ($note = mysqli_fetch_assoc($notes)) {
+                    echo '<div class="info-block">' . htmlspecialchars($note["title"]) . '</div>';
+                }
+                // Reset the data pointer for $notes
+                mysqli_data_seek($notes, 0);
+            }
+        ?>
         </div>
-    </div>
 
-    <script src="script.js">
-    </script>
+        <div class="main">
+        <h1>Welcome to the notes page. Here you can view all of your notes and edit them!</h1>
+        <?php
+        if ($numNotes > 0) {
+            while ($note = mysqli_fetch_assoc($notes)) {
+                echo '<div class="note-container">';
+                echo '<div class="note-title">' . htmlspecialchars($note['title']) . '</div>';
+                echo '<div class="note-content">' . htmlspecialchars(substr($note['content'], 0, 50)) . '...</div>'; // preview
+
+                // Update the onclick attribute below
+                echo '<button class="edit-button" onclick="location.href=\'notes-view.php?id=' . $note['id'] . '\'">View/Edit</button>';
+                echo '</div>';
+            }
+        } else {
+            echo '<p>No notes found.</p>';
+            echo '<p>No notes fod.</p>';
+        }
+    ?>
+        </div>
+
+
+    <script src="script.js"></script>
+</body>
+    </div>
 </body>
 </html>

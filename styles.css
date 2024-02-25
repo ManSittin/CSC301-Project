@@ -70,16 +70,145 @@ a {
 
 
 .info-block {
+    position: relative;
     background-color: #f582ae;
     text-align: center;
     width: 20vw;
     height: 15%;
 }
 
+.del-button {
+    position: absolute;
+    border: none;
+    top: 0;
+    right: 0;
+    transition: opacity 0.1s;
+    opacity: 0;
+    height: 100%;
+    cursor: pointer;
+    background-color: white;
+}
+
+.info-block:hover .del-button {
+    opacity: 0.5;
+}
+
 #sidebar-info h2 {
     word-wrap: break-word;
 }
 
+.textbox-section {
+    display: flex;
+    align-items: space-between;
+    justify-content: space-around;
+    flex-direction: column;
+    height: 76%;
+}
+
+.review-section {
+    display: flex;
+    align-items: space-between;
+    justify-content: space-around;
+    flex-direction: row;
+    height: 76%;
+}
+
+.textbox-section a, .textbox-section button {
+    background-color: #f582ae;
+    border: none;
+    border-radius: 15px;
+    padding: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.textbox-section h2 {
+    margin: 0;
+    padding: 0;
+}
+
+.flashcard-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.cue, .response {
+    border: 2px solid #001858;
+    width: 80%;
+    margin: auto;
+    margin-bottom: 20px;
+    height: 80px;
+    background-color: #fef6e4;
+    border-radius: 15px;
+    line-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+}
+
+textarea {
+    resize: none;
+}
+
+.note-body {
+    width: 95%;
+    height: 280px;
+}
+
+
+.response {
+    display: none;
+}
+
+.note-container {
+    display: flex;
+    align-items: center; /* This ensures vertical centering */
+    justify-content: space-between; /* This spreads out the flex items */
+    background: #F3D2C1;
+    margin: 20px 0;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.note-title,
+.note-content,
+.edit-button {
+    margin: 0 10px; /* Add spacing between elements */
+}
+
+.note-title {
+    flex-basis: 20%;
+    font-size: 1.5em;
+    color: #333;
+}
+
+.note-content {
+    flex-basis: 60%;
+    font-size: 1em;
+    color: #666;
+    overflow-y: auto;
+    padding-left: 10px;
+}
+
+.edit-button {
+    flex-basis: 20%;
+    padding: 10px;
+    background: #f582ae;
+    color: white;
+    text-align: center;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.edit-button:hover {
+    background: #0056b3;
+}
 /* tablet view */
 
 @media only screen and (max-width: 768px) {
@@ -157,6 +286,10 @@ a {
         text-align: center;
         width: 15vw;
         height: 15%;
+    }
+
+    .textbox-section {
+        height: 60%;
     }
 }
 
