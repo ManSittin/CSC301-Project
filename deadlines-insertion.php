@@ -27,7 +27,7 @@
             <label class="non-desktop hamburger-menu" id="sidebar-open-hamburger">
                 <input type="checkbox" id="toggle-closed">
             </label>
-            <a href = "profile.php">profile</a>
+            <a>profile</a>
             <a>settings</a>
         </div>
         <div id="sidebar-info">
@@ -37,7 +37,8 @@
                 <?php
                     if ($numDeadlines > 0) {
                         while ($deadline = mysqli_fetch_assoc($deadlines)) {
-                            echo '<div class="info-block">' . $deadline["deadline_name"] . ' : ' . $deadline['due_date'] . '<button class="del-button" id="' . $deadline["id"] . '"onclick="handleDeadlineDelete(event)">✖</button></div>';
+                            echo '<div class="info-block">' . $deadline["deadline_name"]
+                            . ' : ' . $deadline['due_date'] . '</div>';
                         }
                     }
                 ?>
@@ -48,13 +49,12 @@
                 <?php
                     if ($numNotes > 0) {
                         while ($note = mysqli_fetch_assoc($notes)) {
-                            echo '<div class="info-block">' . $note["title"] . '<button class="del-button" id="' . $note["id"] . '" onclick="handleNoteDelete(event)">✖</button></div>';
+                            echo '<div class="info-block">' . $note["title"] . '</div>';
                         }
                     }
                 ?>
             </div>
         </div>
-    </div>
     </div>
     <div class="not-sidebar">
         <div class="nav" id="pages-nav">
@@ -67,14 +67,29 @@
             <a href="#">schedule</a>
         </div>
         <div class="main">
-            <h1>Welcome to the notes page. Here you can add new notes or view the ones you have already added. </h1>
+            <h1>Welcome to the deadlines page. Here you can add new deadlines or view the ones you have already added. </h1>
 
             <!-- Add a Textbox Feature -->
             <div class="textbox-section">
-                <div><a href="notes-insertion.php">Add Notes</a></div>
-                <div><a href="notes-all.php">View Notes</a></div>
+                <h2>Enter a new deadline below</h2>
+                <form id="addDeadlineForm">
+                    <p>Enter Course: </p>
+                    <textarea rows="1" cols="50" name="tags" id="tags" placeholder="Type your course here..."></textarea>
+                    </select>
+                    <p>Enter Deadline Name:</p>
+                    <textarea rows="1" cols="50" name="title" id="title" placeholder="Enter the name of your deadline here..."></textarea>
+                    <input
+                        type="datetime-local"
+                        id="date"
+                        name="date"
+                        value="2024-02-05T15:00"
+                        min="0000-00-00T00:00"
+                        max="9999-12-31T23:59"
+                     />
+                    <br><br>
+                    <input type="button" value="Submit deadline" onclick="addDeadline()">
+                </form>
             </div>
-
         </div>
     </div>
 

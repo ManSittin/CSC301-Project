@@ -13,6 +13,9 @@ class Controller {
             case 'POST':
                 $this->handlePost();
                 break;
+            case 'DELETE':
+                $this->handleDelete();
+                break;
             default:
                 http_response_code(400);
                 echo "Request method not allowed";
@@ -21,7 +24,6 @@ class Controller {
     }
 
     private function handlePost() {
-        file_put_contents('post_data.log', print_r($_POST, true));
         $command = $_POST['command'];
         $model = new Model();
         
@@ -39,9 +41,9 @@ class Controller {
                 $username = $_POST['username'];
                 $course = $_POST['course'];
                 $name = $_POST['deadline_name'];
-                $duedate = $_POST['duedate'];
+                $due_date = $_POST['due_date'];
 
-                $result = $model->newDeadline($username, $course, $name, $duedate);
+                $result = $model->newDeadline($username, $course, $name, $due_date);
 
                 break;
             
@@ -60,6 +62,16 @@ class Controller {
                 $title = $_POST['title'];
                 $content = $_POST['content'];
                 $result = $model->updateNote($id, $username, $title, $content);
+
+                break;
+
+            case ('deadline-update'):
+                $id = $_POST['id'];
+                $username = $_POST['username'];
+                $course = $_POST['course'];
+                $deadline_name = $_POST['deadline_name'];
+                $due_date = $_POST['due_date'];
+                $result = $model->updateDeadline($id, $username, $course, $deadline_name, $due_date);
 
                 break;
                 
@@ -110,6 +122,7 @@ class Controller {
     }
     
     private function handleGet() {
+        file_put_contents('get_data.log', print_r($_GET, true));
         $command = $_GET['command'];
         $model = new Model();
 
@@ -181,8 +194,42 @@ class Controller {
             exit();
         }
     }
-}
+    private function handleDelete() {
+        $request_uri = $_SERVER['REQUEST_URI'];
+        $segments = explode('/', $request_uri);
+        $model = new Model();
 
+        $command = $segments[2]; 
+        $id = $segments[3];
+        file_put_contents('post_data.log', $command, true);
+
+        switch ($command) {
+
+            case 'deadlines':
+                $results = $model->deleteDeadline($id);
+                break;
+            case 'notes':
+                $results = $model->deleteNote($id);
+                break;
+            default:
+                http_response_code(400);
+                header('Content-Type: application/json');
+                echo json_encode(['status' => 'Failure' . $command, 'message' => $command . ' is an invalid command']);
+                exit();
+        }
+        if($results) {
+            http_response_code(200);
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'Success: ' . $command, 'message' => $results]);
+            exit();
+        } else {
+            http_response_code(500);
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'Failure: ' . $command, 'message' => ""]);
+            exit();
+        }
+    }
+}
 $controller = new Controller();
 $controller->handle();
 ?>
