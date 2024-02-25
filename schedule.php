@@ -37,8 +37,7 @@
                 <?php
                     if ($numDeadlines > 0) {
                         while ($deadline = mysqli_fetch_assoc($deadlines)) {
-                            echo '<div class="info-block">' . $deadline["deadline_name"]
-                            . ' : ' . $deadline['due_date'] . '</div>';
+                            echo '<div class="info-block">' . $deadline["deadline_name"] . ' : ' . $deadline['due_date'] . '<button class="del-button" id="' . $deadline["id"] . '"onclick="handleDeadlineDelete(event)">✖</button></div>';
                         }
                     }
                 ?>
@@ -49,7 +48,7 @@
                 <?php
                     if ($numNotes > 0) {
                         while ($note = mysqli_fetch_assoc($notes)) {
-                            echo '<div class="info-block">' . $note["title"] . '</div>';
+                            echo '<div class="info-block">' . $note["title"] . '<button class="del-button" id="' . $note["id"] . '" onclick="handleNoteDelete(event)">✖</button></div>';
                         }
                     }
                 ?>
@@ -63,17 +62,18 @@
                 <input type="checkbox" id="toggle-open">
             </label>
             <a href="notes.php">notes</a>
-            <a href="#">flashcards</a>
+            <a href="flashcards.php">flashcards</a>
             <a href="deadlines.php">assignments</a>
             <a href="schedule.php">schedule</a>
         </div>
         <div class="main">
-            <h1>Welcome to the flashcards page. Here you can add new flashcards or review the ones you have already added. </h1>
+            <h1>Welcome to the schedule page. Here you can add new courses, view the ones you have already or generate a schedule for your courses. </h1>
 
             <!-- Add a Textbox Feature -->
             <div class="textbox-section">
-                <div><a href="flashcard-insertion.php">Add Flashcards</a></div>
-                <div><a href="flashcard-review.php">Review Flashcards</a></div>
+                <div><a href="course-insertion.php">Add Course</a></div>
+                <div><a href="courses-all.php">View Courses</a></div>
+                <div><a href="schedule-create.php">Generate Schedule</a></div>
             </div>
 
         </div>

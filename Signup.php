@@ -332,10 +332,10 @@ a:hover {
             <label class="non-desktop hamburger-menu" id="sidebar-closed-hamburger">
                 <input type="checkbox" id="toggle-open">
             </label>
-            <a href="#">notes</a>
-            <a href="#">flashcards</a>
+            <a href="notes.php">notes</a>
+            <a href="flashcards.php">flashcards</a>
             <a href="deadlines.php">assignments</a>
-            <a href="#">schedule</a>
+            <a href="schedule.php">schedule</a>
         </div>
         <div class="main">
         <div className='signuppage'>

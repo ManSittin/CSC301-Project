@@ -60,7 +60,7 @@
             <a href="notes.php">notes</a>
             <a href="flashcards.php">flashcards</a>
             <a href="deadlines.php">assignments</a>
-            <a>schedule</a>
+            <a href="schedule.php">schedule</a>
         </div>
         <div class="main">
             <h1>Welcome to CourseBind! Use the links at the top of the page to access each of our core features :&rpar;

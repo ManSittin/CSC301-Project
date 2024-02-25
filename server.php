@@ -56,6 +56,13 @@ class Controller {
 
                 break;
 
+            case ('courses'):
+                $username = $_POST['username'];
+                $course_name = $_POST['course_name'];
+
+                $result = $model->newCourse($username, $course_name);
+                break;
+
             case ('note-update'):
                 $id = $_POST['id'];
                 $username = $_POST['username'];
