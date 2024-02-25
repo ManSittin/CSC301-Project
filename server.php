@@ -41,9 +41,9 @@ class Controller {
                 $username = $_POST['username'];
                 $course = $_POST['course'];
                 $name = $_POST['deadline_name'];
-                $duedate = $_POST['duedate'];
+                $due_date = $_POST['due_date'];
 
-                $result = $model->newDeadline($username, $course, $name, $duedate);
+                $result = $model->newDeadline($username, $course, $name, $due_date);
 
                 break;
             
@@ -62,6 +62,16 @@ class Controller {
                 $title = $_POST['title'];
                 $content = $_POST['content'];
                 $result = $model->updateNote($id, $username, $title, $content);
+
+                break;
+
+            case ('deadline-update'):
+                $id = $_POST['id'];
+                $username = $_POST['username'];
+                $course = $_POST['course'];
+                $deadline_name = $_POST['deadline_name'];
+                $due_date = $_POST['due_date'];
+                $result = $model->updateDeadline($id, $username, $course, $deadline_name, $due_date);
 
                 break;
                 
@@ -112,6 +122,7 @@ class Controller {
     }
     
     private function handleGet() {
+        file_put_contents('get_data.log', print_r($_GET, true));
         $command = $_GET['command'];
         $model = new Model();
 

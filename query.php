@@ -51,15 +51,30 @@ class Model {
         return $result;
     }
 
-    public function deleteDeadline($deadline_id) {
+    public function updateDeadline($id, $username, $course, $deadline_name, $due_date) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
-    
+      
         if ($conn->connect_error) {
             die("Connection to database failed: " . $conn->connect_error);
             return false;
         }
+        $stmt = $conn->prepare("UPDATE Deadlines SET course = ?, deadline_name = ?, due_date = ? WHERE Deadlines.id = ? AND Deadlines.username = ?;");
+        $stmt->bind_param("sssis", $course, $deadline_name, $due_date, $id, $username);
+
+        $result = $stmt->execute(); // check if query worked
+        return $result;
+    }  
+    public function deleteDeadline($deadline_id) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+  
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false;
+        }
+  
         $stmt = $conn->prepare("DELETE FROM Deadlines WHERE id = ?"); 
         $stmt->bind_param("s", $deadline_id);
+      
         $result = $stmt->execute(); // check if query worked
         return $result;
     }
@@ -77,11 +92,11 @@ class Model {
         $result = $stmt->execute();
         
         if ($result) {
-            $stmt->bind_result($id, $username, $course, $deadline_name, $duedate);
+            $stmt->bind_result($id, $username, $course, $deadline_name, $due_date);
     
             $results = [];
             while ($stmt->fetch()) {
-                $results[] = ['id' => $id, 'username' => $username, 'course' => $course, 'deadline_name' => $deadline_name, 'duedate', $duedate];
+                $results[] = ['id' => $id, 'username' => $username, 'course' => $course, 'deadline_name' => $deadline_name, 'due_date' => $due_date];
             }
             $stmt->close();
             return $results;
@@ -143,7 +158,7 @@ class Model {
         $stmt->bind_param("s", $note_id);
         $result = $stmt->execute(); // check if query worked
         return $result;
-}
+    }
     public function updateNote($id, $username, $title, $content) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
         if ($conn->connect_error) {
@@ -154,7 +169,7 @@ class Model {
         $stmt->bind_param("ssis", $title, $content, $id, $username);
         $result = $stmt->execute(); // check if query worked
         return $result;
-}
+    }
 
     public function getNotes($username) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
