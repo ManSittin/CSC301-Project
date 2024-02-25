@@ -63,7 +63,7 @@ class Controller {
                 $result = $model->newCourse($username, $course_name);
                 break;
             
-            case ('timeslot'):
+            case ('timeslots'):
                 $course_id = $_POST['course_id'];
                 $day_of_week = $_POST['day_of_week'];
                 $num_hours = $_POST['num_hours'];
@@ -192,6 +192,21 @@ class Controller {
             case 'courses':
                 $username = $_GET['username'];
                 $results = $model->getCourses($username);
+                if($results) {
+                    http_response_code(200);
+                    header('Content-Type: application/json');
+                    echo json_encode($results);
+                    exit();
+                } else {
+                    http_response_code(500);
+                    header('Content-Type: application/json');
+                    echo json_encode("");
+                    exit();
+                }
+                break;
+            case 'timeslots':
+                $course_id = $_GET['course_id'];
+                $results = $model->getTimeslots($course_id);
                 if($results) {
                     http_response_code(200);
                     header('Content-Type: application/json');

@@ -21,7 +21,7 @@
         /* Existing style here */
     </style>
 </head>
-<body onload="showCourses('userAA')">
+<body onload="showTimeslots()">
     <div id="sidebar">
         <div class="nav" id="sidebar-nav">
             <label class="non-desktop hamburger-menu" id="sidebar-open-hamburger">
@@ -69,7 +69,7 @@
         </div>
 
         <div class="main" id='course-main'>
-        <h1>Welcome to the schedule page. Here you can add new courses, view the ones you have already or generate a schedule for your courses.</h1>        
+        <h1>Welcome to the schedule page. Here you can add new courses, view the ones you have already or generate a schedule for your courses.</h1>
         </div>
     <script src="script.js"></script>
 </body>
