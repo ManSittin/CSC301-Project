@@ -234,10 +234,7 @@ function updateDeadline($deadlineID) {
 // button click listener
 if (updateDeadlineBtn){
   updateDeadlineBtn.addEventListener('click', function(){ // reveal response
-    alert("hi");
   const deadlineID = document.getElementById('hiddenDeadlineId').value; // Get the note ID from the hidden input
-  alert(deadlineID);
-  alert('aaaa');
   updateDeadline(deadlineID); // was hard coded before
   });
 }
