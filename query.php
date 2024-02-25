@@ -53,13 +53,28 @@ class Model {
 
     public function updateDeadline($id, $username, $course, $deadline_name, $due_date) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
-
+      
         if ($conn->connect_error) {
             die("Connection to database failed: " . $conn->connect_error);
             return false;
         }
         $stmt = $conn->prepare("UPDATE Deadlines SET course = ?, deadline_name = ?, due_date = ? WHERE Deadlines.id = ? AND Deadlines.username = ?;");
         $stmt->bind_param("sssis", $course, $deadline_name, $due_date, $id, $username);
+
+        $result = $stmt->execute(); // check if query worked
+        return $result;
+    }  
+    public function deleteDeadline($deadline_id) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+  
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false;
+        }
+  
+        $stmt = $conn->prepare("DELETE FROM Deadlines WHERE id = ?"); 
+        $stmt->bind_param("s", $deadline_id);
+      
         $result = $stmt->execute(); // check if query worked
         return $result;
     }
@@ -129,6 +144,29 @@ class Model {
 
         $stmt = $conn->prepare("INSERT INTO Notes (username, title, content) VALUES (?,?,?)");
         $stmt->bind_param("sss", $username, $title, $content);
+        $result = $stmt->execute(); // check if query worked
+        return $result;
+    }
+
+    public function deleteNote($note_id) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false;
+        }
+        $stmt = $conn->prepare("DELETE FROM Notes WHERE id = ?"); 
+        $stmt->bind_param("s", $note_id);
+        $result = $stmt->execute(); // check if query worked
+        return $result;
+    }
+    public function updateNote($id, $username, $title, $content) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false;
+        }
+        $stmt = $conn->prepare("UPDATE Notes SET title = ?, content = ? WHERE Notes.id = ? AND Notes.username = ?;");
+        $stmt->bind_param("ssis", $title, $content, $id, $username);
         $result = $stmt->execute(); // check if query worked
         return $result;
     }

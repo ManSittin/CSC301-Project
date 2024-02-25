@@ -120,6 +120,29 @@ function addNote() { // insert a note
   alert('Note added!');
 }
 
+function handleDeadlineDelete(event) {
+    var id = event.target.getAttribute('id');
+    fetch('server.php/deadlines/' + id, {
+        method: 'DELETE'
+    });
+
+    // this is where the http req is made
+
+    alert('Deadline successfully deleted!');
+}
+
+function handleNoteDelete(event) {
+    var id = event.target.getAttribute('id');
+
+    fetch('server.php/notes/' + id, {
+        method: 'DELETE'
+    });
+
+    // this is where the http req is made
+
+    alert('Note successfully deleted!');
+}
+
 function addFlashcard() { // insert a flashcard
   // Add logic to send the note to the server and store it in the database
   var formData = new FormData();
@@ -342,16 +365,3 @@ function getRandomFlashcard() {
     console.error('Error:', error);
   });
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
