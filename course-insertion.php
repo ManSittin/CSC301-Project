@@ -37,7 +37,8 @@
                 <?php
                     if ($numDeadlines > 0) {
                         while ($deadline = mysqli_fetch_assoc($deadlines)) {
-                            echo '<div class="info-block">' . $deadline["deadline_name"] . ' : ' . $deadline['due_date'] . '<button class="del-button" id="' . $deadline["id"] . '"onclick="handleDeadlineDelete(event)">✖</button></div>';
+                            echo '<div class="info-block">' . $deadline["deadline_name"]
+                            . ' : ' . $deadline['due_date'] . '</div>';
                         }
                     }
                 ?>
@@ -48,7 +49,7 @@
                 <?php
                     if ($numNotes > 0) {
                         while ($note = mysqli_fetch_assoc($notes)) {
-                            echo '<div class="info-block">' . $note["title"] . '<button class="del-button" id="' . $note["id"] . '" onclick="handleNoteDelete(event)">✖</button></div>';
+                            echo '<div class="info-block">' . $note["title"] . '</div>';
                         }
                     }
                 ?>
@@ -71,11 +72,34 @@
 
             <!-- Add a Textbox Feature -->
             <div class="textbox-section">
-                <div><a href="course-insertion.php">Add Course</a></div>
-                <div><a href="courses-all.php">View Courses</a></div>
-                <div><a href="#">Generate Schedule</a></div>
+                <h2>Enter a new course below</h2>
+                <form id="addCourseForm">
+                    <p>Enter Course Name: </p>
+                    <textarea rows="1" cols="50" name="tags" id="tags" placeholder="Type your course name here..."></textarea>
+                    <br><br>
+                    <label for="daysOfWeek">Day of the Week:</label>
+                    <select id="daysOfWeek">
+                        <option value="Monday">Monday</option>
+                        <option value="Tuesday">Tuesday</option>
+                        <option value="Wednesday">Wednesday</option>
+                        <option value="Thursday">Thursday</option>
+                        <option value="Friday">Friday</option>
+                        <option value="Saturday">Saturday</option>
+                        <option value="Sunday">Sunday</option>
+                    </select>
+                    <br><br>
+                    <label for="startTime">Class start time: </label>
+                    <input
+                        type="time"
+                        id="startTime"
+                    >
+                    <br><br>
+                    <label for="length">Number of Hours: </label>
+                    <input type="number" id="length" min="0" max="24" step="1">
+                    <br><br>
+                    <input type="button" value="Add course" onclick="addCourse()">
+                </form>
             </div>
-
         </div>
     </div>
 
