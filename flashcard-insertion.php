@@ -27,7 +27,7 @@
             <label class="non-desktop hamburger-menu" id="sidebar-open-hamburger">
                 <input type="checkbox" id="toggle-closed">
             </label>
-            <a>profile</a>
+            <a href = "profile.php">profile</a>
             <a>settings</a>
         </div>
         <div id="sidebar-info">
@@ -37,7 +37,8 @@
                 <?php
                     if ($numDeadlines > 0) {
                         while ($deadline = mysqli_fetch_assoc($deadlines)) {
-                            echo '<div class="info-block">' . $deadline["deadline_name"] . ' : ' . $deadline['due_date'] . '<button class="del-button" id="' . $deadline["id"] . '"onclick="handleDeadlineDelete(event)">✖</button></div>';
+                            echo '<div class="info-block">' . $deadline["deadline_name"]
+                            . ' : ' . $deadline['due_date'] . '</div>';
                         }
                     }
                 ?>
@@ -48,12 +49,13 @@
                 <?php
                     if ($numNotes > 0) {
                         while ($note = mysqli_fetch_assoc($notes)) {
-                            echo '<div class="info-block">' . $note["title"] . '<button class="del-button" id="' . $note["id"] . '" onclick="handleNoteDelete(event)">✖</button></div>';
+                            echo '<div class="info-block">' . $note["title"] . '</div>';
                         }
                     }
                 ?>
             </div>
         </div>
+    </div>
     </div>
     <div class="not-sidebar">
         <div class="nav" id="pages-nav">
@@ -62,47 +64,26 @@
             </label>
             <a href="notes.php">notes</a>
             <a href="flashcards.php">flashcards</a>
-            <a href="#">assignments</a>
+            <a href="deadlines.php">assignments</a>
             <a href="#">schedule</a>
         </div>
         <div class="main">
-            <h1>Welcome to the deadlines page. Here you can register deadlines for the scheduler, so that you can be reminded of them.</h1>
+            <h1>Welcome to the flashcards page. Here you can add new flashcards or review the ones you have already added. </h1>
 
             <!-- Add a Textbox Feature -->
             <div class="textbox-section">
-                <h2>Enter a new deadline below</h2>
-                <form id="addDeadlineForm">
-                    <p>Select tags:</p>
-                    <textarea rows="4" cols="50" name="tags" id="tags" placeholder="Type your tags here..."></textarea>
+                <h2>Add a new flashcard</h2>
+                <form id="addFlashcardForm">
+                    <p>Cue:</p>
+                    <textarea rows="2" cols="50" name="cue" id="enter-cue" placeholder="Type your cue here..."></textarea>
                     <br>
+                        <!-- Planning to give the user freedom to create their own category -->
                     </select>
-                    <p>Enter the title:</p>
-                    <textarea rows="1" cols="50" name="title" id="title" placeholder="Enter your title here..."></textarea>
+                    <p>Response:</p>
+                    <textarea rows="4" cols="50" name="response" id="enter-response" placeholder="Type your response here..."></textarea>
                     <br>
-                    <p>Enter a description:</p>
-                    <textarea rows="4" cols="50" name="description" id="description" placeholder="Type a description here..."></textarea>
-                    <br>
-                    <p>Enter a date and time:</p>
-                    <input
-                        type="datetime-local"
-                        id="date"
-                        name="date"
-                        value="2024-02-05T15:00"
-                        min="0000-00-00T00:00"
-                        max="9999-12-31T23:59"
-                     />
-                    <br><br>
-                    <!--<textarea rows="4" cols="50" name="datetime" id="datetime" placeholder="Enter your date and time here..."></textarea> this is the original format
-                    <br>
-                    <input type="button" value="Add Datetime" onclick="setDateTime()"> -->
-                    </select>
+                    <input type="button" value="Add Flashcard" onclick="addFlashcard()">
                 </form>
-                <input type="button" value="Submit deadline" onclick="submit()">
-            </div>
-
-            <!-- Placeholder for displaying deadlines by tag -->
-            <div class="deadlines-by-tag" id="deadlinesByTag">
-                <!-- Display deadlines here based on the selected tags -->
             </div>
         </div>
     </div>

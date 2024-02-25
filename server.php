@@ -24,7 +24,6 @@ class Controller {
     }
 
     private function handlePost() {
-        file_put_contents('post_data.log', print_r($_POST, true));
         $command = $_POST['command'];
         $model = new Model();
         
@@ -47,6 +46,25 @@ class Controller {
                 $result = $model->newDeadline($username, $course, $name, $duedate);
 
                 break;
+            
+            case ('flashcards'):
+                $username = $_POST['username'];
+                $cue = $_POST['cue'];
+                $response = $_POST['response'];
+                
+                $result = $model->newFlashcard($username, $cue, $response);
+
+                break;
+
+            case ('note-update'):
+                $id = $_POST['id'];
+                $username = $_POST['username'];
+                $title = $_POST['title'];
+                $content = $_POST['content'];
+                $result = $model->updateNote($id, $username, $title, $content);
+
+                break;
+                
             case ('users'):
                 $username = $_POST['username'];
                 $email = $_POST['email'];
@@ -129,6 +147,21 @@ class Controller {
                     exit();
                 }
                 break;
+            case 'flashcards':
+                $username = $_GET['username'];
+                $results = $model->getFlashcards($username);
+                if($results) {
+                    http_response_code(200);
+                    header('Content-Type: application/json');
+                    echo json_encode(['status' => 'Success: ' . $command, 'message' => $results]);
+                    exit();
+                } else {
+                    http_response_code(500);
+                    header('Content-Type: application/json');
+                    echo json_encode(['status' => 'Failure: ' . $command, 'message' => ""]);
+                    exit();
+                }
+                break;
             // here is user code for get
             default:
             
@@ -154,26 +187,18 @@ class Controller {
         $request_uri = $_SERVER['REQUEST_URI'];
         $segments = explode('/', $request_uri);
         $model = new Model();
-    
+
         $command = $segments[2]; 
         $id = $segments[3];
         file_put_contents('post_data.log', $command, true);
 
         switch ($command) {
+
             case 'deadlines':
                 $results = $model->deleteDeadline($id);
-
-                if($results) {
-                    http_response_code(200);
-                    header('Content-Type: application/json');
-                    echo json_encode(['status' => 'Success: ' . $command, 'message' => $results]);
-                    exit();
-                } else {
-                    http_response_code(500);
-                    header('Content-Type: application/json');
-                    echo json_encode(['status' => 'Failure: ' . $command, 'message' => ""]);
-                    exit();
-                }
+                break;
+            case 'notes':
+                $results = $model->deleteNote($id);
                 break;
             default:
                 http_response_code(400);
@@ -181,9 +206,19 @@ class Controller {
                 echo json_encode(['status' => 'Failure' . $command, 'message' => $command . ' is an invalid command']);
                 exit();
         }
+        if($results) {
+            http_response_code(200);
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'Success: ' . $command, 'message' => $results]);
+            exit();
+        } else {
+            http_response_code(500);
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'Failure: ' . $command, 'message' => ""]);
+            exit();
+        }
     }
 }
-
 $controller = new Controller();
 $controller->handle();
 ?>

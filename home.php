@@ -45,7 +45,7 @@
                 <?php
                     if ($numNotes > 0) {
                         while ($note = mysqli_fetch_assoc($notes)) {
-                            echo '<div class="info-block">' . $note["title"] . '</div>';
+                            echo '<div class="info-block">' . $note["title"] . '<button class="del-button" id="' . $note["id"] . '" onclick="handleNoteDelete(event)">✖</button></div>';
                         }
                     }
                 ?>
@@ -58,7 +58,7 @@
                 <input type="checkbox" id="toggle-open">
             </label>
             <a href="notes.php">notes</a>
-            <a>flashcards</a>
+            <a href="flashcards.php">flashcards</a>
             <a href="deadlines.php">assignments</a>
             <a>schedule</a>
         </div>
