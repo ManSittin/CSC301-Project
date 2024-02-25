@@ -88,10 +88,27 @@ a {
 
 
 .info-block {
-  background-color: #f582ae;
-  text-align: center;
-  width: 20vw;
-  height: 15%;
+    position: relative;
+    background-color: #f582ae;
+    text-align: center;
+    width: 20vw;
+    height: 15%;
+}
+
+.del-button {
+    position: absolute;
+    border: none;
+    top: 0;
+    right: 0;
+    transition: opacity 0.1s;
+    opacity: 0;
+    height: 100%;
+    cursor: pointer;
+    background-color: white;
+}
+
+.info-block:hover .del-button {
+    opacity: 0.5;
 }
 
 #sidebar-info h2 {
@@ -303,7 +320,7 @@ a:hover {
                 <?php
                     if ($numNotes > 0) {
                         while ($note = mysqli_fetch_assoc($notes)) {
-                            echo '<div class="info-block">' . $note["title"] . '</div>';
+                            echo '<div class="info-block">' . $note["title"] . '<button class="del-button" id="' . $note["id"] . '" onclick="handleNoteDelete(event)">✖</button></div>';
                         }
                     }
                 ?>
