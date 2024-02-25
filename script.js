@@ -202,10 +202,14 @@ function updateNote($noteID) {
   alert('Note updated!');
 }
 
-// button click listener
-updateNoteBtn.addEventListener('click', function(){ // reveal response
-  updateNote(4); // hard-coded right now...
-});
+
+if (updateNoteBtn) {
+  updateNoteBtn.addEventListener('click', function(){
+    const noteID = document.getElementById('hiddenNoteId').value; // Get the note ID from the hidden input
+    updateNote(noteID);
+  });
+}
+
 
 // FLASHCARDS
 
@@ -215,15 +219,23 @@ const response = document.querySelector('.response');
 const reveal = document.querySelector('.reveal');
 const next = document.querySelector('.next');
 
+if (reveal) {
 // button click listeners
 reveal.addEventListener('click', function(){ // reveal response
+  
   response.style.display = 'flex';
 });
 
-next.addEventListener('click', function(){ // populate cue, response with a random flashcard
-  getRandomFlashcard();
-  response.style.display = 'none';
-});
+}
+
+if (next){
+  next.addEventListener('click', function(){ // populate cue, response with a random flashcard
+    getRandomFlashcard();
+    response.style.display = 'none';
+  });
+
+}
+
 
 // flashcard data 
 function getFlashcards() { // get all the user's flashcards as (cue, response) objects
