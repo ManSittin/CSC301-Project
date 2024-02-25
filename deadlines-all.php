@@ -134,7 +134,6 @@
                 echo '<div class="deadline-course">' . htmlspecialchars($deadline['course']) . '</div>';
                 echo '<div class="note-content">' . htmlspecialchars(substr($deadline['deadline_name'], 0, 50)) . '...</div>'; // preview
                 echo '<div class="deadline-date">Due: ' . htmlspecialchars($deadline['due_date']) . '</div>'; // Displaying the due date
-
             
                 // Update the onclick attribute below
                 echo '<button class="edit-button" onclick="location.href=\'deadlines-view.php?id=' . $deadline['id'] . '\'">View/Edit</button>';

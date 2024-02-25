@@ -126,13 +126,14 @@ fetch('/server.php', {
 
 function addDeadline() { // insert a deadline
   // need to collect all data and send to db..
-  
+  console.log(onlineUsers)
   var formData = new FormData();
   formData.append('command', 'deadlines');
   formData.append('username',onlineUsers);
   formData.append('course', document.getElementById("addDeadlineForm").elements[0].value);
   formData.append('deadline_name', document.getElementById("addDeadlineForm").elements[1].value);
   formData.append('duedate', document.getElementById("addDeadlineForm").elements[2].value);
+  
   fetch('/server.php', {
       method: 'POST',
       body: formData,
@@ -201,7 +202,7 @@ const updateDeadlineBtn = document.querySelector('.update-deadline');
 
 // deadline data 
 function getDeadlines() { // get all the user's deadlines as (id, course, deadline_name, due_date) objects
-  return fetch('/server.php?command=deadlines&username=' ,onlineUsers)
+  return fetch(`/server.php?command=notes&username=${encodeURIComponent(onlineUsers)}`)
     .then(response => response.json())
     .then(json => {
       return json.message.map(entry => {
@@ -253,7 +254,7 @@ function updateDeadline($deadlineID) {
   var formData = new FormData();
   formData.append('command', 'deadline-update');
   formData.append('id', $deadlineID);
-  formData.append('username', $_SESSION['onlineUsers']);
+  formData.append('username', onlineUsers);
   formData.append('course', course.value);
   formData.append('deadline_name', deadline_name.value);
   formData.append('due_date', date.value);
@@ -267,7 +268,8 @@ function updateDeadline($deadlineID) {
 // button click listener
 if (updateDeadlineBtn){
   updateDeadlineBtn.addEventListener('click', function(){ // reveal response
-    updateDeadline(3); // hard-coded right now...
+  const deadlineID = document.getElementById('hiddenDeadlineId').value; // Get the note ID from the hidden input
+  updateDeadline(deadlineID); // was hard coded before
   });
 }
 
@@ -279,7 +281,9 @@ const updateNoteBtn = document.querySelector('.update-note');
 
 // note data 
 function getNotes() { // get all the user's notes as (id, title, content) objects
-  return fetch('/server.php?command=notes&username=', onlineUsers)
+  
+
+  return fetch(`/server.php?command=notes&username=${encodeURIComponent(onlineUsers)}`)
     .then(response => response.json())
     .then(json => {
       return json.message.map(entry => {
@@ -326,7 +330,7 @@ function updateNote($noteID) {
   var formData = new FormData();
   formData.append('command', 'note-update');
   formData.append('id', $noteID);
-  formData.append('username', $_SESSION['onlineUsers']);
+  formData.append('username', onlineUsers);
   formData.append('title', title.innerText);
   formData.append('content', body.value);
   fetch('/server.php', {

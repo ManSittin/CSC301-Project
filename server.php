@@ -42,7 +42,7 @@ class Controller {
                 $username = $_POST['username'];
                 $course = $_POST['course'];
                 $name = $_POST['deadline_name'];
-                $due_date = $_POST['due_date'];
+                $due_date = $_POST['duedate'];
 
                 $result = $model->newDeadline($username, $course, $name, $due_date);
 
