@@ -124,7 +124,7 @@ class Model {
                 file_put_contents('post_data.log', print_r($password, true));
                 if (strcmp($password, $pass) === 0) {
                     $stmt->close();
-                    return true;
+                    return  $username;
                 }
             }
 

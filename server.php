@@ -1,6 +1,7 @@
 <?php
 
 include('query.php');
+include_once "Session.php";
 
 class Controller {
     public function handle() {
@@ -96,11 +97,15 @@ class Controller {
                             exit();
                         } else {
                             http_response_code(200);
+                            addUserToOnlineUsers($results);
                             header('Content-Type: application/json');
                             echo json_encode(['status' => 'Success' . $command, 'message' => $results]);
                             exit();
                         }
                         break;
+
+            case ('logout'):
+                    removeUserFromOnlineUsers('123');
 
             default:
                 http_response_code(400);
