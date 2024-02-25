@@ -90,7 +90,7 @@ window.location.href = "signup.php";
 
 }
 
-function submit() {
+function submit() { // insert a deadline
   // need to collect all data and send to db..
   
   var formData = new FormData();
@@ -108,7 +108,7 @@ function submit() {
   alert('Deadline submitted.');
 }
 
-function addNote() {
+function addNote() { // insert a note
   // Add logic to send the note to the server and store it in the database
   var formData = new FormData();
   formData.append('command', 'notes');
@@ -134,4 +134,138 @@ function handleNoteDelete(event) {
     alert('Note successfully deleted!');
 }
 
+function addFlashcard() { // insert a flashcard
+  // Add logic to send the note to the server and store it in the database
+  var formData = new FormData();
+  formData.append('command', 'flashcards');
+  formData.append('username', 'userAA');
+  formData.append('cue', document.getElementById("addFlashcardForm").elements[0].value);
+  formData.append('response', document.getElementById("addFlashcardForm").elements[1].value);
+  fetch('/server.php', {
+      method: 'POST',
+      body: formData,
+  });
+  alert('Flashcard added!');
+}
+
+// NOTE UPDATES
+
+// Front-end note view elements
+const title = document.querySelector('.note-title');
+const body = document.querySelector('.note-body');
+const updateNoteBtn = document.querySelector('.update-note');
+
+// note data 
+function getNotes() { // get all the user's notes as (id, title, content) objects
+  return fetch('/server.php?command=notes&username=userAA')
+    .then(response => response.json())
+    .then(json => {
+      return json.message.map(entry => {
+        return {
+          id: entry.id,
+          title: entry.title,
+          content: entry.content
+        };
+      });
+    })
+    .catch(error => {
+      console.error('Error fetching notes:', error);
+      throw error;
+    });
+}
+
+// given a note id, load its information from the DB, returning an object with (title, content) attributes
+async function getNote($noteID){
+  try {
+    const notes = await getNotes();
+    const note = notes.find(note => note.id == $noteID);
+    return note || null;
+  } catch (error) {
+    console.error('Error fetching note by ID:', error);
+    throw error;
+  }
+}
+
+// given a note object, display its title in the note-title section and content in the note-body section
+async function loadNote($noteID){
+  try {
+    const data = await getNote($noteID);
+    title.innerHTML = `${data.title}`;
+    body.innerHTML = `${data.content}`;
+    alert('Note Loaded!');
+  } catch (error) {
+    // Handle errors
+    console.error('Error:', error);
+  }
+}
+
+// update the user's note in the DB with this noteID based on the info stored in note-title and note-body
+function updateNote($noteID) {
+  var formData = new FormData();
+  formData.append('command', 'note-update');
+  formData.append('id', $noteID);
+  formData.append('username', 'userAA');
+  formData.append('title', title.innerText);
+  formData.append('content', body.value);
+  fetch('/server.php', {
+      method: 'POST',
+      body: formData,
+  });
+  alert('Note updated!');
+}
+
+// button click listener
+updateNoteBtn.addEventListener('click', function(){ // reveal response
+  updateNote(4); // hard-coded right now...
+});
+
+// FLASHCARDS
+
+// Front-end flashcard reivew elements
+const cue = document.querySelector('.cue');
+const response = document.querySelector('.response');
+const reveal = document.querySelector('.reveal');
+const next = document.querySelector('.next');
+
+// button click listeners
+reveal.addEventListener('click', function(){ // reveal response
+  response.style.display = 'flex';
+});
+
+next.addEventListener('click', function(){ // populate cue, response with a random flashcard
+  getRandomFlashcard();
+  response.style.display = 'none';
+});
+
+// flashcard data 
+function getFlashcards() { // get all the user's flashcards as (cue, response) objects
+  return fetch('/server.php?command=flashcards&username=userAA')
+    .then(response => response.json())
+    .then(json => {
+      return json.message.map(entry => {
+        return {
+          cue: entry.cue,
+          response: entry.response
+        };
+      });
+    })
+    .catch(error => {
+      console.error('Error fetching flashcards:', error);
+      throw error;
+    });
+}
+
+function getRandomFlashcard() {
+  getFlashcards()
+  .then(data => {
+    randomFlashcard = data[Math.floor(Math.random() * data.length)];
+    cue.innerHTML = `<h3>${randomFlashcard.cue}</h3>`;
+    response.innerHTML = `<h3>${randomFlashcard.response}</h3>`;
+    alert('Flashcards Loaded!');
+  })
+  .catch(error => {
+    // Handle errors
+    console.error('Error:', error);
+  });
+}
 

@@ -62,34 +62,20 @@
             <label class="non-desktop hamburger-menu" id="sidebar-closed-hamburger">
                 <input type="checkbox" id="toggle-open">
             </label>
-            <a href="#">notes</a>
-            <a href="#">flashcards</a>
+            <a href="notes.php">notes</a>
+            <a href="flashcards.php">flashcards</a>
             <a href="deadlines.php">assignments</a>
             <a href="#">schedule</a>
         </div>
         <div class="main">
-            <h1>Welcome to the notes page. Here you can keep track of your assignments, deadlines, or simply put reminders.</h1>
+            <h1>Welcome to the notes page. Here you can add new notes or view the ones you have already added. </h1>
 
             <!-- Add a Textbox Feature -->
             <div class="textbox-section">
-                <h2>Enter a new note</h2>
-                <form id="addNoteForm">
-                    <p>Enter title:</p>
-                    <textarea rows="4" cols="50" name="title" id="title" placeholder="Type your title here..."></textarea>
-                    <br>
-                        <!-- Planning to give the user freedom to create their own category -->
-                    </select>
-                    <p>Enter your note:</p>
-                    <textarea rows="4" cols="50" name="note" id="note" placeholder="Type your note here..."></textarea>
-                    <br>
-                    <input type="button" value="Add Note" onclick="addNote()">
-                </form>
+                <div><a href="notes-insertion.php">Add Notes</a></div>
+                <div><a href="notes-view.php">View Notes</a></div>
             </div>
 
-            <!-- Placeholder for displaying notes by category -->
-            <div class="notes-by-category" id="notesByCategory">
-                <!-- Display notes here based on the selected category -->
-            </div>
         </div>
     </div>
 

@@ -17,6 +17,9 @@
     <link rel="stylesheet" href="styles.css">
     <link href='https://fonts.googleapis.com/css?family=Outfit' rel='stylesheet'>
     <title>CourseBind</title>
+    <style>
+        /* Existing style here */
+    </style>
 </head>
 <body>
     <div id="sidebar">
@@ -24,7 +27,7 @@
             <label class="non-desktop hamburger-menu" id="sidebar-open-hamburger">
                 <input type="checkbox" id="toggle-closed">
             </label>
-            <a href = "profile.php" > profile</a>
+            <a href = "profile.php">profile</a>
             <a>settings</a>
         </div>
         <div id="sidebar-info">
@@ -46,12 +49,13 @@
                 <?php
                     if ($numNotes > 0) {
                         while ($note = mysqli_fetch_assoc($notes)) {
-                            echo '<div class="info-block">' . $note["title"] . '<button class="del-button" id="' . $note["id"] . '" onclick="handleNoteDelete(event)">✖</button></div>';
+                            echo '<div class="info-block">' . $note["title"] . '</div>';
                         }
                     }
                 ?>
             </div>
         </div>
+    </div>
     </div>
     <div class="not-sidebar">
         <div class="nav" id="pages-nav">
@@ -59,18 +63,23 @@
                 <input type="checkbox" id="toggle-open">
             </label>
             <a href="notes.php">notes</a>
-            <a href="flashcards.php">flashcards</a>
+            <a href="#">flashcards</a>
             <a href="deadlines.php">assignments</a>
-            <a>schedule</a>
+            <a href="#">schedule</a>
         </div>
         <div class="main">
-            <h1>Welcome to CourseBind! Use the links at the top of the page to access each of our core features :&rpar;
-                The page will adapt dynamically to your chosen feature!
-            </h1>
+            <h1>Welcome to the flashcards page. Here you can add new flashcards or review the ones you have already added. </h1>
+
+            <!-- Add a Textbox Feature -->
+            <div class="textbox-section">
+                <div><a href="flashcard-insertion.php">Add Flashcards</a></div>
+                <div><a href="flashcard-review.php">Review Flashcards</a></div>
+            </div>
+
         </div>
     </div>
-    
+
+    <script src="script.js">
+    </script>
 </body>
-<script src="script.js">
-</script>
 </html>
