@@ -63,9 +63,9 @@
                 <input type="checkbox" id="toggle-open">
             </label>
             <a href="notes.php">notes</a>
-            <a href="#">flashcards</a>
+            <a href="flashcards.php">flashcards</a>
             <a href="deadlines.php">assignments</a>
-            <a href="#">schedule</a>
+            <a href="schedule.php">schedule</a>
         </div>
         <div class="main">
             <h1>Welcome to the flashcards page. Here you can add new flashcards or review the ones you have already added. </h1>

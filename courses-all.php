@@ -8,28 +8,7 @@
     $notesQuery = "SELECT * FROM Notes;";
     $notes = mysqli_query($conn, $notesQuery);
     $numNotes = mysqli_num_rows($notes);
-
-    // Fetch Deadline for Editing
-    $deadlineForEditing = null; // Initialize variable to hold deadline data for editing
-    if (isset($_GET['id'])) {
-        $deadlineId = $_GET['id'];
-        $stmt = $conn->prepare("SELECT * FROM Deadlines WHERE id = ?");
-        $stmt->bind_param("i", $deadlineId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        if ($result->num_rows > 0) {
-            $deadlineForEditing = $result->fetch_assoc();
-        } else {
-            //echo "<script>alert('Deadline not found.'); window.location.href='deadlines.php';</script>";
-        }
-        $stmt->close();
-    } else {
-        echo "<script>alert('Deadline Edited'); window.location.href='deadlines-all.php';</script>";
-   }
 ?>
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -42,7 +21,7 @@
         /* Existing style here */
     </style>
 </head>
-<body onload="loadDeadline(<?php echo isset($deadlineForEditing['id']) ? $deadlineForEditing['id'] : 'null'; ?>)">
+<body onload="showCourses('userAA')">
     <div id="sidebar">
         <div class="nav" id="sidebar-nav">
             <label class="non-desktop hamburger-menu" id="sidebar-open-hamburger">
@@ -88,33 +67,12 @@
             <a href="deadlines.php">assignments</a>
             <a href="schedule.php">schedule</a>
         </div>
-        <!-- hard-coded note for now; will pull this in when a note is selected -->
-        <div class="main">
-            <h1>Welcome to the deadlines page. Here you can add new deadlines or view the ones you have already added. </h1>
-            <div class="textbox-section">
-                <!-- Loaded deadline info preloads here... -->
-                <h2>Edit Deadline</h2> 
-                <form id="editDeadlineForm" method="post" action="deadlines-view.php">
-                <input type="hidden" name="hiddenDeadlineId" id="hiddenDeadlineId" value="<?php echo isset($deadlineForEditing['id']) ? $deadlineForEditing['id'] : ''; ?>">
-                <p>Edit Course: </p>
-                <textarea rows="1" cols="50" name="course" class="deadline_course"><?php echo isset($deadlineForEditing['course']) ? $deadlineForEditing['course'] : ''; ?></textarea>
-                <p>Edit Deadline Name:</p>
-                <textarea rows="1" cols="50" name="deadline_name" class="deadline_name"><?php echo isset($deadlineForEditing['deadline_name']) ? $deadlineForEditing['deadline_name'] : ''; ?></textarea>
-                <p>Edit Date:</p>
-                <input
-                    type="datetime-local"
-                    id="date"
-                    name="due_date"
-                    value="<?php echo isset($deadlineForEditing['due_date']) ? str_replace(' ', 'T', $deadlineForEditing['due_date']) : ''; ?>"
-                    class="deadline_date"
-                />
-                <br><br>
-                <input type="submit" value="Update Deadline" class="update-deadline">
-            </form>
-        </div>
-    </div>
 
-    <script src="script.js">
-    </script>
+        <div class="main" id='course-main'>
+        <h1>Welcome to the schedule page. Here you can add new courses, view the ones you have already or generate a schedule for your courses.</h1>        
+        </div>
+    <script src="script.js"></script>
+</body>
+    </div>
 </body>
 </html>

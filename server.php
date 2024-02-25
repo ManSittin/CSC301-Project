@@ -56,6 +56,21 @@ class Controller {
 
                 break;
 
+            case ('courses'):
+                $username = $_POST['username'];
+                $course_name = $_POST['course_name'];
+
+                $result = $model->newCourse($username, $course_name);
+                break;
+            
+            case ('timeslots'):
+                $course_id = $_POST['course_id'];
+                $day_of_week = $_POST['day_of_week'];
+                $num_hours = $_POST['num_hours'];
+                $start_time = $_POST['start_time'];
+                
+                $result = $model->addTimeslot($course_id, $day_of_week, $num_hours, $start_time);
+                break;
             case ('note-update'):
                 $id = $_POST['id'];
                 $username = $_POST['username'];
@@ -173,7 +188,39 @@ class Controller {
                     exit();
                 }
                 break;
-            // here is user code for get
+
+            case 'courses':
+                $username = $_GET['username'];
+                $results = $model->getCourses($username);
+                if($results) {
+                    http_response_code(200);
+                    header('Content-Type: application/json');
+                    echo json_encode($results);
+                    exit();
+                } else {
+                    http_response_code(500);
+                    header('Content-Type: application/json');
+                    echo json_encode("");
+                    exit();
+                }
+                break;
+            case 'timeslots':
+                $course_id = $_GET['course_id'];
+                $results = $model->getTimeslots($course_id);
+                if($results) {
+                    http_response_code(200);
+                    header('Content-Type: application/json');
+                    echo json_encode($results);
+                    exit();
+                } else {
+                    http_response_code(500);
+                    header('Content-Type: application/json');
+                    echo json_encode("");
+                    exit();
+                }
+                break;
+            
+
             default:
             
                 // handle incorrect command, bad request?

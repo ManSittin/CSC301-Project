@@ -8,28 +8,7 @@
     $notesQuery = "SELECT * FROM Notes;";
     $notes = mysqli_query($conn, $notesQuery);
     $numNotes = mysqli_num_rows($notes);
-
-    // Fetch Deadline for Editing
-    $deadlineForEditing = null; // Initialize variable to hold deadline data for editing
-    if (isset($_GET['id'])) {
-        $deadlineId = $_GET['id'];
-        $stmt = $conn->prepare("SELECT * FROM Deadlines WHERE id = ?");
-        $stmt->bind_param("i", $deadlineId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        if ($result->num_rows > 0) {
-            $deadlineForEditing = $result->fetch_assoc();
-        } else {
-            //echo "<script>alert('Deadline not found.'); window.location.href='deadlines.php';</script>";
-        }
-        $stmt->close();
-    } else {
-        echo "<script>alert('Deadline Edited'); window.location.href='deadlines-all.php';</script>";
-   }
 ?>
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -42,7 +21,7 @@
         /* Existing style here */
     </style>
 </head>
-<body onload="loadDeadline(<?php echo isset($deadlineForEditing['id']) ? $deadlineForEditing['id'] : 'null'; ?>)">
+<body>
     <div id="sidebar">
         <div class="nav" id="sidebar-nav">
             <label class="non-desktop hamburger-menu" id="sidebar-open-hamburger">
@@ -88,29 +67,42 @@
             <a href="deadlines.php">assignments</a>
             <a href="schedule.php">schedule</a>
         </div>
-        <!-- hard-coded note for now; will pull this in when a note is selected -->
         <div class="main">
-            <h1>Welcome to the deadlines page. Here you can add new deadlines or view the ones you have already added. </h1>
+            <h1>Welcome to the schedule page. Here you can add new courses, view the ones you have already or generate a schedule for your courses. </h1>
+
+            <!-- Add a Textbox Feature -->
             <div class="textbox-section">
-                <!-- Loaded deadline info preloads here... -->
-                <h2>Edit Deadline</h2> 
-                <form id="editDeadlineForm" method="post" action="deadlines-view.php">
-                <input type="hidden" name="hiddenDeadlineId" id="hiddenDeadlineId" value="<?php echo isset($deadlineForEditing['id']) ? $deadlineForEditing['id'] : ''; ?>">
-                <p>Edit Course: </p>
-                <textarea rows="1" cols="50" name="course" class="deadline_course"><?php echo isset($deadlineForEditing['course']) ? $deadlineForEditing['course'] : ''; ?></textarea>
-                <p>Edit Deadline Name:</p>
-                <textarea rows="1" cols="50" name="deadline_name" class="deadline_name"><?php echo isset($deadlineForEditing['deadline_name']) ? $deadlineForEditing['deadline_name'] : ''; ?></textarea>
-                <p>Edit Date:</p>
-                <input
-                    type="datetime-local"
-                    id="date"
-                    name="due_date"
-                    value="<?php echo isset($deadlineForEditing['due_date']) ? str_replace(' ', 'T', $deadlineForEditing['due_date']) : ''; ?>"
-                    class="deadline_date"
-                />
-                <br><br>
-                <input type="submit" value="Update Deadline" class="update-deadline">
-            </form>
+                <h2>Enter timeslot below</h2>
+                <form id="addTimeslotForm">
+                    <p>Enter Day of Week: </p>
+                    <select id="dayOfWeek">
+                        <option value="Monday">Monday</option>
+                        <option value="Tuesday">Tuesday</option>
+                        <option value="Wednesday">Wednesday</option>
+                        <option value="Thursday">Thursday</option>
+                        <option value="Friday">Friday</option>
+                        <option value="Saturday">Saturday</option>
+                        <option value="Sunday">Sunday</option>
+                    </select>
+                    <br><br>
+                    <p>Enter class start time: </p>
+                    <input
+                        type="time"
+                        id="startTime"
+                        value="09:00"
+                    >
+                    <br><br>
+                    <p>Enter class length in hours</p>
+                    <input
+                        type="number"
+                        min="0"
+                        max="4"
+                        value="0"
+                    >
+                    <br><br>
+                    <input type="button" value="Add timeslot" onclick="addTimeslot()">
+                </form>
+            </div>
         </div>
     </div>
 
