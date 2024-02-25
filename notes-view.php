@@ -8,6 +8,25 @@
     $notesQuery = "SELECT * FROM Notes;";
     $notes = mysqli_query($conn, $notesQuery);
     $numNotes = mysqli_num_rows($notes);
+
+    // Fetch Note for Editing
+    $noteForEditing = null; // Initialize variable to hold note data for editing
+    if (isset($_GET['id'])) {
+        $noteId = $_GET['id'];
+        $stmt = $conn->prepare("SELECT * FROM Notes WHERE id = ?");
+        $stmt->bind_param("i", $noteId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+             $noteForEditing = $result->fetch_assoc();
+        } else {
+            echo "<script>alert('Note not found.'); window.location.href='notes-all.php';</script>";
+        }
+        $stmt->close();
+    } else {
+         echo "<script>alert('Note Edited'); window.location.href='notes-all.php';</script>";
+    }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -21,7 +40,7 @@
         /* Existing style here */
     </style>
 </head>
-<body onload="loadNote(4)">
+<body onload="loadNote(<?php echo isset($noteForEditing['id']) ? $noteForEditing['id'] : 'null'; ?>)">
     <div id="sidebar">
         <div class="nav" id="sidebar-nav">
             <label class="non-desktop hamburger-menu" id="sidebar-open-hamburger">
@@ -73,11 +92,12 @@
             <div class="textbox-section">
                 <!-- Loaded note info preloads here... -->
                 <h2 class="note-title">Your Note</h2> 
-                <form id="editNoteForm">
-                    <textarea rows="4" cols="50" name="note" class="note-body"></textarea>
-                    <br>
-                    <input type="button" value="Update Note" class="update-note">
-                </form>
+                <form id="editNoteForm" method="post" action="notes-view.php">
+                <input type="hidden" id="hiddenNoteId" value="<?php echo isset($noteForEditing['id']) ? $noteForEditing['id'] : ''; ?>">
+                <textarea rows="4" cols="50" name="noteContent" class="note-body"><?php echo isset($noteForEditing['content']) ? $noteForEditing['content'] : ''; ?></textarea>
+                <br>
+                <input type="submit" value="Update Note" class="update-note">
+            </form>
         </div>
     </div>
 

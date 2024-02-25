@@ -302,10 +302,10 @@ function updateNote($noteID) {
   alert('Note updated!');
 }
 
-// button click listener
-if (updateNoteBtn){
-  updateNoteBtn.addEventListener('click', function(){ // reveal response
-    updateNote(4); // hard-coded right now...
+if (updateNoteBtn) {
+  updateNoteBtn.addEventListener('click', function(){
+    const noteID = document.getElementById('hiddenNoteId').value; // Get the note ID from the hidden input
+    updateNote(noteID);
   });
 }
 
@@ -319,7 +319,6 @@ const reveal = document.querySelector('.reveal');
 const next = document.querySelector('.next');
 
 // button click listeners
-
 if (reveal){
   reveal.addEventListener('click', function(){ // reveal response
     response.style.display = 'flex';
