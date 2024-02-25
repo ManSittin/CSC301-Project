@@ -90,17 +90,15 @@ window.location.href = "signup.php";
 
 }
 
-function submit() { // insert a deadline
+function addDeadline() { // insert a deadline
   // need to collect all data and send to db..
   
   var formData = new FormData();
   formData.append('command', 'deadlines');
   formData.append('username', 'userAA');
-  console.log(document.getElementById("addDeadlineForm").elements[0].value);
   formData.append('course', document.getElementById("addDeadlineForm").elements[0].value);
   formData.append('deadline_name', document.getElementById("addDeadlineForm").elements[1].value);
-  //formData.append('description', document.getElementById("addDeadlineForm").elements[2].value);
-  formData.append('duedate', document.getElementById("addDeadlineForm").elements[3].value);
+  formData.append('duedate', document.getElementById("addDeadlineForm").elements[2].value);
   fetch('/server.php', {
       method: 'POST',
       body: formData,
@@ -122,6 +120,29 @@ function addNote() { // insert a note
   alert('Note added!');
 }
 
+function handleDeadlineDelete(event) {
+    var id = event.target.getAttribute('id');
+    fetch('server.php/deadlines/' + id, {
+        method: 'DELETE'
+    });
+
+    // this is where the http req is made
+
+    alert('Deadline successfully deleted!');
+}
+
+function handleNoteDelete(event) {
+    var id = event.target.getAttribute('id');
+
+    fetch('server.php/notes/' + id, {
+        method: 'DELETE'
+    });
+
+    // this is where the http req is made
+
+    alert('Note successfully deleted!');
+}
+
 function addFlashcard() { // insert a flashcard
   // Add logic to send the note to the server and store it in the database
   var formData = new FormData();
@@ -136,8 +157,87 @@ function addFlashcard() { // insert a flashcard
   alert('Flashcard added!');
 }
 
-// NOTE UPDATES
+// DEADLINE UPDATES
 
+// Front-end note view elements
+const course = document.querySelector('.deadline_course');
+const deadline_name = document.querySelector('.deadline_name');
+const date = document.querySelector('.deadline_date');
+const updateDeadlineBtn = document.querySelector('.update-deadline');
+
+// deadline data 
+function getDeadlines() { // get all the user's deadlines as (id, course, deadline_name, due_date) objects
+  return fetch('/server.php?command=deadlines&username=userAA')
+    .then(response => response.json())
+    .then(json => {
+      return json.message.map(entry => {
+        return {
+          id: entry.id,
+          course: entry.course,
+          deadline_name: entry.deadline_name,
+          due_date: entry.due_date
+        };
+      });
+    })
+    .catch(error => {
+      console.error('Error fetching deadlines:', error);
+      throw error;
+    });
+}
+
+// given a deadline id, load its information from the DB, returning an object with (course, deadline_name, due_date) attributes
+async function getDeadline($deadlineID){
+  try {
+    const notes = await getDeadlines();
+    const note = notes.find(note => note.id == $deadlineID);
+    return note || null;
+  } catch (error) {
+    console.error('Error fetching deadline by ID:', error);
+    throw error;
+  }
+}
+
+// given a deadline object, display its course in the deadline_course section, name in the deadline_name section and date in the deadline_date section
+async function loadDeadline($deadlineID){
+  try {
+    const data = await getDeadline($deadlineID);
+    course.innerHTML = `${data.course}`;
+    deadline_name.innerHTML = `${data.deadline_name}`;
+    // Convert due_date to string format "yyyy-MM-ddThh:mm"
+    const dueDate = new Date(data.due_date);
+    const dateString = dueDate.toISOString().slice(0, 16);
+    date.value = dateString;
+    alert('Deadline Loaded!');
+  } catch (error) {
+    // Handle errors
+    console.error('Error:', error);
+  }
+}
+
+// update the user's deadline in the DB with this deadlineID based on the info stored in deadline_course, deadline_name, and deadline_date elements
+function updateDeadline($deadlineID) {
+  var formData = new FormData();
+  formData.append('command', 'deadline-update');
+  formData.append('id', $deadlineID);
+  formData.append('username', 'userAA');
+  formData.append('course', course.value);
+  formData.append('deadline_name', deadline_name.value);
+  formData.append('due_date', date.value);
+  fetch('/server.php', {
+      method: 'POST',
+      body: formData,
+  });
+  alert('Deadline updated!');
+}
+
+// button click listener
+if (updateDeadlineBtn){
+  updateDeadlineBtn.addEventListener('click', function(){ // reveal response
+    updateDeadline(3); // hard-coded right now...
+  });
+}
+
+// NOTE UPDATES
 // Front-end note view elements
 const title = document.querySelector('.note-title');
 const body = document.querySelector('.note-body');
@@ -202,7 +302,6 @@ function updateNote($noteID) {
   alert('Note updated!');
 }
 
-
 if (updateNoteBtn) {
   updateNoteBtn.addEventListener('click', function(){
     const noteID = document.getElementById('hiddenNoteId').value; // Get the note ID from the hidden input
@@ -219,13 +318,11 @@ const response = document.querySelector('.response');
 const reveal = document.querySelector('.reveal');
 const next = document.querySelector('.next');
 
-if (reveal) {
 // button click listeners
-reveal.addEventListener('click', function(){ // reveal response
-  
-  response.style.display = 'flex';
-});
-
+if (reveal){
+  reveal.addEventListener('click', function(){ // reveal response
+    response.style.display = 'flex';
+  });
 }
 
 if (next){
@@ -233,7 +330,6 @@ if (next){
     getRandomFlashcard();
     response.style.display = 'none';
   });
-
 }
 
 
@@ -268,16 +364,3 @@ function getRandomFlashcard() {
     console.error('Error:', error);
   });
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
