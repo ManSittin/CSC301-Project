@@ -371,9 +371,44 @@ function addCourse() {
     formData.append('username', 'userAA');
     formData.append('course_name', document.getElementById("addCourseForm").elements[0].value);
 
-    var response = fetch('/server.php', {
+    fetch('/server.php', {
         method: 'POST',
-        body: formData,
+        body: formData
     });
     alert('Course added!');
+}
+
+
+function showCourses(username) {
+
+    fetch('/server.php?command=courses&username=userAA')
+    .then(console.log(response))
+    .then(response => response.json())
+    .then(data => {
+        const main = document.getElementById('course-main');
+
+        data.forEach(item => {
+
+            const container = document.createElement('div');
+            container.classList.add('note-container');
+            const div = document.createElement('div');
+            div.innerHTML = `
+                <div class='note-title'>${item.course_name}</div>
+            `;
+            const button = document.createElement('button');
+            button.classList.add('edit-button');
+            button.textContent = 'View/Add Timeslots';
+
+            button.addEventListener('click', function() {
+                window.location.href = "notes-view.php?id=" + 25;
+            });
+
+            container.appendChild(div);
+            container.appendChild(button);
+            main.appendChild(container);
+        });
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
 }

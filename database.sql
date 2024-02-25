@@ -42,3 +42,11 @@ CREATE TABLE IF NOT EXISTS Courses (
     course_name VARCHAR(255),
     FOREIGN KEY (username) REFERENCES Users(username)
 );
+
+CREATE TABLE IF NOT EXISTS Course_Timeslots (
+    course_id INT,
+    day_of_week VARCHAR(10),
+    num_hours INT,
+    start_time TIME,
+    FOREIGN KEY (course_id) REFERENCES Courses(id)
+)

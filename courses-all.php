@@ -21,7 +21,7 @@
         /* Existing style here */
     </style>
 </head>
-<body>
+<body onload="showCourses('userAA')">
     <div id="sidebar">
         <div class="nav" id="sidebar-nav">
             <label class="non-desktop hamburger-menu" id="sidebar-open-hamburger">
@@ -67,23 +67,30 @@
             <a href="deadlines.php">assignments</a>
             <a href="schedule.php">schedule</a>
         </div>
-        <div class="main">
-            <h1>Welcome to the schedule page. Here you can add new courses, view the ones you have already or generate a schedule for your courses. </h1>
-
-            <!-- Add a Textbox Feature -->
-            <div class="textbox-section">
-                <h2>Enter a new course below</h2>
-                <form id="addCourseForm">
-                    <p>Enter Course Name: </p>
-                    <textarea rows="1" cols="50" name="tags" id="tags" placeholder="Type your course name here..."></textarea>
-                    <br><br>
-                    <input type="button" value="Add course" onclick="addCourse()">
-                </form>
-            </div>
+        <!-- hard-coded note for now; will pull this in when a note is selected -->
+                
+        <div id="note info">
+        <h2>Recent Notes</h2>
+        <?php
+            if ($numNotes > 0) {
+                while ($note = mysqli_fetch_assoc($notes)) {
+                    echo '<div class="info-block">' . htmlspecialchars($note["title"]) . '</div>';
+                }
+                // Reset the data pointer for $notes
+                mysqli_data_seek($notes, 0);
+            }
+        ?>
         </div>
-    </div>
 
-    <script src="script.js">
-    </script>
+        <div class="main" id='course-main'>
+        <h1>Welcome to the schedule page. Here you can add new courses, view the ones you have already or generate a schedule for your courses.</h1>
+        
+        
+        </div>
+
+
+    <script src="script.js"></script>
+</body>
+    </div>
 </body>
 </html>
