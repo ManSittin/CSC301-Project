@@ -364,3 +364,16 @@ function getRandomFlashcard() {
     console.error('Error:', error);
   });
 }
+
+function addCourse() {
+    var formData = new FormData();
+    formData.append('command', 'courses');
+    formData.append('username', 'userAA');
+    formData.append('course_name', document.getElementById("addCourseForm").elements[0].value);
+
+    var response = fetch('/server.php', {
+        method: 'POST',
+        body: formData,
+    });
+    alert('Course added!');
+}
