@@ -51,6 +51,19 @@ class Model {
         return $result;
     }
 
+    public function deleteDeadline($deadline_id) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+    
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false;
+        }
+        $stmt = $conn->prepare("DELETE FROM Deadlines WHERE id = ?"); 
+        $stmt->bind_param("s", $deadline_id);
+        $result = $stmt->execute(); // check if query worked
+        return $result;
+    }
+
     public function getDeadlines($username) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
 

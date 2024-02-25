@@ -187,26 +187,18 @@ class Controller {
         $request_uri = $_SERVER['REQUEST_URI'];
         $segments = explode('/', $request_uri);
         $model = new Model();
-    
+
         $command = $segments[2]; 
         $id = $segments[3];
         file_put_contents('post_data.log', $command, true);
 
         switch ($command) {
+
+            case 'deadlines':
+                $results = $model->deleteDeadline($id);
+                break;
             case 'notes':
                 $results = $model->deleteNote($id);
-
-                if($results) {
-                    http_response_code(200);
-                    header('Content-Type: application/json');
-                    echo json_encode(['status' => 'Success: ' . $command, 'message' => $results]);
-                    exit();
-                } else {
-                    http_response_code(500);
-                    header('Content-Type: application/json');
-                    echo json_encode(['status' => 'Failure: ' . $command, 'message' => ""]);
-                    exit();
-                }
                 break;
             default:
                 http_response_code(400);
@@ -214,9 +206,19 @@ class Controller {
                 echo json_encode(['status' => 'Failure' . $command, 'message' => $command . ' is an invalid command']);
                 exit();
         }
+        if($results) {
+            http_response_code(200);
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'Success: ' . $command, 'message' => $results]);
+            exit();
+        } else {
+            http_response_code(500);
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'Failure: ' . $command, 'message' => ""]);
+            exit();
+        }
     }
 }
-
 $controller = new Controller();
 $controller->handle();
 ?>
