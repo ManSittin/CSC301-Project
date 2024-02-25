@@ -215,6 +215,7 @@ async function loadDeadline($deadlineID){
 }
 
 // update the user's deadline in the DB with this deadlineID based on the info stored in deadline_course, deadline_name, and deadline_date elements
+
 function updateDeadline($deadlineID) {
   var formData = new FormData();
   formData.append('command', 'deadline-update');
@@ -233,7 +234,11 @@ function updateDeadline($deadlineID) {
 // button click listener
 if (updateDeadlineBtn){
   updateDeadlineBtn.addEventListener('click', function(){ // reveal response
-    updateDeadline(3); // hard-coded right now...
+    alert("hi");
+  const deadlineID = document.getElementById('hiddenDeadlineId').value; // Get the note ID from the hidden input
+  alert(deadlineID);
+  alert('aaaa');
+  updateDeadline(deadlineID); // was hard coded before
   });
 }
 
