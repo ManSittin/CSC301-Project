@@ -73,7 +73,7 @@
             <!-- Add a Textbox Feature -->
             <div class="textbox-section">
                 <div><a href="notes-insertion.php">Add Notes</a></div>
-                <div><a href="notes-view.php">View Notes</a></div>
+                <div><a href="notes-all.php">View Notes</a></div>
             </div>
 
         </div>
