@@ -72,7 +72,7 @@
             <!-- Add a Textbox Feature -->
             <div class="textbox-section">
                 <div><a href="deadlines-insertion.php">Add Deadline</a></div>
-                <div><a href="deadlines-view.php">View Deadlines</a></div>
+                <div><a href="deadlines-all.php">View Deadlines</a></div>
             </div>
 
         </div>
