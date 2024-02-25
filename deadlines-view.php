@@ -8,7 +8,28 @@
     $notesQuery = "SELECT * FROM Notes;";
     $notes = mysqli_query($conn, $notesQuery);
     $numNotes = mysqli_num_rows($notes);
+
+    // Fetch Deadline for Editing
+    $deadlineForEditing = null; // Initialize variable to hold deadline data for editing
+    if (isset($_GET['id'])) {
+        $deadlineId = $_GET['id'];
+        $stmt = $conn->prepare("SELECT * FROM Deadlines WHERE id = ?");
+        $stmt->bind_param("i", $deadlineId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+            $deadlineForEditing = $result->fetch_assoc();
+        } else {
+            //echo "<script>alert('Deadline not found.'); window.location.href='deadlines.php';</script>";
+        }
+        $stmt->close();
+    } else {
+        echo "<script>alert('Deadline Edited'); window.location.href='deadlines-all.php';</script>";
+   }
 ?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,7 +42,7 @@
         /* Existing style here */
     </style>
 </head>
-<body onload="loadDeadline(3)">
+<body onload="loadDeadline(<?php echo isset($deadlineForEditing['id']) ? $deadlineForEditing['id'] : 'null'; ?>)">
     <div id="sidebar">
         <div class="nav" id="sidebar-nav">
             <label class="non-desktop hamburger-menu" id="sidebar-open-hamburger">
@@ -73,24 +94,23 @@
             <div class="textbox-section">
                 <!-- Loaded deadline info preloads here... -->
                 <h2>Edit Deadline</h2> 
-                <form id="editDeadlineForm">
-                    <p>Edit Course: </p>
-                    <textarea rows="1" cols="50" class="deadline_course"></textarea>
-                    <p>Edit Deadline Name:</p>
-                    <textarea rows="1" cols="50" name="title" class="deadline_name"></textarea>
-                    <p>Edit Date:</p>
-                    <input
-                        type="datetime-local"
-                        id="date"
-                        name="date"
-                        value="2024-02-05T15:00"
-                        min="0000-00-00T00:00"
-                        max="9999-12-31T23:59"
-                        class="deadline_date"
-                     />
-                     <br><br>
-                    <input type="button" value="Update Deadline" class="update-deadline">
-                </form>
+                <form id="editDeadlineForm" method="post" action="deadlines-view.php">
+                <input type="hidden" name="hiddenDeadlineId" id="hiddenDeadlineId" value="<?php echo isset($deadlineForEditing['id']) ? $deadlineForEditing['id'] : ''; ?>">
+                <p>Edit Course: </p>
+                <textarea rows="1" cols="50" name="course" class="deadline_course"><?php echo isset($deadlineForEditing['course']) ? $deadlineForEditing['course'] : ''; ?></textarea>
+                <p>Edit Deadline Name:</p>
+                <textarea rows="1" cols="50" name="deadline_name" class="deadline_name"><?php echo isset($deadlineForEditing['deadline_name']) ? $deadlineForEditing['deadline_name'] : ''; ?></textarea>
+                <p>Edit Date:</p>
+                <input
+                    type="datetime-local"
+                    id="date"
+                    name="due_date"
+                    value="<?php echo isset($deadlineForEditing['due_date']) ? str_replace(' ', 'T', $deadlineForEditing['due_date']) : ''; ?>"
+                    class="deadline_date"
+                />
+                <br><br>
+                <input type="submit" value="Update Deadline" class="update-deadline">
+            </form>
         </div>
     </div>
 
