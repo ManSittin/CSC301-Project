@@ -202,7 +202,7 @@ const updateDeadlineBtn = document.querySelector('.update-deadline');
 
 // deadline data 
 function getDeadlines() { // get all the user's deadlines as (id, course, deadline_name, due_date) objects
-  return fetch(`/server.php?command=notes&username=${encodeURIComponent(onlineUsers)}`)
+  return fetch(`/server.php?command=deadlines&username=${encodeURIComponent(onlineUsers)}`)
     .then(response => response.json())
     .then(json => {
       return json.message.map(entry => {
@@ -373,7 +373,7 @@ if (next){
 
 // flashcard data 
 function getFlashcards() { // get all the user's flashcards as (cue, response) objects
-  return fetch('/server.php?command=flashcards&username=', onlineUsers)
+  return fetch(`/server.php?command=flashcards&username=${encodeURIComponent(onlineUsers)}`)
     .then(response => response.json())
     .then(json => {
       return json.message.map(entry => {

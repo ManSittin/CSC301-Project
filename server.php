@@ -165,6 +165,7 @@ class Controller {
                 break;
             case 'flashcards':
                 $username = $_GET['username'];
+                
                 $results = $model->getFlashcards($username);
                 if($results) {
                     http_response_code(200);
