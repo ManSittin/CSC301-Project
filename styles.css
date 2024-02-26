@@ -30,6 +30,11 @@ body, html {
 a {
     text-decoration: none;
     all: unset;
+    cursor: pointer;
+}
+
+a:hover {
+    opacity: 0.5;
 }
 
 #sidebar .nav {
