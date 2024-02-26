@@ -126,13 +126,14 @@ fetch('/server.php', {
 
 function addDeadline() { // insert a deadline
   // need to collect all data and send to db..
-  
+  console.log(onlineUsers)
   var formData = new FormData();
   formData.append('command', 'deadlines');
   formData.append('username',onlineUsers);
   formData.append('course', document.getElementById("addDeadlineForm").elements[0].value);
   formData.append('deadline_name', document.getElementById("addDeadlineForm").elements[1].value);
   formData.append('duedate', document.getElementById("addDeadlineForm").elements[2].value);
+  
   fetch('/server.php', {
       method: 'POST',
       body: formData,
@@ -201,7 +202,7 @@ const updateDeadlineBtn = document.querySelector('.update-deadline');
 
 // deadline data 
 function getDeadlines() { // get all the user's deadlines as (id, course, deadline_name, due_date) objects
-  return fetch('/server.php?command=deadlines&username=' ,onlineUsers)
+  return fetch(`/server.php?command=deadlines&username=${encodeURIComponent(onlineUsers)}`)
     .then(response => response.json())
     .then(json => {
       return json.message.map(entry => {
@@ -249,11 +250,12 @@ async function loadDeadline($deadlineID){
 }
 
 // update the user's deadline in the DB with this deadlineID based on the info stored in deadline_course, deadline_name, and deadline_date elements
+
 function updateDeadline($deadlineID) {
   var formData = new FormData();
   formData.append('command', 'deadline-update');
   formData.append('id', $deadlineID);
-  formData.append('username', $_SESSION['onlineUsers']);
+  formData.append('username', onlineUsers);
   formData.append('course', course.value);
   formData.append('deadline_name', deadline_name.value);
   formData.append('due_date', date.value);
@@ -267,7 +269,8 @@ function updateDeadline($deadlineID) {
 // button click listener
 if (updateDeadlineBtn){
   updateDeadlineBtn.addEventListener('click', function(){ // reveal response
-    updateDeadline(3); // hard-coded right now...
+  const deadlineID = document.getElementById('hiddenDeadlineId').value; // Get the note ID from the hidden input
+  updateDeadline(deadlineID); // was hard coded before
   });
 }
 
@@ -279,7 +282,9 @@ const updateNoteBtn = document.querySelector('.update-note');
 
 // note data 
 function getNotes() { // get all the user's notes as (id, title, content) objects
-  return fetch('/server.php?command=notes&username=', onlineUsers)
+  
+
+  return fetch(`/server.php?command=notes&username=${encodeURIComponent(onlineUsers)}`)
     .then(response => response.json())
     .then(json => {
       return json.message.map(entry => {
@@ -326,7 +331,7 @@ function updateNote($noteID) {
   var formData = new FormData();
   formData.append('command', 'note-update');
   formData.append('id', $noteID);
-  formData.append('username', $_SESSION['onlineUsers']);
+  formData.append('username', onlineUsers);
   formData.append('title', title.innerText);
   formData.append('content', body.value);
   fetch('/server.php', {
@@ -369,7 +374,7 @@ if (next){
 
 // flashcard data 
 function getFlashcards() { // get all the user's flashcards as (cue, response) objects
-  return fetch('/server.php?command=flashcards&username=', onlineUsers)
+  return fetch(`/server.php?command=flashcards&username=${encodeURIComponent(onlineUsers)}`)
     .then(response => response.json())
     .then(json => {
       return json.message.map(entry => {
@@ -397,4 +402,118 @@ function getRandomFlashcard() {
     // Handle errors
     console.error('Error:', error);
   });
+}
+
+function addCourse() {
+    var formData = new FormData();
+    formData.append('command', 'courses');
+    formData.append('username', 'userAA');
+    formData.append('course_name', document.getElementById("addCourseForm").elements[0].value);
+
+    fetch('/server.php', {
+        method: 'POST',
+        body: formData
+    });
+    alert('Course added!');
+}
+
+function addTimeslot() {
+    var urlParams = new URLSearchParams(window.location.search);
+    var id = urlParams.get('id');
+
+    var formData = new FormData();
+    formData.append('command', 'timeslots');
+    formData.append('course_id', id);
+    //formData.append('course_id', document.getElementById("addTimeslotsForm").elements[0].value);
+    formData.append('day_of_week', document.getElementById("addTimeslotForm").elements[0].value);
+    formData.append('start_time', document.getElementById("addTimeslotForm").elements[1].value);
+    formData.append('num_hours', document.getElementById("addTimeslotForm").elements[2].value);
+
+
+    fetch('/server.php', {
+        method: 'POST',
+        body: formData
+    });
+    alert('Timeslot added!');
+
+}
+
+function showCourses() {
+
+    fetch('/server.php?command=courses&username=userAA')
+    .then(console.log(response))
+    .then(response => response.json())
+    .then(data => {
+        const main = document.getElementById('course-main');
+
+        data.forEach(item => {
+
+            const container = document.createElement('div');
+            container.classList.add('note-container');
+            const div = document.createElement('div');
+            div.innerHTML = `
+                <div class='note-title'>${item.course_name}</div>
+            `;
+            const button = document.createElement('button');
+            button.classList.add('edit-button');
+            button.textContent = 'View/Add Timeslots';
+
+            button.addEventListener('click', function() {
+                window.location.href = "course_view.php?id=" + item.id;
+            });
+
+            container.appendChild(div);
+            container.appendChild(button);
+            main.appendChild(container);
+        });
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+function showTimeslots() {
+
+    var urlParams = new URLSearchParams(window.location.search);
+    var id = urlParams.get('id');
+
+    fetch('/server.php?command=timeslots&course_id=' + id)
+    .then(console.log(response))
+    .then(response => response.json())
+    .then(data => {
+        const main = document.getElementById('course-main');
+        const button = document.createElement('button');
+        button.classList.add('edit-button');
+        button.textContent = 'Add a timeslot';
+
+        button.addEventListener('click', function() {
+            window.location.href = "timeslot_insertion.php?id=" + id;
+        });
+        main.appendChild(button);
+
+        data.forEach(item => {
+
+            const container = document.createElement('div');
+            container.classList.add('note-container');
+            const div1 = document.createElement('div');
+            const div2 = document.createElement('div');
+            const div3 = document.createElement('div');
+            div1.innerHTML = `
+                <div class="note-title">${item.day_of_week}</div>
+            `;
+            div2.innerHTML = `
+                <div class="note-title">Begins at ${item.start_time}</div>
+            `;
+            div3.innerHTML = `
+                <div class="note-title">${item.num_hours} hours</div><h1>
+            `;
+            container.appendChild(div1);
+            container.appendChild(div2);
+            container.appendChild(div3);
+            main.appendChild(container);
+        });
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
 }

@@ -233,6 +233,82 @@ class Model {
         }
     }
 
+    public function newCourse($username, $course_name) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false;
+        }
+
+        $stmt = $conn->prepare("INSERT INTO Courses (username, course_name) VALUES (?,?)");
+        $stmt->bind_param("ss", $username, $course_name);
+        $result = $stmt->execute(); // check if query worked
+        return $result;
+    }
+
+    public function getCourses($username) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false; // TODO
+        }
+        $stmt = $conn->prepare("SELECT * FROM Courses WHERE Courses.username = ?");
+        $stmt->bind_param("s", $username);
+        $result = $stmt->execute();
+        if ($result) {
+            $stmt->bind_result($id, $username, $course_name);
+
+            $results = [];
+            while ($stmt->fetch()) {
+                $results[] = ['id' => $id, 'username' => $username, 'course_name' => $course_name];
+            }
+            $stmt->close();
+            return $results;
+        } else {
+            return false;
+        }
+    }
+
+    public function addTimeslot($course_id, $day_of_week, $num_hours, $start_time) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false;
+        }
+
+        $stmt = $conn->prepare("INSERT INTO Course_Timeslots (course_id, day_of_week, num_hours, start_time) VALUES (?,?,?,?)");
+        $stmt->bind_param("isis", $course_id, $day_of_week, $num_hours, $start_time);
+        $result = $stmt->execute(); // check if query worked
+        return $result;
+    }
+
+    public function getTimeslots($course_id) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false; // TODO
+        }
+        $stmt = $conn->prepare("SELECT * FROM Course_Timeslots WHERE course_id = ?");
+        $stmt->bind_param("i", $course_id);
+        $result = $stmt->execute();
+        if ($result) {
+            $stmt->bind_result($temp, $day_of_week, $num_hours, $start_time);
+
+            $results = [];
+            while ($stmt->fetch()) {
+                $results[] = ['course_id' => $course_id, 'day_of_week' => $day_of_week, 'num_hours' => $num_hours, 'start_time' => $start_time];
+            }
+            $stmt->close();
+            return $results;
+        } else {
+            return false;
+        }
+    }
+
     public function initDatabase() {
         $conn = new mysqli(HOST, USERNAME, PASSWORD);
 
