@@ -1,6 +1,7 @@
 <?php
 
 include('query.php');
+include_once "Session.php";
 
 class Controller {
     public function handle() {
@@ -41,7 +42,7 @@ class Controller {
                 $username = $_POST['username'];
                 $course = $_POST['course'];
                 $name = $_POST['deadline_name'];
-                $due_date = $_POST['due_date'];
+                $due_date = $_POST['duedate'];
 
                 $result = $model->newDeadline($username, $course, $name, $due_date);
 
@@ -111,11 +112,15 @@ class Controller {
                             exit();
                         } else {
                             http_response_code(200);
+                            addUserToOnlineUsers($results);
                             header('Content-Type: application/json');
                             echo json_encode(['status' => 'Success' . $command, 'message' => $results]);
                             exit();
                         }
                         break;
+
+            case ('logout'):
+                    removeUserFromOnlineUsers('123');
 
             default:
                 http_response_code(400);
@@ -175,6 +180,7 @@ class Controller {
                 break;
             case 'flashcards':
                 $username = $_GET['username'];
+                
                 $results = $model->getFlashcards($username);
                 if($results) {
                     http_response_code(200);

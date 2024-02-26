@@ -5,6 +5,12 @@ const nav = document.getElementById('sidebar-nav')
 const closed_ham = document.getElementById('sidebar-closed-hamburger')
 const open_ham = document.getElementById('sidebar-open-hamburger')
 
+
+var isUserOnline = sessionStorage.getItem('isUserOnline'); // check the user being onlien
+var onlineUsers = sessionStorage.getItem('onlineUsers');
+
+console.log(isUserOnline, onlineUsers)
+
 toggle_open.addEventListener('change', (event) => {
   if (event.currentTarget.checked) {
     sidebar.style.display = "inline-block";
@@ -64,23 +70,34 @@ function handleSignInClick() {
               method: 'POST',
               body: formData,
           })
+          .then(response => {
+            if (!response.ok) {
+              console.error('Error:');
+              alert('wrong user!');
+              throw new Error('Network response was not ok');
+            }
+            // Handle the response object
+            return response.json(); // This returns a promise
+          })
       .then(data => {
-  // Handle the data returned by the server
-      console.log('Response:', data);
+      // Handle the data returned by the server
+      console.log('Response:', data.message);
 
   // Check the status field in the response
-      if (data.status === 200) {
           alert('user online !');
-      // User data retrieval was successful
-      // You can access the user data from the 'message' field in the response
+          sessionStorage.setItem('isUserOnline', 'true');
+          const message = data.message;
+
+// Extract the username from the response
+         onlineUsers = message;
+        sessionStorage.setItem('onlineUsers', onlineUsers);
+          isUserOnline = sessionStorage.getItem('isUserOnline');
+     
       console.log('User data:', data.message);
-  } else {
-      // User data retrieval failed
-      console.error('Error:', data.message);
-      alert('wrong user!');
-  }
+      location.reload();
+      
 })
-        
+
 }
 
 function handleSignupClick() {
@@ -90,15 +107,33 @@ window.location.href = "signup.php";
 
 }
 
+
+function handlelogout() {
+  var formData = new FormData();
+  formData.append('command', 'logout');
+
+fetch('/server.php', {
+      method: 'POST',
+      body: formData,
+  }).then(response => {
+    sessionStorage.setItem('isUserOnline', 'false');
+    sessionStorage.setItem('onlineUsers', 'false');
+    location.reload();
+    location.reload();
+  })
+  
+}
+
 function addDeadline() { // insert a deadline
   // need to collect all data and send to db..
-  
+  console.log(onlineUsers)
   var formData = new FormData();
   formData.append('command', 'deadlines');
-  formData.append('username', 'userAA');
+  formData.append('username',onlineUsers);
   formData.append('course', document.getElementById("addDeadlineForm").elements[0].value);
   formData.append('deadline_name', document.getElementById("addDeadlineForm").elements[1].value);
   formData.append('duedate', document.getElementById("addDeadlineForm").elements[2].value);
+  
   fetch('/server.php', {
       method: 'POST',
       body: formData,
@@ -110,7 +145,7 @@ function addNote() { // insert a note
   // Add logic to send the note to the server and store it in the database
   var formData = new FormData();
   formData.append('command', 'notes');
-  formData.append('username', 'userAA');
+  formData.append('username', onlineUsers);
   formData.append('title', document.getElementById("addNoteForm").elements[0].value);
   formData.append('content', document.getElementById("addNoteForm").elements[1].value);
   fetch('/server.php', {
@@ -147,7 +182,7 @@ function addFlashcard() { // insert a flashcard
   // Add logic to send the note to the server and store it in the database
   var formData = new FormData();
   formData.append('command', 'flashcards');
-  formData.append('username', 'userAA');
+  formData.append('username', onlineUsers);
   formData.append('cue', document.getElementById("addFlashcardForm").elements[0].value);
   formData.append('response', document.getElementById("addFlashcardForm").elements[1].value);
   fetch('/server.php', {
@@ -167,7 +202,7 @@ const updateDeadlineBtn = document.querySelector('.update-deadline');
 
 // deadline data 
 function getDeadlines() { // get all the user's deadlines as (id, course, deadline_name, due_date) objects
-  return fetch('/server.php?command=deadlines&username=userAA')
+  return fetch(`/server.php?command=deadlines&username=${encodeURIComponent(onlineUsers)}`)
     .then(response => response.json())
     .then(json => {
       return json.message.map(entry => {
@@ -220,7 +255,7 @@ function updateDeadline($deadlineID) {
   var formData = new FormData();
   formData.append('command', 'deadline-update');
   formData.append('id', $deadlineID);
-  formData.append('username', 'userAA');
+  formData.append('username', onlineUsers);
   formData.append('course', course.value);
   formData.append('deadline_name', deadline_name.value);
   formData.append('due_date', date.value);
@@ -247,7 +282,9 @@ const updateNoteBtn = document.querySelector('.update-note');
 
 // note data 
 function getNotes() { // get all the user's notes as (id, title, content) objects
-  return fetch('/server.php?command=notes&username=userAA')
+  
+
+  return fetch(`/server.php?command=notes&username=${encodeURIComponent(onlineUsers)}`)
     .then(response => response.json())
     .then(json => {
       return json.message.map(entry => {
@@ -294,7 +331,7 @@ function updateNote($noteID) {
   var formData = new FormData();
   formData.append('command', 'note-update');
   formData.append('id', $noteID);
-  formData.append('username', 'userAA');
+  formData.append('username', onlineUsers);
   formData.append('title', title.innerText);
   formData.append('content', body.value);
   fetch('/server.php', {
@@ -337,7 +374,7 @@ if (next){
 
 // flashcard data 
 function getFlashcards() { // get all the user's flashcards as (cue, response) objects
-  return fetch('/server.php?command=flashcards&username=userAA')
+  return fetch(`/server.php?command=flashcards&username=${encodeURIComponent(onlineUsers)}`)
     .then(response => response.json())
     .then(json => {
       return json.message.map(entry => {
