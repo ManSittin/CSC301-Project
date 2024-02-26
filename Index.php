@@ -96,6 +96,7 @@
                     }
                 ?>
             </div>
+            <div id = "result"> </div>
         </div>
     </div>
     <div class="not-sidebar">

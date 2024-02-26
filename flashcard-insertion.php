@@ -96,6 +96,7 @@ $numNotes = 0;
                     }
                 ?>
             </div>
+            <div id = "result"> </div>
         </div>
     </div>
     </div>

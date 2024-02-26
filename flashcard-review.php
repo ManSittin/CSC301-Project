@@ -98,6 +98,7 @@
                     }
                 ?>
             </div>
+            <div id = "result"> </div>
         </div>
     </div>
     </div>

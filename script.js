@@ -422,6 +422,22 @@ if (updateNoteBtn) {
 // FLASHCARDS
 
 // Front-end flashcard reivew elements
+
+
+
+document.getElementById("result").innerHTML = "The number of flashcard is: " + getFlashcardsnum()
+.then(num => {
+  // This code block will execute once the promise is resolved
+  document.getElementById("result").innerHTML = "The number of flashcard is: " + num.toString();
+})
+.catch(error => {
+  // Handle any errors that might occur during the promise chain
+  console.error('Error:', error);
+  // Optionally, you can set a default value if there's an error
+  document.getElementById("result").innerHTML = " The number of flashcard is: 0" ;
+});
+
+
 const cue = document.querySelector('.cue');
 const response = document.querySelector('.response');
 const reveal = document.querySelector('.reveal');
@@ -459,6 +475,22 @@ function getFlashcards() { // get all the user's flashcards as (cue, response) o
       throw error;
     });
 }
+
+
+function getFlashcardsnum() {
+  return getFlashcards()
+      .then(flashcards => {
+          console.log(flashcards);
+          return flashcards.length;
+      })
+      .catch(error => {
+          console.error('Error:', error);
+          return 0;
+      });
+}
+
+
+
 
 function getRandomFlashcard() {
   getFlashcards()

@@ -1,5 +1,5 @@
 Array
 (
-    [command] => timeslots
-    [course_id] => 1
+    [command] => flashcards
+    [username] => perigno
 )
