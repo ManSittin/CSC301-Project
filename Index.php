@@ -1,6 +1,5 @@
 <?php
     include_once 'dbh.php';
-    include_once 'dbh.php';
     include_once "Session.php";
     // sidebar database info
    if ($_SESSION['onlineUsers']){

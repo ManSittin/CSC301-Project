@@ -4,6 +4,23 @@ const sidebar = document.getElementById('sidebar')
 const nav = document.getElementById('sidebar-nav')
 const closed_ham = document.getElementById('sidebar-closed-hamburger')
 const open_ham = document.getElementById('sidebar-open-hamburger')
+const secretKey = "1Q2W3E4RT5YFDSAQ";
+
+
+
+
+function encryptMessage(key, message) {
+  let encryptedMessage = '';
+  for (let i = 0; i < message.length; i++) {
+      // XOR operation with key character
+      encryptedMessage += String.fromCharCode(message.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+  }
+  return encryptedMessage;
+}
+// Decryption function
+
+
+// Example usage: Generate a secret key of length 16
 
 
 var isUserOnline = sessionStorage.getItem('isUserOnline'); // check the user being onlien
@@ -63,9 +80,10 @@ function handleSignInClick() {
   console.log('Email:', email);
   console.log('Password:', password);
   var formData = new FormData();
+  var passi = encryptMessage(document.getElementById("login").elements[3].value, secretKey);
           formData.append('command', 'connect');
           formData.append('email', document.getElementById("login").elements[1].value);
-          formData.append('password', document.getElementById("login").elements[3].value);
+          formData.append('password', passi);
       fetch('/server.php', {
               method: 'POST',
               body: formData,
@@ -98,6 +116,58 @@ function handleSignInClick() {
       
 })
 
+}
+
+
+
+
+
+function handleSignUpClick() {
+  // Prevent the default form submission behavior
+  console.log(document.getElementById("signup").elements)
+ // event.preventDefault();
+
+  // Retrieve the email and password from the input fields
+  var firstname = document.getElementById("firstName").value;
+  var lastname = document.getElementById("lastName").value;
+  var email =  document.getElementById("email").value;
+  var username =  document.getElementById("username").value;
+  var password =  document.getElementById("password").value;
+  
+  // Perform validation if needed
+  var passi = encryptMessage(password, secretKey);
+  // Perform sign-in logic (e.g., send AJAX request to the server)
+  // Here, you can use fetch() or any other method to send the data to the server
+  // For demonstration purposes, we'll simply log the email and password
+  var formData = new FormData();
+          formData.append('command', 'users');
+          formData.append('first_name', document.getElementById("firstName").value);
+          formData.append('last_name', document.getElementById("lastName").value);
+          formData.append('email', document.getElementById("email").value);
+          formData.append('username', document.getElementById("username").value);
+          formData.append('password', passi);
+
+      fetch('/server.php', {
+              method: 'POST',
+              body: formData,
+          })
+      .then(data => {
+  // Handle the data returned by the server
+      console.log('Response:', data);
+
+  // Check the status field in the response
+      if (data.status ===  200) {
+          alert('user online !');
+      // User data retrieval was successful
+      // You can access the user data from the 'message' field in the response
+      console.log('User data:', data.message);
+  } else {
+      // User data retrieval failed
+      console.error('Error:', data.message);
+  }
+})
+  
+        
 }
 
 function handleSignupClick() {
@@ -407,7 +477,7 @@ function getRandomFlashcard() {
 function addCourse() {
     var formData = new FormData();
     formData.append('command', 'courses');
-    formData.append('username', 'userAA');
+    formData.append('username', onlineUsers);
     formData.append('course_name', document.getElementById("addCourseForm").elements[0].value);
 
     fetch('/server.php', {
@@ -440,7 +510,7 @@ function addTimeslot() {
 
 function showCourses() {
 
-    fetch('/server.php?command=courses&username=userAA')
+    fetch(`/server.php?command=courses&username=${encodeURIComponent(onlineUsers)}`)
     .then(console.log(response))
     .then(response => response.json())
     .then(data => {
