@@ -1,52 +1,13 @@
 <?php
-include_once 'dbh.php';
-include_once "Session.php";
-// sidebar database info
-if ($_SESSION['onlineUsers']){
-$loggedInUserId = $_SESSION['onlineUsers'];
+    include_once 'dbh.php';
 
-  $deadlineQuery = "SELECT * FROM Deadlines WHERE Deadlines.username = ?";
-
-
-
-
-  $stmt = mysqli_prepare($conn, $deadlineQuery);
-
-  // Bind the username parameter
-  mysqli_stmt_bind_param($stmt, "s", $loggedInUserId);
-  
-  // Execute the statement
-  mysqli_stmt_execute($stmt);
-  
-  // Get the result
-  $deadlines = mysqli_stmt_get_result($stmt);
-
-$numDeadlines = mysqli_num_rows($deadlines);
-
-$notesQuery = "SELECT * FROM Notes WHERE Notes.username = ?";
-
-
-
-$stmt1 = mysqli_prepare($conn, $notesQuery);
-
-// Bind the username parameter
-mysqli_stmt_bind_param($stmt1, "s", $loggedInUserId);
-
-// Execute the statement
-mysqli_stmt_execute($stmt1);
-
-// Get the result
-$notes = mysqli_stmt_get_result($stmt1);
-$numNotes =  mysqli_num_rows($notes);
-}
-else{
-$deadlineQuery = 'no query';
-
-$loggedInUserId = false;
-$numDeadlines = 0;
-$numNotes = 0;
-
-}
+    // sidebar database info
+    $deadlineQuery = "SELECT * FROM Deadlines;";
+    $deadlines = mysqli_query($conn, $deadlineQuery);
+    $numDeadlines = mysqli_num_rows($deadlines);
+    $notesQuery = "SELECT * FROM Notes;";
+    $notes = mysqli_query($conn, $notesQuery);
+    $numNotes = mysqli_num_rows($notes);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -68,16 +29,13 @@ $numNotes = 0;
             </label>
             <a href = "profile.php">profile</a>
             <a>settings</a>
-            <?php
-                if($_SESSION['onlineUsers'] ){echo  '<button onClick="handlelogout()"> Logout </button>';}
-                ?>
         </div>
         <div id="sidebar-info">
             <div id="assignment info">
                 <h2>Assignments</h2>
                 <!-- <div class="info-block">Test</div> -->
                 <?php
-                    if ($numDeadlines > 0 && $_SESSION['onlineUsers']) {
+                    if ($numDeadlines > 0) {
                         while ($deadline = mysqli_fetch_assoc($deadlines)) {
                             echo '<div class="info-block">' . $deadline["deadline_name"]
                             . ' : ' . $deadline['due_date'] . '</div>';
@@ -89,7 +47,7 @@ $numNotes = 0;
                 <h2>Recent Notes</h2>
                 <!-- <div class="info-block">Test</div> -->
                 <?php
-                    if ($numNotes > 0 && $_SESSION['onlineUsers']) {
+                    if ($numNotes > 0) {
                         while ($note = mysqli_fetch_assoc($notes)) {
                             echo '<div class="info-block">' . $note["title"] . '</div>';
                         }
@@ -110,27 +68,40 @@ $numNotes = 0;
             <a href="schedule.php">schedule</a>
         </div>
         <div class="main">
-            <h1>Welcome to the notes page. Here you can add new notes or view the ones you have already added. </h1>
+            <h1>Welcome to the schedule page. Here you can add new courses, view the ones you have already or generate a schedule for your courses. </h1>
 
             <!-- Add a Textbox Feature -->
             <div class="textbox-section">
-                <h2>Enter a new note</h2>
-                <form id="addNoteForm">
-                    <p>Enter title:</p>
-                    <textarea rows="4" cols="50" name="title" id="title" placeholder="Type your title here..."></textarea>
-                    <br>
-                        <!-- Planning to give the user freedom to create their own category -->
+                <h2>Enter timeslot below</h2>
+                <form id="addTimeslotForm">
+                    <p>Enter Day of Week: </p>
+                    <select id="dayOfWeek">
+                        <option value="Monday">Monday</option>
+                        <option value="Tuesday">Tuesday</option>
+                        <option value="Wednesday">Wednesday</option>
+                        <option value="Thursday">Thursday</option>
+                        <option value="Friday">Friday</option>
+                        <option value="Saturday">Saturday</option>
+                        <option value="Sunday">Sunday</option>
                     </select>
-                    <p>Enter your note:</p>
-                    <textarea rows="4" cols="50" name="note" id="note" placeholder="Type your note here..."></textarea>
-                    <br>
-                    <input type="button" value="Add Note" onclick="addNote()">
+                    <br><br>
+                    <p>Enter class start time: </p>
+                    <input
+                        type="time"
+                        id="startTime"
+                        value="09:00"
+                    >
+                    <br><br>
+                    <p>Enter class length in hours</p>
+                    <input
+                        type="number"
+                        min="0"
+                        max="4"
+                        value="0"
+                    >
+                    <br><br>
+                    <input type="button" value="Add timeslot" onclick="addTimeslot()">
                 </form>
-            </div>
-
-            <!-- Placeholder for displaying notes by category -->
-            <div class="notes-by-category" id="notesByCategory">
-                <!-- Display notes here based on the selected category -->
             </div>
         </div>
     </div>

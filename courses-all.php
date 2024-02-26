@@ -1,54 +1,52 @@
 <?php
     include_once 'dbh.php';
-
-    include_once 'dbh.php';
     include_once "Session.php";
     // sidebar database info
     if ($_SESSION['onlineUsers']){
-    $loggedInUserId = $_SESSION['onlineUsers'];
-    
-      $deadlineQuery = "SELECT * FROM Deadlines WHERE Deadlines.username = ?";
-    
-    
-    
-    
-      $stmt = mysqli_prepare($conn, $deadlineQuery);
-    
-      // Bind the username parameter
-      mysqli_stmt_bind_param($stmt, "s", $loggedInUserId);
-      
-      // Execute the statement
-      mysqli_stmt_execute($stmt);
-      
-      // Get the result
-      $deadlines = mysqli_stmt_get_result($stmt);
-    
-    $numDeadlines = mysqli_num_rows($deadlines);
-    
-    $notesQuery = "SELECT * FROM Notes WHERE Notes.username = ?";
+        $loggedInUserId = $_SESSION['onlineUsers'];
+       
+          $deadlineQuery = "SELECT * FROM Deadlines WHERE Deadlines.username = ?";
     
     
     
-    $stmt1 = mysqli_prepare($conn, $notesQuery);
     
-    // Bind the username parameter
-    mysqli_stmt_bind_param($stmt1, "s", $loggedInUserId);
+          $stmt = mysqli_prepare($conn, $deadlineQuery);
     
-    // Execute the statement
-    mysqli_stmt_execute($stmt1);
+          // Bind the username parameter
+          mysqli_stmt_bind_param($stmt, "s", $loggedInUserId);
+          
+          // Execute the statement
+          mysqli_stmt_execute($stmt);
+          
+          // Get the result
+          $deadlines = mysqli_stmt_get_result($stmt);
+        
+        $numDeadlines = mysqli_num_rows($deadlines);
     
-    // Get the result
-    $notes = mysqli_stmt_get_result($stmt1);
-    $numNotes =  mysqli_num_rows($notes);
-    }
-    else{
-    $deadlineQuery = 'no query';
+        $notesQuery = "SELECT * FROM Notes WHERE Notes.username = ?";
     
-    $loggedInUserId = false;
-    $numDeadlines = 0;
-    $numNotes = 0;
     
-    }
+        
+        $stmt1 = mysqli_prepare($conn, $notesQuery);
+    
+        // Bind the username parameter
+        mysqli_stmt_bind_param($stmt1, "s", $loggedInUserId);
+        
+        // Execute the statement
+        mysqli_stmt_execute($stmt1);
+        
+        // Get the result
+        $notes = mysqli_stmt_get_result($stmt1);
+        $numNotes =  mysqli_num_rows($notes);
+       }
+       else{
+        $deadlineQuery = 'no query';
+    
+        $loggedInUserId = false;
+        $numDeadlines = 0;
+        $numNotes = 0;
+    
+       }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -62,7 +60,7 @@
         /* Existing style here */
     </style>
 </head>
-<body>
+<body onload="showCourses('userAA')">
     <div id="sidebar">
         <div class="nav" id="sidebar-nav">
             <label class="non-desktop hamburger-menu" id="sidebar-open-hamburger">
@@ -70,16 +68,13 @@
             </label>
             <a href = "profile.php">profile</a>
             <a>settings</a>
-            <?php
-                if($_SESSION['onlineUsers'] ){echo  '<button onClick="handlelogout()"> Logout </button>';}
-                ?>
         </div>
         <div id="sidebar-info">
             <div id="assignment info">
                 <h2>Assignments</h2>
                 <!-- <div class="info-block">Test</div> -->
                 <?php
-                    if ($numDeadlines > 0 && $_SESSION['onlineUsers']) {
+                    if ($numDeadlines > 0) {
                         while ($deadline = mysqli_fetch_assoc($deadlines)) {
                             echo '<div class="info-block">' . $deadline["deadline_name"]
                             . ' : ' . $deadline['due_date'] . '</div>';
@@ -91,14 +86,13 @@
                 <h2>Recent Notes</h2>
                 <!-- <div class="info-block">Test</div> -->
                 <?php
-                    if ($numNotes > 0 && $_SESSION['onlineUsers']) {
+                    if ($numNotes > 0) {
                         while ($note = mysqli_fetch_assoc($notes)) {
                             echo '<div class="info-block">' . $note["title"] . '</div>';
                         }
                     }
                 ?>
             </div>
-            <div id = "result"> </div>
         </div>
     </div>
     </div>
@@ -112,31 +106,12 @@
             <a href="deadlines.php">assignments</a>
             <a href="schedule.php">schedule</a>
         </div>
-        <div class="main">
-            <h1>Welcome to the flashcards page. Here you can add new flashcards or review the ones you have already added. </h1>
 
-            <!-- Add a Textbox Feature -->
-            <div class="textbox-section">
-                <h2>Review Flashcards</h2>
-                <div class="flashcards">
-                    <div class="cue"><h3>Cue</h3></div>
-                    <div class="response"><h3>Response</h3></div>
-                </div>
-
-                <div class="flashcard-buttons">
-                    <div class="reveal"><button>Reveal Response</button></div>
-                    <div class="next"><button>Next Cue</button></div>
-                </div>
-
-            </div>
-
-
-            </div>
-
+        <div class="main" id='course-main'>
+        <h1>Welcome to the schedule page. Here you can add new courses, view the ones you have already or generate a schedule for your courses.</h1>        
         </div>
+    <script src="script.js"></script>
+</body>
     </div>
-
-    <script src="script.js">
-    </script>
 </body>
 </html>

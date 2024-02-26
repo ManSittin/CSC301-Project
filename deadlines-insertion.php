@@ -98,7 +98,6 @@ $numNotes = 0;
             </div>
         </div>
     </div>
-    </div>
     <div class="not-sidebar">
         <div class="nav" id="pages-nav">
             <label class="non-desktop hamburger-menu" id="sidebar-closed-hamburger">
@@ -110,27 +109,28 @@ $numNotes = 0;
             <a href="schedule.php">schedule</a>
         </div>
         <div class="main">
-            <h1>Welcome to the notes page. Here you can add new notes or view the ones you have already added. </h1>
+            <h1>Welcome to the deadlines page. Here you can add new deadlines or view the ones you have already added. </h1>
 
             <!-- Add a Textbox Feature -->
             <div class="textbox-section">
-                <h2>Enter a new note</h2>
-                <form id="addNoteForm">
-                    <p>Enter title:</p>
-                    <textarea rows="4" cols="50" name="title" id="title" placeholder="Type your title here..."></textarea>
-                    <br>
-                        <!-- Planning to give the user freedom to create their own category -->
+                <h2>Enter a new deadline below</h2>
+                <form id="addDeadlineForm">
+                    <p>Enter Course: </p>
+                    <textarea rows="1" cols="50" name="tags" id="tags" placeholder="Type your course here..."></textarea>
                     </select>
-                    <p>Enter your note:</p>
-                    <textarea rows="4" cols="50" name="note" id="note" placeholder="Type your note here..."></textarea>
-                    <br>
-                    <input type="button" value="Add Note" onclick="addNote()">
+                    <p>Enter Deadline Name:</p>
+                    <textarea rows="1" cols="50" name="title" id="title" placeholder="Enter the name of your deadline here..."></textarea>
+                    <input
+                        type="datetime-local"
+                        id="date"
+                        name="date"
+                        value="2024-02-05T15:00"
+                        min="0000-00-00T00:00"
+                        max="9999-12-31T23:59"
+                     />
+                    <br><br>
+                    <input type="button" value="Submit deadline" onclick="addDeadline()">
                 </form>
-            </div>
-
-            <!-- Placeholder for displaying notes by category -->
-            <div class="notes-by-category" id="notesByCategory">
-                <!-- Display notes here based on the selected category -->
             </div>
         </div>
     </div>

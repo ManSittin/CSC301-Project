@@ -1,18 +1,17 @@
 <?php
     include_once 'dbh.php';
-    include_once 'dbh.php';
     include_once "Session.php";
     // sidebar database info
-    if ($_SESSION['onlineUsers']){
+   if ($_SESSION['onlineUsers']){
     $loggedInUserId = $_SESSION['onlineUsers'];
-    
+   
       $deadlineQuery = "SELECT * FROM Deadlines WHERE Deadlines.username = ?";
-    
-    
-    
-    
+
+
+
+
       $stmt = mysqli_prepare($conn, $deadlineQuery);
-    
+
       // Bind the username parameter
       mysqli_stmt_bind_param($stmt, "s", $loggedInUserId);
       
@@ -23,13 +22,13 @@
       $deadlines = mysqli_stmt_get_result($stmt);
     
     $numDeadlines = mysqli_num_rows($deadlines);
-    
+
     $notesQuery = "SELECT * FROM Notes WHERE Notes.username = ?";
-    
-    
+
+
     
     $stmt1 = mysqli_prepare($conn, $notesQuery);
-    
+
     // Bind the username parameter
     mysqli_stmt_bind_param($stmt1, "s", $loggedInUserId);
     
@@ -39,15 +38,15 @@
     // Get the result
     $notes = mysqli_stmt_get_result($stmt1);
     $numNotes =  mysqli_num_rows($notes);
-    }
-    else{
+   }
+   else{
     $deadlineQuery = 'no query';
-    
+
     $loggedInUserId = false;
     $numDeadlines = 0;
     $numNotes = 0;
-    
-    }
+
+   }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -57,9 +56,6 @@
     <link rel="stylesheet" href="styles.css">
     <link href='https://fonts.googleapis.com/css?family=Outfit' rel='stylesheet'>
     <title>CourseBind</title>
-    <style>
-        /* Existing style here */
-    </style>
 </head>
 <body>
     <div id="sidebar">
@@ -67,10 +63,14 @@
             <label class="non-desktop hamburger-menu" id="sidebar-open-hamburger">
                 <input type="checkbox" id="toggle-closed">
             </label>
-            <a href = "profile.php">profile</a>
+            <a href = "profile.php" > profile</a>
             <a>settings</a>
             <?php
-                if($_SESSION['onlineUsers'] ){echo  '<button onClick="handlelogout()"> Logout </button>';}
+                if( $_SESSION['onlineUsers']){
+                 
+                  
+                  echo  '<button onClick="handlelogout()"> Logout </button>';
+                }
                 ?>
         </div>
         <div id="sidebar-info">
@@ -78,7 +78,7 @@
                 <h2>Assignments</h2>
                 <!-- <div class="info-block">Test</div> -->
                 <?php
-                    if ($numDeadlines > 0 && $_SESSION['onlineUsers']) {
+                    if ($numDeadlines > 0) {
                         while ($deadline = mysqli_fetch_assoc($deadlines)) {
                             echo '<div class="info-block">' . $deadline["deadline_name"] . ' : ' . $deadline['due_date'] . '<button class="del-button" id="' . $deadline["id"] . '"onclick="handleDeadlineDelete(event)">✖</button></div>';
                         }
@@ -89,15 +89,15 @@
                 <h2>Recent Notes</h2>
                 <!-- <div class="info-block">Test</div> -->
                 <?php
-                    if ($numNotes > 0 && $_SESSION['onlineUsers']) {
+                    if ($numNotes > 0) {
                         while ($note = mysqli_fetch_assoc($notes)) {
                             echo '<div class="info-block">' . $note["title"] . '<button class="del-button" id="' . $note["id"] . '" onclick="handleNoteDelete(event)">✖</button></div>';
                         }
                     }
                 ?>
             </div>
+            <div id = "result"> </div>
         </div>
-    </div>
     </div>
     <div class="not-sidebar">
         <div class="nav" id="pages-nav">
@@ -110,18 +110,13 @@
             <a href="schedule.php">schedule</a>
         </div>
         <div class="main">
-            <h1>Welcome to the deadlines page. Here you can add new deadlines or view the ones you have already added. </h1>
-
-            <!-- Add a Textbox Feature -->
-            <div class="textbox-section">
-                <div><a href="deadlines-insertion.php">Add Deadline</a></div>
-                <div><a href="deadlines-all.php">View Deadlines</a></div>
-            </div>
-
+            <h1>Welcome to CourseBind! Use the links at the top of the page to access each of our core features :&rpar;
+                The page will adapt dynamically to your chosen feature!
+            </h1>
         </div>
     </div>
-
-    <script src="script.js">
-    </script>
+    
 </body>
+<script src="script.js">
+</script>
 </html>

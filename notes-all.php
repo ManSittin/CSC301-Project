@@ -60,13 +60,13 @@ $numNotes = 0;
         /* Existing style here */
     </style>
 </head>
-<body>
+<body onload="loadNote(4)">
     <div id="sidebar">
         <div class="nav" id="sidebar-nav">
             <label class="non-desktop hamburger-menu" id="sidebar-open-hamburger">
                 <input type="checkbox" id="toggle-closed">
             </label>
-            <a href = "profile.php">profile</a>
+            <a href = "profile.php" > profile</a>
             <a>settings</a>
             <?php
                 if($_SESSION['onlineUsers'] ){echo  '<button onClick="handlelogout()"> Logout </button>';}
@@ -109,33 +109,44 @@ $numNotes = 0;
             <a href="deadlines.php">assignments</a>
             <a href="schedule.php">schedule</a>
         </div>
-        <div class="main">
-            <h1>Welcome to the notes page. Here you can add new notes or view the ones you have already added. </h1>
-
-            <!-- Add a Textbox Feature -->
-            <div class="textbox-section">
-                <h2>Enter a new note</h2>
-                <form id="addNoteForm">
-                    <p>Enter title:</p>
-                    <textarea rows="4" cols="50" name="title" id="title" placeholder="Type your title here..."></textarea>
-                    <br>
-                        <!-- Planning to give the user freedom to create their own category -->
-                    </select>
-                    <p>Enter your note:</p>
-                    <textarea rows="4" cols="50" name="note" id="note" placeholder="Type your note here..."></textarea>
-                    <br>
-                    <input type="button" value="Add Note" onclick="addNote()">
-                </form>
-            </div>
-
-            <!-- Placeholder for displaying notes by category -->
-            <div class="notes-by-category" id="notesByCategory">
-                <!-- Display notes here based on the selected category -->
-            </div>
+        <!-- hard-coded note for now; will pull this in when a note is selected -->
+                
+        <div id="note info">
+        <h2>Recent Notes</h2>
+        <?php
+            if ($numNotes > 0) {
+                while ($note = mysqli_fetch_assoc($notes)) {
+                    echo '<div class="info-block">' . htmlspecialchars($note["title"]) . '</div>';
+                }
+                // Reset the data pointer for $notes
+                mysqli_data_seek($notes, 0);
+            }
+        ?>
         </div>
-    </div>
 
-    <script src="script.js">
-    </script>
+        <div class="main">
+        <h1>Welcome to the notes page. Here you can view all of your notes and edit them!</h1>
+        <?php
+        if ($numNotes > 0) {
+            while ($note = mysqli_fetch_assoc($notes)) {
+                echo '<div class="note-container">';
+                echo '<div class="note-title">' . htmlspecialchars($note['title']) . '</div>';
+                echo '<div class="note-content">' . htmlspecialchars(substr($note['content'], 0, 50)) . '...</div>'; // preview
+
+                // Update the onclick attribute below
+                echo '<button class="edit-button" onclick="location.href=\'notes-view.php?id=' . $note['id'] . '\'">View/Edit</button>';
+                echo '</div>';
+            }
+        } else {
+            echo '<p>No notes found.</p>';
+            echo '<p>No notes fod.</p>';
+        }
+    ?>
+        </div>
+
+
+    <script src="script.js"></script>
+</body>
+    </div>
 </body>
 </html>
