@@ -81,6 +81,7 @@
     </style>
 </head>
 <body onload="loadDeadline(<?php echo isset($deadlineForEditing['id']) ? $deadlineForEditing['id'] : 'null'; ?>)">
+<body onload="loadDeadline(<?php echo isset($deadlineForEditing['id']) ? $deadlineForEditing['id'] : 'null'; ?>)">
     <div id="sidebar">
         <div class="nav" id="sidebar-nav">
             <label class="non-desktop hamburger-menu" id="sidebar-open-hamburger">
@@ -127,7 +128,7 @@
             <a href="notes.php">notes</a>
             <a href="flashcards.php">flashcards</a>
             <a href="deadlines.php">assignments</a>
-            <a href="#">schedule</a>
+            <a href="schedule.php">schedule</a>
         </div>
         <!-- hard-coded note for now; will pull this in when a note is selected -->
         <div class="main">
@@ -135,6 +136,23 @@
             <div class="textbox-section">
                 <!-- Loaded deadline info preloads here... -->
                 <h2>Edit Deadline</h2> 
+                <form id="editDeadlineForm" method="post" action="deadlines-view.php">
+                <input type="hidden" name="hiddenDeadlineId" id="hiddenDeadlineId" value="<?php echo isset($deadlineForEditing['id']) ? $deadlineForEditing['id'] : ''; ?>">
+                <p>Edit Course: </p>
+                <textarea rows="1" cols="50" name="course" class="deadline_course"><?php echo isset($deadlineForEditing['course']) ? $deadlineForEditing['course'] : ''; ?></textarea>
+                <p>Edit Deadline Name:</p>
+                <textarea rows="1" cols="50" name="deadline_name" class="deadline_name"><?php echo isset($deadlineForEditing['deadline_name']) ? $deadlineForEditing['deadline_name'] : ''; ?></textarea>
+                <p>Edit Date:</p>
+                <input
+                    type="datetime-local"
+                    id="date"
+                    name="due_date"
+                    value="<?php echo isset($deadlineForEditing['due_date']) ? str_replace(' ', 'T', $deadlineForEditing['due_date']) : ''; ?>"
+                    class="deadline_date"
+                />
+                <br><br>
+                <input type="submit" value="Update Deadline" class="update-deadline">
+            </form>
                 <form id="editDeadlineForm" method="post" action="deadlines-view.php">
                 <input type="hidden" name="hiddenDeadlineId" id="hiddenDeadlineId" value="<?php echo isset($deadlineForEditing['id']) ? $deadlineForEditing['id'] : ''; ?>">
                 <p>Edit Course: </p>

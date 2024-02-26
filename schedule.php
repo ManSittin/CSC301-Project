@@ -1,53 +1,13 @@
 <?php
     include_once 'dbh.php';
-    include_once 'dbh.php';
-    include_once "Session.php";
+
     // sidebar database info
-   if ($_SESSION['onlineUsers']){
-    $loggedInUserId = $_SESSION['onlineUsers'];
-   
-      $deadlineQuery = "SELECT * FROM Deadlines WHERE Deadlines.username = ?";
-
-
-
-
-      $stmt = mysqli_prepare($conn, $deadlineQuery);
-
-      // Bind the username parameter
-      mysqli_stmt_bind_param($stmt, "s", $loggedInUserId);
-      
-      // Execute the statement
-      mysqli_stmt_execute($stmt);
-      
-      // Get the result
-      $deadlines = mysqli_stmt_get_result($stmt);
-    
+    $deadlineQuery = "SELECT * FROM Deadlines;";
+    $deadlines = mysqli_query($conn, $deadlineQuery);
     $numDeadlines = mysqli_num_rows($deadlines);
-
-    $notesQuery = "SELECT * FROM Notes WHERE Notes.username = ?";
-
-
-    
-    $stmt1 = mysqli_prepare($conn, $notesQuery);
-
-    // Bind the username parameter
-    mysqli_stmt_bind_param($stmt1, "s", $loggedInUserId);
-    
-    // Execute the statement
-    mysqli_stmt_execute($stmt1);
-    
-    // Get the result
-    $notes = mysqli_stmt_get_result($stmt1);
-    $numNotes =  mysqli_num_rows($notes);
-   }
-   else{
-    $deadlineQuery = 'no query';
-
-    $loggedInUserId = false;
-    $numDeadlines = 0;
-    $numNotes = 0;
-
-   }
+    $notesQuery = "SELECT * FROM Notes;";
+    $notes = mysqli_query($conn, $notesQuery);
+    $numNotes = mysqli_num_rows($notes);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -57,6 +17,9 @@
     <link rel="stylesheet" href="styles.css">
     <link href='https://fonts.googleapis.com/css?family=Outfit' rel='stylesheet'>
     <title>CourseBind</title>
+    <style>
+        /* Existing style here */
+    </style>
 </head>
 <body>
     <div id="sidebar">
@@ -64,15 +27,8 @@
             <label class="non-desktop hamburger-menu" id="sidebar-open-hamburger">
                 <input type="checkbox" id="toggle-closed">
             </label>
-            <a href = "profile.php" > profile</a>
+            <a href = "profile.php">profile</a>
             <a>settings</a>
-            <?php
-                if( $_SESSION['onlineUsers']){
-                 
-                  
-                  echo  '<button onClick="handlelogout()"> Logout </button>';
-                }
-                ?>
         </div>
         <div id="sidebar-info">
             <div id="assignment info">
@@ -99,6 +55,7 @@
             </div>
         </div>
     </div>
+    </div>
     <div class="not-sidebar">
         <div class="nav" id="pages-nav">
             <label class="non-desktop hamburger-menu" id="sidebar-closed-hamburger">
@@ -110,13 +67,19 @@
             <a href="schedule.php">schedule</a>
         </div>
         <div class="main">
-            <h1>Welcome to CourseBind! Use the links at the top of the page to access each of our core features :&rpar;
-                The page will adapt dynamically to your chosen feature!
-            </h1>
+            <h1>Welcome to the schedule page. Here you can add new courses, view the ones you have already or generate a schedule for your courses. </h1>
+
+            <!-- Add a Textbox Feature -->
+            <div class="textbox-section">
+                <div><a href="course-insertion.php">Add Course</a></div>
+                <div><a href="courses-all.php">View Courses</a></div>
+                <div><a href="#">Generate Schedule</a></div>
+            </div>
+
         </div>
     </div>
-    
+
+    <script src="script.js">
+    </script>
 </body>
-<script src="script.js">
-</script>
 </html>

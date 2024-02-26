@@ -107,7 +107,7 @@ $numNotes = 0;
             <a href="notes.php">notes</a>
             <a href="flashcards.php">flashcards</a>
             <a href="deadlines.php">assignments</a>
-            <a href="#">schedule</a>
+            <a href="schedule.php">schedule</a>
         </div>
         <!-- hard-coded note for now; will pull this in when a note is selected -->
                 
