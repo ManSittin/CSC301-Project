@@ -681,6 +681,7 @@ class FordFulkerson {
 
     return visited[this.sink];
   }
+}
 
 function showCourses() {
 
