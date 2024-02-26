@@ -66,6 +66,13 @@
             </label>
             <a href = "profile.php" > profile</a>
             <a>settings</a>
+            <?php
+                if( $_SESSION['onlineUsers']){
+                 
+                  
+                  echo  '<button onClick="handlelogout()"> Logout </button>';
+                }
+                ?>
         </div>
         <div id="sidebar-info">
             <div id="assignment info">
