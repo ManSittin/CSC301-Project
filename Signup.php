@@ -1,13 +1,54 @@
 <?php
     include_once 'dbh.php';
 
+    include_once 'dbh.php';
+    include_once "Session.php";
     // sidebar database info
-    $deadlineQuery = "SELECT * FROM Deadlines;";
-    $deadlines = mysqli_query($conn, $deadlineQuery);
+   if ($_SESSION['onlineUsers']){
+    $loggedInUserId = $_SESSION['onlineUsers'];
+   
+      $deadlineQuery = "SELECT * FROM Deadlines WHERE Deadlines.username = ?";
+
+
+
+
+      $stmt = mysqli_prepare($conn, $deadlineQuery);
+
+      // Bind the username parameter
+      mysqli_stmt_bind_param($stmt, "s", $loggedInUserId);
+      
+      // Execute the statement
+      mysqli_stmt_execute($stmt);
+      
+      // Get the result
+      $deadlines = mysqli_stmt_get_result($stmt);
+    
     $numDeadlines = mysqli_num_rows($deadlines);
-    $notesQuery = "SELECT * FROM Notes;";
-    $notes = mysqli_query($conn, $notesQuery);
-    $numNotes = mysqli_num_rows($notes);
+
+    $notesQuery = "SELECT * FROM Notes WHERE Notes.username = ?";
+
+
+    
+    $stmt1 = mysqli_prepare($conn, $notesQuery);
+
+    // Bind the username parameter
+    mysqli_stmt_bind_param($stmt1, "s", $loggedInUserId);
+    
+    // Execute the statement
+    mysqli_stmt_execute($stmt1);
+    
+    // Get the result
+    $notes = mysqli_stmt_get_result($stmt1);
+    $numNotes =  mysqli_num_rows($notes);
+   }
+   else{
+    $deadlineQuery = 'no query';
+
+    $loggedInUserId = false;
+    $numDeadlines = 0;
+    $numNotes = 0;
+
+   }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -298,8 +339,15 @@ a:hover {
             <label class="non-desktop hamburger-menu" id="sidebar-open-hamburger">
                 <input type="checkbox" id="toggle-closed">
             </label>
-            <a>profile</a>
+            < <a href = "profile.php" > profile</a>
             <a>settings</a>
+            <?php
+                if( $_SESSION['onlineUsers']){
+                 
+                  
+                  echo  '<button onClick="handlelogout()"> Logout </button>';
+                }
+                ?>
         </div>
         <div id="sidebar-info">
             <div id="assignment info">
@@ -393,56 +441,9 @@ a:hover {
         </div>
     </div>
 
-    <script>
+    <script src="script.js">
 
 
-    function handleSignUpClick() {
-    // Prevent the default form submission behavior
-    console.log(document.getElementById("signup").elements)
-   // event.preventDefault();
-  
-    // Retrieve the email and password from the input fields
-    var firstname = document.getElementById("firstName").value;
-    var lastname = document.getElementById("lastName").value;
-    var email =  document.getElementById("email").value;
-    var username =  document.getElementById("username").value;
-    var password =  document.getElementById("password").value;
-    
-    // Perform validation if needed
-
-    // Perform sign-in logic (e.g., send AJAX request to the server)
-    // Here, you can use fetch() or any other method to send the data to the server
-    // For demonstration purposes, we'll simply log the email and password
-    var formData = new FormData();
-            formData.append('command', 'users');
-            formData.append('first_name', document.getElementById("firstName").value);
-            formData.append('last_name', document.getElementById("lastName").value);
-            formData.append('email', document.getElementById("email").value);
-            formData.append('username', document.getElementById("username").value);
-            formData.append('password', document.getElementById("password").value);
-
-        fetch('/server.php', {
-                method: 'POST',
-                body: formData,
-            })
-        .then(data => {
-    // Handle the data returned by the server
-        console.log('Response:', data);
-
-    // Check the status field in the response
-        if (data.status ===  200) {
-            alert('user online !');
-        // User data retrieval was successful
-        // You can access the user data from the 'message' field in the response
-        console.log('User data:', data.message);
-    } else {
-        // User data retrieval failed
-        console.error('Error:', data.message);
-    }
-})
-    
-          
-}
     </script>
 </body>
 </html>
