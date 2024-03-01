@@ -139,7 +139,6 @@ $numNotes = 0;
             }
         } else {
             echo '<p>No notes found.</p>';
-            echo '<p>No notes fod.</p>';
         }
     ?>
         </div>
