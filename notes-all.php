@@ -112,7 +112,6 @@ $numNotes = 0;
         <!-- hard-coded note for now; will pull this in when a note is selected -->
                 
         <div id="note info">
-        <h2>Recent Notes</h2>
         <?php
             if ($numNotes > 0) {
                 while ($note = mysqli_fetch_assoc($notes)) {
@@ -139,7 +138,6 @@ $numNotes = 0;
             }
         } else {
             echo '<p>No notes found.</p>';
-            echo '<p>No notes fod.</p>';
         }
     ?>
         </div>
