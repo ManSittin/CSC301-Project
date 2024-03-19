@@ -1,14 +1,4 @@
-<?php
-    include_once 'dbh.php';
-
-    // sidebar database info
-    $deadlineQuery = "SELECT * FROM Deadlines;";
-    $deadlines = mysqli_query($conn, $deadlineQuery);
-    $numDeadlines = mysqli_num_rows($deadlines);
-    $notesQuery = "SELECT * FROM Notes;";
-    $notes = mysqli_query($conn, $notesQuery);
-    $numNotes = mysqli_num_rows($notes);
-?>
+<?php include_once 'sidebar-db.php';?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
