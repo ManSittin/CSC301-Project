@@ -488,10 +488,23 @@ function getFlashcards() { // get all the user's flashcards as (cue, response) o
 function getRandomFlashcard() {
   getFlashcards()
   .then(data => {
-    randomFlashcard = data[Math.floor(Math.random() * data.length)];
-    cue.innerHTML = `<h3>${randomFlashcard.cue}</h3>`;
-    response.innerHTML = `<h3>${randomFlashcard.response}</h3>`;
-    alert('Flashcards Loaded!');
+    // Filter flashcards with review dates on or before today
+    const validFlashcards = data.filter(flashcard => {
+      const reviewDate = new Date(flashcard.review_date);
+      return reviewDate <= new Date(); // Compare review date with today
+    });
+
+    if (validFlashcards.length > 0) {
+      // If there are valid flashcards, select a random one
+      const randomIndex = Math.floor(Math.random() * validFlashcards.length);
+      const randomFlashcard = validFlashcards[randomIndex];
+      cue.innerHTML = `<h3>${randomFlashcard.cue}</h3>`;
+      response.innerHTML = `<h3>${randomFlashcard.response}</h3>`;
+      alert('Flashcards Loaded!');
+    } else {
+      // No valid flashcards found
+      alert('No flashcards available for review.');
+    }
   })
   .catch(error => {
     // Handle errors
