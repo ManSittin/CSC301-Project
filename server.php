@@ -52,8 +52,8 @@ class Controller {
                 $username = $_POST['username'];
                 $cue = $_POST['cue'];
                 $response = $_POST['response'];
-                
-                $result = $model->newFlashcard($username, $cue, $response);
+                $review_date = $_POST['review_date'];
+                $result = $model->newFlashcard($username, $cue, $response, $review_date);
 
                 break;
 

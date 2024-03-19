@@ -22,6 +22,7 @@
                     </select>
                     <p>Enter Deadline Name:</p>
                     <textarea rows="1" cols="50" name="title" id="title" placeholder="Enter the name of your deadline here..."></textarea>
+                    <br>
                     <input
                         type="datetime-local"
                         id="date"
@@ -207,8 +208,6 @@
                     <p>Cue:</p>
                     <textarea rows="2" cols="50" name="cue" id="enter-cue" placeholder="Type your cue here..."></textarea>
                     <br>
-                        <!-- Planning to give the user freedom to create their own category -->
-                    </select>
                     <p>Response:</p>
                     <textarea rows="4" cols="50" name="response" id="enter-response" placeholder="Type your response here..."></textarea>
                     <br>

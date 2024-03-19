@@ -248,19 +248,6 @@ function handleNoteDelete(event) {
     alert('Note successfully deleted!');
 }
 
-function addFlashcard() { // insert a flashcard
-  // Add logic to send the note to the server and store it in the database
-  var formData = new FormData();
-  formData.append('command', 'flashcards');
-  formData.append('username', onlineUsers);
-  formData.append('cue', document.getElementById("addFlashcardForm").elements[0].value);
-  formData.append('response', document.getElementById("addFlashcardForm").elements[1].value);
-  fetch('/server.php', {
-      method: 'POST',
-      body: formData,
-  });
-  alert('Flashcard added!');
-}
 
 // DEADLINE UPDATES
 
@@ -421,10 +408,31 @@ if (updateNoteBtn) {
 
 // FLASHCARDS
 
+function addFlashcard() { // insert a flashcard
+  // Add logic to send the note to the server and store it in the database
+  var formData = new FormData();
+  formData.append('command', 'flashcards');
+  formData.append('username', onlineUsers);
+  formData.append('cue', document.getElementById("addFlashcardForm").elements[0].value);
+  formData.append('response', document.getElementById("addFlashcardForm").elements[1].value);
+
+  // default review_date to today
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0'); // Add leading zero if needed
+  const day = String(today.getDate()).padStart(2, '0'); // Add leading zero if needed
+  const formattedDate = `${year}-${month}-${day}`;
+  formData.append('review_date', formattedDate);
+
+  fetch('/server.php', {
+      method: 'POST',
+      body: formData,
+  });
+  alert('Flashcard added!');
+}
+
+
 // Front-end flashcard reivew elements
-
-
-
 document.getElementById("result").innerHTML = "The number of flashcards is: " + getFlashcardsnum()
 .then(num => {
   // This code block will execute once the promise is resolved
@@ -476,22 +484,6 @@ function getFlashcards() { // get all the user's flashcards as (cue, response) o
     });
 }
 
-
-function getFlashcardsnum() {
-  return getFlashcards()
-      .then(flashcards => {
-          console.log(flashcards);
-          return flashcards.length;
-      })
-      .catch(error => {
-          console.error('Error:', error);
-          return 0;
-      });
-}
-
-
-
-
 function getRandomFlashcard() {
   getFlashcards()
   .then(data => {
@@ -506,6 +498,17 @@ function getRandomFlashcard() {
   });
 }
 
+function getFlashcardsnum() {
+  return getFlashcards()
+      .then(flashcards => {
+          console.log(flashcards);
+          return flashcards.length;
+      })
+      .catch(error => {
+          console.error('Error:', error);
+          return 0;
+      });
+}
 
 // function getCourses() {
 //   return fetch('/server.php?commmand=courses&username=userAA') 
