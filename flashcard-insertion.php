@@ -14,15 +14,7 @@
 <body>
     <?php include_once 'sidebar-content.php'; ?>
     <div class="not-sidebar">
-        <div class="nav" id="pages-nav">
-            <label class="non-desktop hamburger-menu" id="sidebar-closed-hamburger">
-                <input type="checkbox" id="toggle-open">
-            </label>
-            <a href="notes.php">notes</a>
-            <a href="flashcards.php">flashcards</a>
-            <a href="deadlines.php">assignments</a>
-            <a href="schedule.php">schedule</a>
-        </div>
+        <?php include_once 'navbar.html'?>
         <div class="main">
             <h1>Welcome to the flashcards page. Here you can add new flashcards or review the ones you have already added. </h1>
 
