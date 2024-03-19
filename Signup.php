@@ -285,61 +285,12 @@ a:hover {
 <body>
     <?php include_once 'sidebar-content.php'; ?>
     <div class="not-sidebar">
-        <?php include_once 'navbar.html'?>
-        <div class="main">
-        <div className='signuppage'>
-      <div className='signupform'>
-        <h1>Join Us Today!</h1>
-        <p>Sign up and start exploring our platform!</p>
-        <form id = "signup" className="formReg">
-          <div className="inputField">
-            <label htmlFor="firstName">First Name*</label>
-            <input type="text" id="firstName" placeholder="Enter your first name" 
-            />
-          </div>
-          <div className="inputField">
-            <label htmlFor="lastName">Last Name*</label>
-            <input type="text" id="lastName" placeholder="Enter your last name"
-            />
-            
-          </div>
-
-
-          <div className="inputField">
-            <label htmlFor="email">Email*</label>
-            <input type="email" id="email" placeholder="Enter your email"
-            />
-
-          
-          
-          </div>
-
-          <div className="inputField">
-            <label htmlFor="user">Username*</label>
-            <input type="user" id="username" placeholder="Enter your username"
-
-            /> 
-          </div>
-
-          <div className="inputField">
-            <label htmlFor="password">Password*</label>
-            <input type="password" id="password" placeholder="Enter your password" 
-            />
-          </div>
-          <span className="password-length-info">(Password must be longer than 8 characters)</span>
-          <button type="button" className="btnformReg" onClick="handleSignUpClick()">
-            SIGN UP
-          </button>
-        </form>
-        <span>Already have an account? <a href="profile.php">Sign In</a></span>
-      </div>
-    </div>
-
-            <!-- Placeholder for displaying notes by category -->
-            <div class="notes-by-category" id="notesByCategory">
-                <!-- Display notes here based on the selected category -->
-            </div>
-        </div>
+      <?php include_once 'navbar.html';
+        $header_text = ""; //none
+        $page = "signup";
+        include_once 'main.php';
+        ?>
+        
     </div>
 
     <script src="script.js">

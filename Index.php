@@ -11,14 +11,13 @@
 <body>
     <?php include_once 'sidebar-content.php'; ?>
     <div class="not-sidebar">
-        <?php include_once 'navbar.html'?>
-        <div class="main">
-            <h1>Welcome to CourseBind! Use the links at the top of the page to access each of our core features :&rpar;
-                The page will adapt dynamically to your chosen feature!
-            </h1>
-        </div>
+        <?php include_once 'navbar.html';
+        $header_text = "Welcome to CourseBind! Use the links at the top of the page to access each of our core features :&rpar;
+        The page will adapt dynamically to your chosen feature!";
+        $page = "none"; // no page content
+        include_once 'main.php';
+        ?>
     </div>
-    
 </body>
 <script src="script.js">
 </script>

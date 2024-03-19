@@ -14,29 +14,11 @@
 <body>
     <?php include_once 'sidebar-content.php'; ?>
     <div class="not-sidebar">
-        <?php include_once 'navbar.html'?>
-        <div class="main">
-            <h1>Welcome to the flashcards page. Here you can add new flashcards or review the ones you have already added. </h1>
-
-            <!-- Add a Textbox Feature -->
-            <div class="textbox-section">
-                <h2>Review Flashcards</h2>
-                <div class="flashcards">
-                    <div class="cue"><h3>Cue</h3></div>
-                    <div class="response"><h3>Response</h3></div>
-                </div>
-
-                <div class="flashcard-buttons">
-                    <div class="reveal"><button>Reveal Response</button></div>
-                    <div class="next"><button>Next Cue</button></div>
-                </div>
-
-            </div>
-
-
-            </div>
-
-        </div>
+        <?php include_once 'navbar.html';
+        $header_text = "Welcome to the flashcards page. Here you can add new flashcards or review the ones you have already added. ";
+        $page = "flashcard-review";
+        include_once 'main.php';
+        ?>
     </div>
 
     <script src="script.js">

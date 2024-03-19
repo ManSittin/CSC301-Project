@@ -34,20 +34,11 @@
 <body onload="loadNote(<?php echo isset($noteForEditing['id']) ? $noteForEditing['id'] : 'null'; ?>)">
     <?php include_once 'sidebar-content.php'; ?>
     <div class="not-sidebar">
-        <?php include_once 'navbar.html'?>
-        <!-- hard-coded note for now; will pull this in when a note is selected -->
-        <div class="main">
-            <h1>Welcome to the notes page. Here you can add new notes or view the ones you have already added.</h1>
-            <div class="textbox-section">
-                <!-- Loaded note info preloads here... -->
-                <h2 class="note-title">Your Note</h2> 
-                <form id="editNoteForm" method="post" action="notes-view.php">
-                <input type="hidden" id="hiddenNoteId" value="<?php echo isset($noteForEditing['id']) ? $noteForEditing['id'] : ''; ?>">
-                <textarea rows="4" cols="50" name="noteContent" class="note-body"><?php echo isset($noteForEditing['content']) ? $noteForEditing['content'] : ''; ?></textarea>
-                <br>
-                <input type="submit" value="Update Note" class="update-note">
-            </form>
-        </div>
+        <?php include_once 'navbar.html';
+        $header_text = "Welcome to the notes page. Here you can add new notes or view the ones you have already added.";
+        $page = "notes-view";
+        include_once 'main.php';
+        ?>
     </div>
 
     <script src="script.js">

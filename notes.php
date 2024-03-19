@@ -14,17 +14,11 @@
 <body>
     <?php include_once 'sidebar-content.php'; ?>
     <div class="not-sidebar">
-        <?php include_once 'navbar.html'?>
-        <div class="main">
-            <h1>Welcome to the notes page. Here you can add new notes or view the ones you have already added. </h1>
-
-            <!-- Add a Textbox Feature -->
-            <div class="textbox-section">
-                <div><a href="notes-insertion.php">Add Notes</a></div>
-                <div><a href="notes-all.php">View Notes</a></div>
-            </div>
-
-        </div>
+        <?php include_once 'navbar.html';
+        $header_text = "Welcome to the notes page. Here you can add new notes or view the ones you have already added. ";
+        $page = "notes";
+        include_once 'main.php';
+        ?>
     </div>
 
     <script src="script.js">

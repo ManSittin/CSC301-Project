@@ -14,7 +14,11 @@
 <body>
     <?php include_once 'sidebar-content.php'; ?>
     <div class="not-sidebar">
-        <?php include_once 'navbar.html'?>
+        <?php include_once 'navbar.html';
+        $header_text = "Welcome to the deadlines page. Here you can add new deadlines or view the ones you have already added. ";
+        $page = "deadlines-insertion";
+        include_once 'main.php';
+        ?>
         <div class="main">
             <h1>Welcome to the schedule page. Here you can add new courses, view the ones you have already or generate a schedule for your courses. </h1>
 

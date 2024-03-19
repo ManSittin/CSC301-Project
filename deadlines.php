@@ -14,19 +14,12 @@
 <body>
     <?php include_once 'sidebar-content.php'; ?>
     <div class="not-sidebar">
-        <?php include_once 'navbar.html'?>
-        <div class="main">
-            <h1>Welcome to the deadlines page. Here you can add new deadlines or view the ones you have already added. </h1>
-
-            <!-- Add a Textbox Feature -->
-            <div class="textbox-section">
-                <div><a href="deadlines-insertion.php">Add Deadline</a></div>
-                <div><a href="deadlines-all.php">View Deadlines</a></div>
-            </div>
-
-        </div>
+        <?php include_once 'navbar.html';
+        $header_text = "Welcome to the deadlines page. Here you can add new deadlines or view the ones you have already added. ";
+        $page = "deadlines";
+        include_once 'main.php';
+        ?>
     </div>
-
     <script src="script.js">
     </script>
 </body>

@@ -340,51 +340,11 @@ a {
 <body>
     <?php include_once 'sidebar-content.php'; ?>
     <div class="not-sidebar">
-        <?php include_once 'navbar.html'?>
-        <div class="main">
-        <div>
-
-            <div className='userlogin'>
-      <div className='signin'>
-        <h1>Sign in</h1>
-        <span>or use your account</span>
-        <form className='form' id = "login">
-          <fieldset>
-            <input type='email'
-            placeholder='Email' />
-          </fieldset>
-          <fieldset>
-            <input type='password'
-            placeholder='Password' />
-          </fieldset>
-          <button type='button' className='btnsignin' onClick="handleSignInClick()">
-          SIGN In
-        </button>
-    
-        </form>
-        <span className='forgotpassword' onClick={handlePassword}>
-        <a href="Index.php">Home </a>
-        </span>
-      </div>
-  
-      <div className='signup'>
-        <div className='signup1'>
-          <h1> Join us today</h1>
-        </div>
-        <button type='button' className='btnsignup' onClick="handleSignupClick()">
-          SIGN UP
-        </button>
-      </div>
-    </div>
-            </div>
-
-            <!-- Placeholder for displaying notes by category -->
-            <div class="notes-by-category" id="notesByCategory">
-                <!-- Display notes here based on the selected category -->
-            </div>
-        </div>
-    </div>
-
+      <?php include_once 'navbar.html';
+        $header_text = ""; //none
+        $page = "profile";
+        include_once 'main.php';
+        ?>
     <script src="script.js">
     </script>
 </body>

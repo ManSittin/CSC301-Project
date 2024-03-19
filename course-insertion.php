@@ -14,23 +14,12 @@
 <body>
     <?php include_once 'sidebar-content.php'; ?>
     <div class="not-sidebar">
-        <?php include_once 'navbar.html'?>
-        <div class="main">
-            <h1>Welcome to the schedule page. Here you can add new courses, view the ones you have already or generate a schedule for your courses. </h1>
-
-            <!-- Add a Textbox Feature -->
-            <div class="textbox-section">
-                <h2>Enter a new course below</h2>
-                <form id="addCourseForm">
-                    <p>Enter Course Name: </p>
-                    <textarea rows="1" cols="50" name="tags" id="tags" placeholder="Type your course name here..."></textarea>
-                    <br><br>
-                    <input type="button" value="Add course" onclick="addCourse()">
-                </form>
-            </div>
-        </div>
+        <?php include_once 'navbar.html';
+        $header_text = "Welcome to the schedule page. Here you can add new courses, view the ones you have already or generate a schedule for your courses.";
+        $page = "course-insertion"; 
+        include_once 'main.php';
+        ?>
     </div>
-
     <script src="script.js">
     </script>
 </body>
