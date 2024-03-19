@@ -152,6 +152,11 @@ a:hover {
     justify-content: center;
 }
 
+.correct img, .incorrect img {
+    width: 20px;
+    height: 20px;
+}
+
 
 textarea {
     resize: none;

@@ -230,6 +230,8 @@
 
                 <div class="flashcard-buttons">
                     <div class="reveal"><button>Reveal Response</button></div>
+                    <div class="correct"><button><img src="images/thumbs-up.png"></button></div>
+                    <div class="incorrect"><button><img src="images/thumbs-down.png"></button></div>
                     <div class="next"><button>Next Cue</button></div>
                 </div>
 

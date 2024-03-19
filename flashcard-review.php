@@ -15,7 +15,7 @@
     <?php include_once 'sidebar-content.php'; ?>
     <div class="not-sidebar">
         <?php include_once 'navbar.html';
-        $header_text = "Welcome to the flashcards page. Here you can add new flashcards or review the ones you have already added. ";
+        $header_text = "Recall the cue, and click 'reveal response' to check. If right, press &#x1F44D ; if not, press &#x1F44E. Hit 'next cue' to proceed!";
         $page = "flashcard-review";
         include_once 'main.php';
         ?>
