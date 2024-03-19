@@ -52,8 +52,8 @@ class Controller {
                 $username = $_POST['username'];
                 $cue = $_POST['cue'];
                 $response = $_POST['response'];
-                
-                $result = $model->newFlashcard($username, $cue, $response);
+                $review_date = $_POST['review_date'];
+                $result = $model->newFlashcard($username, $cue, $response, $review_date);
 
                 break;
 
@@ -88,6 +88,16 @@ class Controller {
                 $deadline_name = $_POST['deadline_name'];
                 $due_date = $_POST['due_date'];
                 $result = $model->updateDeadline($id, $username, $course, $deadline_name, $due_date);
+
+                break;
+
+            case ('flashcard-update'):
+                $id = $_POST['id'];
+                $username = $_POST['username'];
+                $cue = $_POST['cue'];
+                $response = $_POST['response'];
+                $review_date = $_POST['review_date'];
+                $result = $model->updateFlashcard($id, $username, $cue, $response, $review_date);
 
                 break;
                 

@@ -248,19 +248,6 @@ function handleNoteDelete(event) {
     alert('Note successfully deleted!');
 }
 
-function addFlashcard() { // insert a flashcard
-  // Add logic to send the note to the server and store it in the database
-  var formData = new FormData();
-  formData.append('command', 'flashcards');
-  formData.append('username', onlineUsers);
-  formData.append('cue', document.getElementById("addFlashcardForm").elements[0].value);
-  formData.append('response', document.getElementById("addFlashcardForm").elements[1].value);
-  fetch('/server.php', {
-      method: 'POST',
-      body: formData,
-  });
-  alert('Flashcard added!');
-}
 
 // DEADLINE UPDATES
 
@@ -420,11 +407,33 @@ if (updateNoteBtn) {
 
 
 // FLASHCARDS
+let currentFlashcard;
+
+function addFlashcard() { // insert a flashcard
+  // Add logic to send the note to the server and store it in the database
+  var formData = new FormData();
+  formData.append('command', 'flashcards');
+  formData.append('username', onlineUsers);
+  formData.append('cue', document.getElementById("addFlashcardForm").elements[0].value);
+  formData.append('response', document.getElementById("addFlashcardForm").elements[1].value);
+
+  // default review_date to today
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0'); // Add leading zero if needed
+  const day = String(today.getDate()).padStart(2, '0'); // Add leading zero if needed
+  const formattedDate = `${year}-${month}-${day}`;
+  formData.append('review_date', formattedDate);
+
+  fetch('/server.php', {
+      method: 'POST',
+      body: formData,
+  });
+  alert('Flashcard added!');
+}
+
 
 // Front-end flashcard reivew elements
-
-
-
 document.getElementById("result").innerHTML = "The number of flashcards is: " + getFlashcardsnum()
 .then(num => {
   // This code block will execute once the promise is resolved
@@ -442,6 +451,8 @@ const cue = document.querySelector('.cue');
 const response = document.querySelector('.response');
 const reveal = document.querySelector('.reveal');
 const next = document.querySelector('.next');
+const correct = document.querySelector('.correct');
+const incorrect = document.querySelector('.incorrect');
 
 // button click listeners
 if (reveal){
@@ -457,6 +468,20 @@ if (next){
   });
 }
 
+if (correct){
+  correct.addEventListener('click', function(){ // update flashcard review date if loaded
+    alert("clicked!");
+    incrementReviewDate(1); // make this variable in a later sprint
+  });
+}
+
+if (incorrect){
+  incorrect.addEventListener('click', function(){ // update flashcard review date if loaded
+    incrementReviewDate(3); // make this variable in a later sprint
+  });
+}
+
+
 
 // flashcard data 
 function getFlashcards() { // get all the user's flashcards as (cue, response) objects
@@ -465,8 +490,11 @@ function getFlashcards() { // get all the user's flashcards as (cue, response) o
     .then(json => {
       return json.message.map(entry => {
         return {
+          id: entry.id,
+          username: entry.username,
           cue: entry.cue,
-          response: entry.response
+          response: entry.response,
+          review_date: entry.review_date
         };
       });
     })
@@ -474,6 +502,75 @@ function getFlashcards() { // get all the user's flashcards as (cue, response) o
       console.error('Error fetching flashcards:', error);
       throw error;
     });
+}
+
+function getRandomFlashcard() {
+  getFlashcards()
+  .then(data => {
+    // Filter flashcards with review dates on or before today
+    const validFlashcards = data.filter(flashcard => {
+      const reviewDate = new Date(flashcard.review_date);
+      return reviewDate <= new Date(); // Compare review date with today
+    });
+
+    if (validFlashcards.length > 0) {
+      // If there are valid flashcards, select a random one
+      const randomIndex = Math.floor(Math.random() * validFlashcards.length);
+      currentFlashcard = validFlashcards[randomIndex];
+      cue.innerHTML = `<h3>${currentFlashcard.cue}</h3>`;
+      response.innerHTML = `<h3>${currentFlashcard.response}</h3>`;
+      alert('Flashcards Loaded!');
+    } else {
+      // No valid flashcards found
+      alert('No flashcards available for review.');
+    }
+  })
+  .catch(error => {
+    // Handle errors
+    console.error('Error:', error);
+  });
+}
+
+function incrementReviewDate(days) {
+
+  if (currentFlashcard) {
+    alert("flashcard found!");
+    const id = currentFlashcard.id;
+    const username = currentFlashcard.username;
+    const cue = currentFlashcard.cue;
+    const response = currentFlashcard.response;
+
+    const formData = new FormData();
+    formData.append('command', 'flashcard-update');
+    formData.append('id', id);
+    formData.append('username', username);
+    formData.append('cue', cue);
+    formData.append('response', response);
+
+    const newReviewDate = new Date();
+    newReviewDate.setDate(newReviewDate.getDate() + days); // Increment review date by days
+    const isoDateString = newReviewDate.toISOString();
+    const dateOnlyString = isoDateString.split('T')[0]; // Extract date part before 'T'
+    alert(dateOnlyString);
+    formData.append('review_date', dateOnlyString);
+
+    return fetch('/server.php', {
+      method: 'POST',
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(json => {
+      if (json.status === 'Success') {
+        return Promise.resolve();
+      } else {
+        return Promise.reject(json.message);
+      }
+    });
+  }
+  else {
+    alert("load a flashcard first!");
+    return;
+  }
 }
 
 
@@ -488,24 +585,6 @@ function getFlashcardsnum() {
           return 0;
       });
 }
-
-
-
-
-function getRandomFlashcard() {
-  getFlashcards()
-  .then(data => {
-    randomFlashcard = data[Math.floor(Math.random() * data.length)];
-    cue.innerHTML = `<h3>${randomFlashcard.cue}</h3>`;
-    response.innerHTML = `<h3>${randomFlashcard.response}</h3>`;
-    alert('Flashcards Loaded!');
-  })
-  .catch(error => {
-    // Handle errors
-    console.error('Error:', error);
-  });
-}
-
 
 // function getCourses() {
 //   return fetch('/server.php?commmand=courses&username=userAA') 

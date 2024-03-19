@@ -195,7 +195,7 @@ class Model {
         }
     }
 
-    public function newFlashcard($username, $cue, $response) {
+    public function newFlashcard($username, $cue, $response, $review_date) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
 
         if ($conn->connect_error) {
@@ -203,8 +203,8 @@ class Model {
             return false;
         }
 
-        $stmt = $conn->prepare("INSERT INTO Flashcards (username, cue, response) VALUES (?,?,?)");
-        $stmt->bind_param("sss", $username, $cue, $response);
+        $stmt = $conn->prepare("INSERT INTO Flashcards (username, cue, response, review_date) VALUES (?,?,?,?)");
+        $stmt->bind_param("ssss", $username, $cue, $response, $review_date);
         $result = $stmt->execute(); // check if query worked
         return $result;
     }
@@ -220,11 +220,11 @@ class Model {
         $stmt->bind_param("s", $username);
         $result = $stmt->execute();
         if ($result) {
-            $stmt->bind_result($id, $username, $cue, $response);
+            $stmt->bind_result($id, $username, $cue, $response, $review_date);
 
             $results = [];
             while ($stmt->fetch()) {
-                $results[] = ['id' => $id, 'username' => $username, 'cue' => $cue, 'response' => $response];
+                $results[] = ['id' => $id, 'username' => $username, 'cue' => $cue, 'response' => $response, 'review_date' => $review_date];
             }
             $stmt->close();
             return $results;
@@ -232,6 +232,20 @@ class Model {
             return false;
         }
     }
+
+    public function updateFlashcard($id, $username, $cue, $response, $review_date) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+      
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false;
+        }
+        $stmt = $conn->prepare("UPDATE Flashcards SET cue = ?, response = ?, review_date = ? WHERE Flashcards.id = ? AND Flashcards.username = ?;");
+        $stmt->bind_param("sssis", $cue, $response, $review_date, $id, $username);
+
+        $result = $stmt->execute(); // check if query worked
+        return $result;
+    }  
 
     public function newCourse($username, $course_name) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
@@ -243,6 +257,7 @@ class Model {
 
         $stmt = $conn->prepare("INSERT INTO Courses (username, course_name) VALUES (?,?)");
         $stmt->bind_param("ss", $username, $course_name);
+
         $result = $stmt->execute(); // check if query worked
         return $result;
     }
