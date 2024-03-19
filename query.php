@@ -233,6 +233,20 @@ class Model {
         }
     }
 
+    public function updateFlashcard($id, $username, $cue, $response, $review_date) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+      
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false;
+        }
+        $stmt = $conn->prepare("UPDATE Flashcards SET cue = ?, response = ?, review_date = ? WHERE Flashcards.id = ? AND Flashcards.username = ?;");
+        $stmt->bind_param("sssis", $cue, $response, $review_date, $id, $username);
+
+        $result = $stmt->execute(); // check if query worked
+        return $result;
+    }  
+
     public function newCourse($username, $course_name) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
 
@@ -243,6 +257,7 @@ class Model {
 
         $stmt = $conn->prepare("INSERT INTO Courses (username, course_name) VALUES (?,?)");
         $stmt->bind_param("ss", $username, $course_name);
+
         $result = $stmt->execute(); // check if query worked
         return $result;
     }

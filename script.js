@@ -407,6 +407,7 @@ if (updateNoteBtn) {
 
 
 // FLASHCARDS
+let currentFlashcard;
 
 function addFlashcard() { // insert a flashcard
   // Add logic to send the note to the server and store it in the database
@@ -450,6 +451,8 @@ const cue = document.querySelector('.cue');
 const response = document.querySelector('.response');
 const reveal = document.querySelector('.reveal');
 const next = document.querySelector('.next');
+const correct = document.querySelector('.correct');
+const incorrect = document.querySelector('.incorrect');
 
 // button click listeners
 if (reveal){
@@ -465,6 +468,20 @@ if (next){
   });
 }
 
+if (correct){
+  correct.addEventListener('click', function(){ // update flashcard review date if loaded
+    alert("clicked!");
+    incrementReviewDate(1); // make this variable in a later sprint
+  });
+}
+
+if (incorrect){
+  incorrect.addEventListener('click', function(){ // update flashcard review date if loaded
+    incrementReviewDate(3); // make this variable in a later sprint
+  });
+}
+
+
 
 // flashcard data 
 function getFlashcards() { // get all the user's flashcards as (cue, response) objects
@@ -473,6 +490,8 @@ function getFlashcards() { // get all the user's flashcards as (cue, response) o
     .then(json => {
       return json.message.map(entry => {
         return {
+          id: entry.id,
+          username: entry.username,
           cue: entry.cue,
           response: entry.response,
           review_date: entry.review_date
@@ -497,9 +516,9 @@ function getRandomFlashcard() {
     if (validFlashcards.length > 0) {
       // If there are valid flashcards, select a random one
       const randomIndex = Math.floor(Math.random() * validFlashcards.length);
-      const randomFlashcard = validFlashcards[randomIndex];
-      cue.innerHTML = `<h3>${randomFlashcard.cue}</h3>`;
-      response.innerHTML = `<h3>${randomFlashcard.response}</h3>`;
+      currentFlashcard = validFlashcards[randomIndex];
+      cue.innerHTML = `<h3>${currentFlashcard.cue}</h3>`;
+      response.innerHTML = `<h3>${currentFlashcard.response}</h3>`;
       alert('Flashcards Loaded!');
     } else {
       // No valid flashcards found
@@ -511,6 +530,49 @@ function getRandomFlashcard() {
     console.error('Error:', error);
   });
 }
+
+function incrementReviewDate(days) {
+
+  if (currentFlashcard) {
+    alert("flashcard found!");
+    const id = currentFlashcard.id;
+    const username = currentFlashcard.username;
+    const cue = currentFlashcard.cue;
+    const response = currentFlashcard.response;
+
+    const formData = new FormData();
+    formData.append('command', 'flashcard-update');
+    formData.append('id', id);
+    formData.append('username', username);
+    formData.append('cue', cue);
+    formData.append('response', response);
+
+    const newReviewDate = new Date();
+    newReviewDate.setDate(newReviewDate.getDate() + days); // Increment review date by days
+    const isoDateString = newReviewDate.toISOString();
+    const dateOnlyString = isoDateString.split('T')[0]; // Extract date part before 'T'
+    alert(dateOnlyString);
+    formData.append('review_date', dateOnlyString);
+
+    return fetch('/server.php', {
+      method: 'POST',
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(json => {
+      if (json.status === 'Success') {
+        return Promise.resolve();
+      } else {
+        return Promise.reject(json.message);
+      }
+    });
+  }
+  else {
+    alert("load a flashcard first!");
+    return;
+  }
+}
+
 
 function getFlashcardsnum() {
   return getFlashcards()

@@ -90,6 +90,16 @@ class Controller {
                 $result = $model->updateDeadline($id, $username, $course, $deadline_name, $due_date);
 
                 break;
+
+            case ('flashcard-update'):
+                $id = $_POST['id'];
+                $username = $_POST['username'];
+                $cue = $_POST['cue'];
+                $response = $_POST['response'];
+                $review_date = $_POST['review_date'];
+                $result = $model->updateFlashcard($id, $username, $cue, $response, $review_date);
+
+                break;
                 
             case ('users'):
                 $username = $_POST['username'];
