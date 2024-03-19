@@ -474,7 +474,8 @@ function getFlashcards() { // get all the user's flashcards as (cue, response) o
       return json.message.map(entry => {
         return {
           cue: entry.cue,
-          response: entry.response
+          response: entry.response,
+          review_date: entry.review_date
         };
       });
     })
