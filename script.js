@@ -425,16 +425,16 @@ if (updateNoteBtn) {
 
 
 
-document.getElementById("result").innerHTML = "The number of flashcard is: " + getFlashcardsnum()
+document.getElementById("result").innerHTML = "The number of flashcards is: " + getFlashcardsnum()
 .then(num => {
   // This code block will execute once the promise is resolved
-  document.getElementById("result").innerHTML = "The number of flashcard is: " + num.toString();
+  document.getElementById("result").innerHTML = "The number of flashcards is: " + num.toString();
 })
 .catch(error => {
   // Handle any errors that might occur during the promise chain
   console.error('Error:', error);
   // Optionally, you can set a default value if there's an error
-  document.getElementById("result").innerHTML = " The number of flashcard is: 0" ;
+  document.getElementById("result").innerHTML = " The number of flashcards is: 0" ;
 });
 
 
