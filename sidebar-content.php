@@ -15,7 +15,7 @@
         </div>
         <div id="sidebar-info">
             <div id="assignment info">
-                <h2>Assignments</h2>
+                <h2>Deadlines</h2>
                 <!-- <div class="info-block">Test</div> -->
                 <?php
                     if ($numDeadlines > 0) {
