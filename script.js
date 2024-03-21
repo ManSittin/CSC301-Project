@@ -408,6 +408,7 @@ if (updateNoteBtn) {
 
 // FLASHCARDS
 let currentFlashcard;
+var flashcardAlgorithm = localStorage.getItem('flashcardAlgorithm');
 
 function addFlashcard() { // insert a flashcard
   // Add logic to send the note to the server and store it in the database
@@ -453,6 +454,8 @@ const reveal = document.querySelector('.reveal');
 const next = document.querySelector('.next');
 const correct = document.querySelector('.correct');
 const incorrect = document.querySelector('.incorrect');
+const randomAlg = document.querySelector('.randomAlg');
+const leitnerAlg = document.querySelector('.leitnerAlg');
 
 // button click listeners
 if (reveal){
@@ -462,8 +465,8 @@ if (reveal){
 }
 
 if (next){
-  next.addEventListener('click', function(){ // populate cue, response with a random flashcard
-    getRandomFlashcard();
+  next.addEventListener('click', function(){ // populate cue, response with the next flashcard
+    getFlashcard();
     response.style.display = 'none';
   });
 }
@@ -478,6 +481,34 @@ if (correct){
 if (incorrect){
   incorrect.addEventListener('click', function(){ // update flashcard review date if loaded
     incrementReviewDate(3); // make this variable in a later sprint
+  });
+}
+
+if (randomAlg){
+  randomAlg.addEventListener('click', function(){ // set flashcard algorithm to random
+    if (flashcardAlgorithm == 'random'){
+      alert("flashcard algorithm is already Random");
+    }
+    else{
+      alert("flashcard algorithm set to Random");
+      flashcardAlgorithm = 'random';
+      localStorage.setItem('flashcardAlgorithm', flashcardAlgorithm);
+      setFlashcards(flashcardAlgorithm);
+    }
+  });
+}
+
+if (leitnerAlg){
+  leitnerAlg.addEventListener('click', function(){ // set flashcard algorithm to leitner
+    if (flashcardAlgorithm == 'leitner'){
+      alert("flashcard algorithm is already Leitner");
+    }
+    else {
+      alert("flashcard algorithm set to Leitner");
+      flashcardAlgorithm = 'leitner';
+      localStorage.setItem('flashcardAlgorithm', flashcardAlgorithm);
+      setFlashcards(flashcardAlgorithm);
+    }
   });
 }
 
@@ -504,6 +535,21 @@ function getFlashcards() { // get all the user's flashcards as (cue, response) o
     });
 }
 
+// get the next flashcard to be reviewed, if available, based on chosen flashcardAlgorithm
+function getFlashcard(){
+  alert(flashcardAlgorithm);
+  if (flashcardAlgorithm == 'random'){
+    return getRandomFlashcard();
+  }
+  else if (flashcardAlgorithm == 'leitner'){
+    return getLeitnerFlashcard();
+  }
+  else{
+    alert("You must choose a flashcard algorithm first");
+    console.error("Invalid flashcard algorithm or none chosen");
+  }
+}
+
 function getRandomFlashcard() {
   getFlashcards()
   .then(data => {
@@ -528,6 +574,75 @@ function getRandomFlashcard() {
   .catch(error => {
     // Handle errors
     console.error('Error:', error);
+  });
+}
+
+function getLeitnerFlashcard(){
+  // to be implemented in 3.11
+  return;
+}
+
+// set all flashcards to their default state as per the algorithm
+function setFlashcards(algorithm){
+
+  // set all flashcards review_date to today (all algorithms)
+  dateToday = todaysDate();
+  alert(dateToday);
+  setReviewDateAll(dateToday);
+
+  // set all priorities to 1 (leitner algorithm)
+  if (algorithm == 'leitner'){
+      // to be implemented in 3.11
+  }
+
+}
+
+// return today's date in 'YYYY-MM-DD' format; ready for POST requests
+function todaysDate(){
+  const dateToday = new Date();
+  const isoDateString = dateToday.toISOString();
+  const dateOnlyString = isoDateString.split('T')[0]; // Extract date part before 'T'
+  return dateOnlyString;
+}
+
+// sets the review date of all flashcards to date
+function setReviewDateAll(date){
+
+  // Get flashcards
+  return getFlashcards()
+    .then(flashcards => {
+      // Iterate over each flashcard and sets its review date to date
+      flashcards.forEach(flashcard => {
+        setReviewDate(date, flashcard.username, flashcard.id, flashcard.cue, flashcard.response);
+      });
+    })
+    .catch(error => {
+      console.error('Error iterating over flashcards:', error);
+      throw error;
+    });
+}
+
+// set the review date of a flashcard with a given username, id, cue, and response to date
+function setReviewDate(date, username, id, cue, response){
+  const formData = new FormData();
+  formData.append('command', 'flashcard-update');
+  formData.append('id', id);
+  formData.append('username', username);
+  formData.append('cue', cue);
+  formData.append('response', response);
+  formData.append('review_date', date);
+
+  return fetch('/server.php', {
+    method: 'POST',
+    body: formData,
+  })
+  .then(response => response.json())
+  .then(json => {
+    if (json.status === 'Success') {
+      return Promise.resolve();
+    } else {
+      return Promise.reject(json.message);
+    }
   });
 }
 
