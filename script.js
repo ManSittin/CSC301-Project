@@ -841,3 +841,94 @@ function showTimeslots() {
         console.error('Error:', error);
     });
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Example: Check if the URL path contains "notes-all"
+  if (window.location.pathname.includes('notes-all')) {
+      loadNotes(); // Initially load all notes
+      const searchButton = document.querySelector('.search-box button[type="submit"]');
+      if (searchButton) {
+          searchButton.addEventListener('click', handleSearch);
+      }
+  }
+});
+
+function handleSearch(event) {
+  event.preventDefault(); // Prevent the default form submission
+  const searchQuery = document.querySelector('.search-box input[name="search"]').value;
+  searchNotes(searchQuery);
+}
+
+function searchNotes(query) {
+  const notesContainer = document.getElementById('note-info');
+  notesContainer.innerHTML = ''; // Always clear the current notes
+  if (query.trim() === '') {
+      notesContainer.innerHTML = '<p>Please enter a search query.</p>';
+      return; // Exit the function early if query is empty
+  }
+  // Proceed with fetch if query is not empty
+  fetch(`/server.php?command=search_notes&query=${encodeURIComponent(query)}&username=${encodeURIComponent(onlineUsers)}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log(data.notes.length);
+          if (data.notes && data.notes.length > 0) {
+              displayNotes(data.notes, notesContainer);
+          } else {
+              notesContainer.innerHTML = '<p>No notes found.</p>';
+          }
+      })
+      .catch(error => {
+        
+          // console.error('Error:', error);
+          notesContainer.innerHTML = '<p>Error fetching notes. Please try again later.</p>';
+      });
+}
+
+function loadNotes() {
+  const notesContainer = document.getElementById('note-info');
+  notesContainer.innerHTML = '<p>Loading notes...</p>'; // Provide a loading indicator
+  fetch('/server.php?command=load_all_notes&username=' + encodeURIComponent(onlineUsers))
+      .then(response => response.json())
+      .then(data => {
+          if (data.notes && data.notes.length > 0) {
+              displayNotes(data.notes, notesContainer);
+          } else {
+              notesContainer.innerHTML = '<p>No notes found.</p>';
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+          notesContainer.innerHTML = '<p>Error loading notes.</p>';
+      });
+}
+
+function displayNotes(notes, container) {
+  container.innerHTML = ''; // Clear container
+  notes.forEach(note => {
+      const noteDiv = document.createElement('div');
+      noteDiv.className = 'note-container';
+      noteDiv.innerHTML = `
+          <div class="note-title">${note.title}</div>
+          <div class="note-content">${note.content.substring(0, 50)}...</div>
+          <button class="edit-button" onclick="location.href='notes-view.php?id=${note.id}'">View/Edit</button>
+      `;
+      container.appendChild(noteDiv);
+  });
+}
+
+function resetSearch() {
+  // Clear the search input
+  const searchInput = document.querySelector('.search-box input[name="search"]');
+  if (searchInput) {
+      searchInput.value = '';
+  }
+
+  // Load all notes again
+  loadNotes();
+}
+

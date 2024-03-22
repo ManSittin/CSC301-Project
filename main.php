@@ -154,36 +154,18 @@
             <?php
             break;
 
-        case 'notes-all':
-            ?>
-            <div id="note info">
-        <?php
-            if ($numNotes > 0) {
-                while ($note = mysqli_fetch_assoc($notes)) {
-                    echo '<div class="info-block">' . htmlspecialchars($note["title"]) . '</div>';
-                }
-                // Reset the data pointer for $notes
-                mysqli_data_seek($notes, 0);
-            }
-        ?>
-        </div>
-        <?php
-        if ($numNotes > 0) {
-            while ($note = mysqli_fetch_assoc($notes)) {
-                echo '<div class="note-container">';
-                echo '<div class="note-title">' . htmlspecialchars($note['title']) . '</div>';
-                echo '<div class="note-content">' . htmlspecialchars(substr($note['content'], 0, 50)) . '...</div>'; // preview
+            case 'notes-all':
+                ?>
+                <form action="javascript:void(0);" method="get" class="search-box" onsubmit="handleSearch(event)">
+                <input type="hidden" name="action" value="notes-all">
+                <input type="text" name="search" placeholder="Search by title..." id="search-input">
+                <button type="submit" id="search-button">Search</button>
+                <button type="button" id="reset-search-button" onclick="resetSearch()">Reset Search</button>
+            </form>
+            <div id="note-info">
+                <!-- Dynamically inserted notes will go here -->
+            </div>
 
-                // Update the onclick attribute below
-                echo '<button class="edit-button" onclick="location.href=\'notes-view.php?id=' . $note['id'] . '\'">View/Edit</button>';
-                echo '</div>';
-            }
-        } else {
-            echo '<p>No notes found.</p>';
-        }
-    ?>
-        </div>
-            
             <?php
             break;
 

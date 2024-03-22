@@ -220,6 +220,32 @@ textarea {
 }
 /* tablet view */
 
+.search-box {
+    /* Style your form to match the rest of your site */
+    margin-top: 2%; /* Adjust as needed */
+    margin-right: 35px;
+    text-align: right; /* Center the form in the div */
+    
+}
+.search-box button {
+    /* Set the background color of the button */
+    background-color: #ff69b4; /* This is a stronger pink color for contrast */
+    color: white; /* Sets the text color to white for better visibility */
+    padding: 5px 10px; /* Adjust padding as needed */
+    cursor: pointer; /* Changes the mouse cursor to a pointer when hovered */
+}
+
+#reset-search-button {
+    background-color: #ff69b4; /* This is a stronger pink color for contrast */
+    color: white; /* Sets the text color to white for better visibility */
+    padding: 5px 5px; /* Adjust padding as needed */
+    cursor: pointer; /* Changes the mouse cursor to a pointer when hovered */
+  }
+  
+  #reset-search-button:hover {
+    background-color: #e6e6e6; /* Slightly darker grey on hover */
+  }
+
 @media only screen and (max-width: 768px) {
 
     #sidebar {
@@ -300,6 +326,7 @@ textarea {
     .textbox-section {
         height: 60%;
     }
+
 }
 
 
