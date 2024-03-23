@@ -194,6 +194,34 @@ class Model {
             return false;
         }
     }
+    public function searchNotesByTitle($searchQuery, $username) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false; // Connection failure
+        }
+    
+        // "SELECT * FROM Notes WHERE username = do AND title LIKE CONCAT('%', ?, '%')";
+        $sql = "SELECT * FROM Notes WHERE username = ? AND title LIKE CONCAT('%', ?, '%')";
+        $stmt = $conn->prepare($sql);
+
+        // Now, this matches the number of ? in the query
+        $stmt->bind_param("ss", $username, $searchQuery);
+        $result = $stmt->execute();    
+        // Bind both the username and the search query parameters
+        if ($result) {
+            $res = $stmt->get_result(); // Use get_result() for flexibility in fetching
+            $results = [];
+            while ($row = $res->fetch_assoc()) { // Fetch as associative array
+                $results[] = $row;
+            }
+            $stmt->close();
+            return $results;
+        } else {
+            $stmt->close();
+            return false; // Execution failure or no results
+        }
+    }
 
     public function newFlashcard($username, $cue, $response, $review_date) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);

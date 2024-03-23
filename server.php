@@ -235,7 +235,37 @@ class Controller {
                     exit();
                 }
                 break;
-            
+                case 'search_notes':
+                    // Assuming the search query parameter is named 'query'
+                    $query = $_GET['query'];
+                    $username = $_GET['username'];
+                    $notesfiltered = $model->searchNotesByTitle($query, $username);
+                    if ($notesfiltered) {
+                        http_response_code(200);
+                        header('Content-Type: application/json');
+                        echo json_encode(['status' => 'Success', 'notes' => $notesfiltered]);
+                    } else {
+                        http_response_code(500); // Not Found if there are no results
+                        header('Content-Type: application/json');
+                        echo json_encode(['status' => 'Failure', 'message' => 'No notes found']);
+                    }
+                        exit();
+                        break;
+
+                    case 'load_all_notes':
+                        $username = $_GET['username'];
+                        $notes = $model->getNotes($username);
+                        if ($notes) {
+                            http_response_code(200);
+                            header('Content-Type: application/json');
+                            echo json_encode(['notes' => $notes]);
+                        } else {
+                            http_response_code(404); // Or another appropriate status code
+                            header('Content-Type: application/json');
+                            echo json_encode(['message' => 'No notes found']);
+                        }
+                        exit();
+                        break;
 
             default:
             
