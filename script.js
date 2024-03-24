@@ -859,7 +859,48 @@ document.addEventListener('DOMContentLoaded', function() {
           searchButton.addEventListener('click', handleDeadlineSearch);
       }
     }
+
+  if (window.location.pathname.includes('flashcard-all')) {
+    loadFlashcards(); // Initially load all notes
+    const searchButton = document.querySelector('.search-box button[type="submit"]');
+    if (searchButton) {
+        searchButton.addEventListener('click', handleSearch);
+    }
+  }
 });
+
+function loadFlashcards() {
+  const flashcardsContainer = document.getElementById('flashcard-info');
+  flashcardsContainer.innerHTML = '<p>Loading flashcards...</p>';
+  fetch('/server.php?command=load_all_flashcards&username=' + encodeURIComponent(onlineUsers))
+    .then(response => response.json())
+    .then(data => {
+      if (data.flashcards && data.flashcards.length > 0) {
+        displayFlashcards(data.flashcards, flashcardsContainer);
+      } else {
+        flashcardsContainer.innerHTML = '<p>No flashcards found.</p>';
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      flashcardsContainer.innerHTML = '<p>Error loading flashcards. Please try again later.</p>';
+    });
+}
+
+function displayFlashcards(flashcards, container) {
+  container.innerHTML = ''; // Clear container
+  flashcards.forEach(flashcard => {
+    const flashcardDiv = document.createElement('div');
+    flashcardDiv.className = 'note-container'; // Use an appropriate class for styling
+    flashcardDiv.innerHTML = `
+      <div class="flashcard-cue">${flashcard.cue}</div>
+      <div class="flashcard-response">${flashcard.response}</div>
+      <div class="flashcard-review-date">Review Date: ${flashcard.review_date}</div>
+    `;
+    container.appendChild(flashcardDiv);
+  });
+}
+
 
 function handleDeadlineSearch(event) {
   event.preventDefault(); // Prevent the default form submission
