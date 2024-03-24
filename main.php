@@ -155,6 +155,7 @@
             <div class="textbox-section">
                 <div><a href="flashcard-insertion.php">Add Flashcards</a></div>
                 <div><a href="flashcard-review.php">Review Flashcards</a></div>
+                <div><a href="flashcard-algorithms.php">Modify Flashcard Algorithm</a></div>
             </div>
             
             <?php
@@ -198,6 +199,18 @@
             
             <?php
             break;
+
+            case 'flashcard-algorithms':
+                ?>
+                <!-- Add a Textbox Feature -->
+                <div class="textbox-section">
+                    <div class="algorithm-buttons">
+                        <div class="randomAlg"><button>Random</button></div>
+                        <div class="leitnerAlg"><button>Leitner</button></div>
+                    </div>
+                </div>
+                <?php
+                break;
 
 
 

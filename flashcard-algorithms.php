@@ -14,8 +14,8 @@
     <?php include_once 'sidebar-content.php'; ?>
     <div class="not-sidebar">
         <?php include_once 'navbar.html';
-        $header_text = "Recall the cue, and click 'reveal response' to check. If right, press &#x1F44D ; if not, press &#x1F44E. Hit 'next cue' to proceed!";
-        $page = "flashcard-review";
+        $header_text = "Choose a flashcard algorithm below. 'Random' will give you a random flashcard each time. 'Leitner' will prioritize flashcards you struggle the most with. Switching algorithms will reset the state of all flashcards.";
+        $page = "flashcard-algorithms";
         include_once 'main.php';
         ?>
     </div>
