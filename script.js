@@ -860,7 +860,164 @@ document.addEventListener('DOMContentLoaded', function() {
           searchButton.addEventListener('click', handleSearch);
       }
   }
+
+  if (window.location.pathname.includes('flashcard-all')) {
+    loadFlashcards(); // Initially load all notes
+    const searchButton = document.querySelector('.search-box button[type="submit"]');
+    if (searchButton) {
+      searchButton.addEventListener('click', handleFlashcardSearch);
+    }
+  }
+
+  if (window.location.pathname.includes('deadlines-all')) {
+    loadDeadlines(); // Initially load all deadlines
+    const searchButton = document.querySelector('.search-box button[type="submit"]');
+    if (searchButton) {
+        searchButton.addEventListener('click', handleDeadlineSearch);
+    }
+  }
+
+
 });
+
+function handleDeadlineSearch(event) {
+  event.preventDefault(); // Prevent the default form submission
+  const searchQuery = document.querySelector('.search-box input[name="search"]').value;
+  searchDeadlines(searchQuery);
+}
+
+function searchDeadlines(query) {
+  const deadlinesContainer = document.getElementById('deadline-info');
+  deadlinesContainer.innerHTML = ''; // Always clear the current deadlines
+  if (query.trim() === '') {
+      deadlinesContainer.innerHTML = '<p>Please enter a search query.</p>';
+      return; // Exit the function early if query is empty
+  }
+  // Proceed with fetch if query is not empty
+  fetch(`/server.php?command=search_deadlines&query=${encodeURIComponent(query)}&username=${encodeURIComponent(onlineUsers)}`)
+      .then(response => response.json())
+      .then(data => {
+          if (data.deadlines && data.deadlines.length > 0) {
+              displayDeadlines(data.deadlines, deadlinesContainer);
+          } else {
+              deadlinesContainer.innerHTML = '<p>No deadlines found.</p>';
+          }
+      })
+      .catch(error => {
+          deadlinesContainer.innerHTML = '<p>Error fetching deadlines. Please try again later.</p>';
+      });
+}
+
+function loadDeadlines() {
+  const deadlinesContainer = document.getElementById('deadline-info');
+  deadlinesContainer.innerHTML = '<p>Loading deadlines...</p>'; // Corrected text to "Loading deadlines..."
+  fetch('/server.php?command=load_all_deadlines&username=' + encodeURIComponent(onlineUsers))
+      .then(response => response.json())
+      .then(data => {
+          if (data.deadlines && data.deadlines.length > 0) { // Corrected from data.notes to data.deadlines
+              displayDeadlines(data.deadlines, deadlinesContainer);
+          } else {
+              deadlinesContainer.innerHTML = '<p>No deadlines found.</p>';
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+          deadlinesContainer.innerHTML = '<p>Error loading deadlines. Please try again later.</p>';
+      });
+}
+
+
+function displayDeadlines(deadlines, container) {
+  container.innerHTML = ''; // Clear container
+  deadlines.forEach(deadline => {
+    const deadlineDiv = document.createElement('div');
+    deadlineDiv.className = 'note-container'; // Use the same class name as in PHP version
+    deadlineDiv.innerHTML = `
+        <div class="deadline-course">${deadline.course}</div>
+        <div class="deadline-name">${deadline.deadline_name.substring(0, 50)}...</div>
+        <div class="deadline-date">Due: ${deadline.due_date}</div>
+        <button class="edit-button" onclick="location.href='deadlines-view.php?id=${deadline.id}'">View/Edit</button>
+    `;
+    container.appendChild(deadlineDiv);
+  });
+}
+
+function resetDeadlineSearch() {
+  const searchInput = document.querySelector('.search-box input[name="search"]');
+  if (searchInput) {
+      searchInput.value = '';
+  }
+  loadDeadlines();
+}
+
+function handleFlashcardSearch(event) {
+  event.preventDefault(); // Prevent the default form submission
+  const searchQuery = document.querySelector('.search-box input[name="search"]').value;
+  searchFlashcards(searchQuery);
+}
+
+function searchFlashcards(query) {
+  const flashcardsContainer = document.getElementById('flashcard-info');
+  flashcardsContainer.innerHTML = ''; // Always clear the current flashcards
+  if (query.trim() === '') {
+      flashcardsContainer.innerHTML = '<p>Please enter a search query.</p>';
+      return; // Exit the function early if query is empty
+  }
+  // Proceed with fetch if query is not empty
+  fetch(`/server.php?command=search_flashcards&query=${encodeURIComponent(query)}&username=${encodeURIComponent(onlineUsers)}`)
+      .then(response => response.json())
+      .then(data => {
+          if (data.flashcards && data.flashcards.length > 0) {
+              displayFlashcards(data.flashcards, flashcardsContainer);
+          } else {
+              flashcardsContainer.innerHTML = '<p>No flashcards found.</p>';
+          }
+      })
+      .catch(error => {
+          flashcardsContainer.innerHTML = '<p>Error fetching flashcards. Please try again later.</p>';
+      });
+}
+
+function resetFlashcardSearch() {
+  const searchInput = document.querySelector('.search-box input[name="search"]');
+  if (searchInput) {
+      searchInput.value = '';
+  }
+  loadFlashcards();
+}
+
+function loadFlashcards() {
+  const flashcardsContainer = document.getElementById('flashcard-info');
+  flashcardsContainer.innerHTML = '<p>Loading flashcards...</p>';
+  fetch('/server.php?command=load_all_flashcards&username=' + encodeURIComponent(onlineUsers))
+    .then(response => response.json())
+    .then(data => {
+      if (data.flashcards && data.flashcards.length > 0) {
+        displayFlashcards(data.flashcards, flashcardsContainer);
+      } else {
+        flashcardsContainer.innerHTML = '<p>No flashcards found.</p>';
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      flashcardsContainer.innerHTML = '<p>Error loading flashcards. Please try again later.</p>';
+    });
+}
+
+function displayFlashcards(flashcards, container) {
+  container.innerHTML = ''; // Clear container
+  flashcards.forEach(flashcard => {
+    const flashcardDiv = document.createElement('div');
+    flashcardDiv.className = 'note-container'; // Use an appropriate class for styling
+    flashcardDiv.innerHTML = `
+      <div class="flashcard-cue">${flashcard.cue}</div>
+      <div class="flashcard-response">${flashcard.response}</div>
+      <div class="flashcard-review-date">Review Date: ${flashcard.review_date}</div>
+    `;
+    container.appendChild(flashcardDiv);
+  });
+}
+
 
 function handleSearch(event) {
   event.preventDefault(); // Prevent the default form submission
@@ -940,4 +1097,5 @@ function resetSearch() {
   // Load all notes again
   loadNotes();
 }
+
 
