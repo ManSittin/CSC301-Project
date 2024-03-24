@@ -25,6 +25,7 @@ function encryptMessage(key, message) {
 
 var isUserOnline = sessionStorage.getItem('isUserOnline'); // check the user being onlien
 var onlineUsers = sessionStorage.getItem('onlineUsers');
+console.log(isUserOnline, onlineUsers)
 
 toggle_open.addEventListener('change', (event) => {
   if (event.currentTarget.checked) {
@@ -115,7 +116,6 @@ function handleSignInClick() {
   // store the user's preferences for this session
   getFlashcardAlgorithm(flashcardAlgorithm);
   sessionStorage.setItem('flashcardAlgorithm', flashcardAlgorithm);
-  alert(flashcardAlgorithm);
 })
 
 }
