@@ -53,7 +53,8 @@ class Controller {
                 $cue = $_POST['cue'];
                 $response = $_POST['response'];
                 $review_date = $_POST['review_date'];
-                $result = $model->newFlashcard($username, $cue, $response, $review_date);
+                $priority = $_POST['priority'];
+                $result = $model->newFlashcard($username, $cue, $response, $review_date, $priority);
 
                 break;
 
@@ -97,7 +98,8 @@ class Controller {
                 $cue = $_POST['cue'];
                 $response = $_POST['response'];
                 $review_date = $_POST['review_date'];
-                $result = $model->updateFlashcard($id, $username, $cue, $response, $review_date);
+                $priority = $_POST['priority'];
+                $result = $model->updateFlashcard($id, $username, $cue, $response, $review_date, $priority);
 
                 break;
                 
