@@ -235,6 +235,7 @@ class Controller {
                     exit();
                 }
                 break;
+
                 case 'search_notes':
                     // Assuming the search query parameter is named 'query'
                     $query = $_GET['query'];
@@ -252,6 +253,23 @@ class Controller {
                         exit();
                         break;
 
+                    case 'search_deadlines':
+                        $query = $_GET['query']; // Assuming the search query parameter is named 'query'
+                        $username = $_GET['username']; // Assuming you also need to filter by username
+                        $deadlinesFiltered = $model->searchDeadlinesByName($query, $username);
+                        if ($deadlinesFiltered) {
+                            http_response_code(200);
+                            header('Content-Type: application/json');
+                            echo json_encode(['status' => 'Success', 'deadlines' => $deadlinesFiltered]);
+                        } else {
+                            http_response_code(404); // Use 404 for "Not Found" if there are no results
+                            header('Content-Type: application/json');
+                            echo json_encode(['status' => 'Failure', 'message' => 'No deadlines found']);
+                        }
+                        exit();
+                        break;
+                        
+
                     case 'load_all_notes':
                         $username = $_GET['username'];
                         $notes = $model->getNotes($username);
@@ -259,6 +277,21 @@ class Controller {
                             http_response_code(200);
                             header('Content-Type: application/json');
                             echo json_encode(['notes' => $notes]);
+                        } else {
+                            http_response_code(404); // Or another appropriate status code
+                            header('Content-Type: application/json');
+                            echo json_encode(['message' => 'No notes found']);
+                        }
+                        exit();
+                        break;
+
+                    case 'load_all_deadlines':
+                        $username = $_GET['username'];
+                        $deadlines = $model->getDeadlines($username);
+                        if ($deadlines) {
+                            http_response_code(200);
+                            header('Content-Type: application/json');
+                            echo json_encode(['deadlines' => $deadlines]);
                         } else {
                             http_response_code(404); // Or another appropriate status code
                             header('Content-Type: application/json');
