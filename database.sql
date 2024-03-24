@@ -51,4 +51,12 @@ CREATE TABLE IF NOT EXISTS Course_Timeslots (
     num_hours INT,
     start_time TIME,
     FOREIGN KEY (course_id) REFERENCES Courses(id)
-)
+);
+
+-- Create table to store Preferences that Users have
+CREATE TABLE IF NOT EXISTS Preferences (
+    preference_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(16) NOT NULL UNIQUE,
+    flashcard_algorithm VARCHAR(16),
+    FOREIGN KEY (username) REFERENCES Users(username)
+);

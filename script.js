@@ -23,8 +23,6 @@ function encryptMessage(key, message) {
 var isUserOnline = sessionStorage.getItem('isUserOnline'); // check the user being onlien
 var onlineUsers = sessionStorage.getItem('onlineUsers');
 
-console.log(isUserOnline, onlineUsers)
-
 toggle_open.addEventListener('change', (event) => {
   if (event.currentTarget.checked) {
     sidebar.style.display = "inline-block";
@@ -110,7 +108,11 @@ function handleSignInClick() {
      
       console.log('User data:', data.message);
       location.reload();
-      
+  
+  // store the user's preferences for this session
+  getFlashcardAlgorithm(flashcardAlgorithm);
+  sessionStorage.setItem('flashcardAlgorithm', flashcardAlgorithm);
+  alert(flashcardAlgorithm);
 })
 
 }
@@ -132,34 +134,61 @@ function handleSignUpClick() {
   // Perform sign-in logic (e.g., send AJAX request to the server)
   // Here, you can use fetch() or any other method to send the data to the server
   // For demonstration purposes, we'll simply log the email and password
+
+  // CREATE NEW USER
   var formData = new FormData();
-          formData.append('command', 'users');
-          formData.append('first_name', document.getElementById("firstName").value);
-          formData.append('last_name', document.getElementById("lastName").value);
-          formData.append('email', document.getElementById("email").value);
-          formData.append('username', document.getElementById("username").value);
-          formData.append('password', passi);
+  formData.append('command', 'users');
+  formData.append('first_name', document.getElementById("firstName").value);
+  formData.append('last_name', document.getElementById("lastName").value);
+  formData.append('email', document.getElementById("email").value);
+  formData.append('username', document.getElementById("username").value);
+  formData.append('password', passi);
 
-      fetch('/server.php', {
-              method: 'POST',
-              body: formData,
-          })
-      .then(data => {
-  // Handle the data returned by the server
-      console.log('Response:', data);
+    fetch('/server.php', {
+            method: 'POST',
+            body: formData,
+        })
+    .then(data => {
+// Handle the data returned by the server
+    console.log('Response:', data);
 
-  // Check the status field in the response
-      if (data.status ===  200) {
-          alert('user online !');
-      // User data retrieval was successful
-      // You can access the user data from the 'message' field in the response
-      console.log('User data:', data.message);
-  } else {
-      // User data retrieval failed
-      console.error('Error:', data.message);
-  }
+// Check the status field in the response
+    if (data.status ===  200) {
+        alert('user online !');
+    // User data retrieval was successful
+    // You can access the user data from the 'message' field in the response
+    console.log('User data:', data.message);
+} else {
+    // User data retrieval failed
+    console.error('Error:', data.message);
+}
 })
   
+  // CREATE NEW PREFERENCES FOR THE USER (can default some here if we want)
+  var formData = new FormData();
+  formData.append('command', 'preferences');
+  formData.append('username', document.getElementById("username").value);
+  formData.append('flashcard_algorithm', 'random'); // DEFAULT
+
+  fetch('/server.php', {
+          method: 'POST',
+          body: formData,
+      })
+  .then(data => {
+// Handle the data returned by the server
+  console.log('Response:', data);
+
+// Check the status field in the response
+  if (data.status ===  200) {
+      alert('user online !');
+  // User data retrieval was successful
+  // You can access the user data from the 'message' field in the response
+  console.log('User data:', data.message);
+} else {
+  // User data retrieval failed
+  console.error('Error:', data.message);
+}
+})
         
 }
 
@@ -401,6 +430,7 @@ if (updateNoteBtn) {
 
 // FLASHCARDS
 let currentFlashcard;
+var flashcardAlgorithm = sessionStorage.getItem('flashcardAlgorithm');
 
 function addFlashcard() { // insert a flashcard
   // Add logic to send the note to the server and store it in the database
@@ -428,6 +458,18 @@ function addFlashcard() { // insert a flashcard
   alert('Flashcard added!');
 }
 
+function updateFlashcardAlgorithm(algo) {
+  var formData = new FormData();
+  formData.append('command', 'preferences-update');
+  formData.append('username', onlineUsers);
+  formData.append('flashcard_algorithm', algo);
+  fetch('/server.php', {
+      method: 'POST',
+      body: formData,
+  });
+  alert('Flashcard Algorithm Updated!');
+}
+
 
 // Front-end flashcard reivew elements
 document.getElementById("result").innerHTML = "The number of flashcards is: " + getFlashcardsnum()
@@ -449,6 +491,8 @@ const reveal = document.querySelector('.reveal');
 const next = document.querySelector('.next');
 const correct = document.querySelector('.correct');
 const incorrect = document.querySelector('.incorrect');
+const randomAlg = document.querySelector('.randomAlg');
+const leitnerAlg = document.querySelector('.leitnerAlg');
 
 // button click listeners
 if (reveal){
@@ -458,8 +502,8 @@ if (reveal){
 }
 
 if (next){
-  next.addEventListener('click', function(){ // populate cue, response with a random flashcard
-    getRandomFlashcard();
+  next.addEventListener('click', function(){ // populate cue, response with the next flashcard
+    getFlashcard();
     response.style.display = 'none';
   });
 }
@@ -475,6 +519,36 @@ if (incorrect){
   incorrect.addEventListener('click', function(){ // update flashcard review date and/or priority if loaded
   updateFlashcardReviewData(flashcardAlgorithm, "incorrect");
   incrementReviewDate(3); // make this variable in a later sprint
+  });
+}
+
+if (randomAlg){
+  randomAlg.addEventListener('click', function(){ // set flashcard algorithm to random
+    if (flashcardAlgorithm == 'random'){
+      alert("flashcard algorithm is already Random");
+    }
+    else{
+      alert("flashcard algorithm set to Random");
+      flashcardAlgorithm = 'random';
+      sessionStorage.setItem('flashcardAlgorithm', flashcardAlgorithm);
+      updateFlashcardAlgorithm(flashcardAlgorithm);
+      setFlashcards(flashcardAlgorithm);
+    }
+  });
+}
+
+if (leitnerAlg){
+  leitnerAlg.addEventListener('click', function(){ // set flashcard algorithm to leitner
+    if (flashcardAlgorithm == 'leitner'){
+      alert("flashcard algorithm is already Leitner");
+    }
+    else {
+      alert("flashcard algorithm set to Leitner");
+      flashcardAlgorithm = 'leitner';
+      sessionStorage.setItem('flashcardAlgorithm', flashcardAlgorithm);
+      updateFlashcardAlgorithm(flashcardAlgorithm);
+      setFlashcards(flashcardAlgorithm);
+    }
   });
 }
 
@@ -531,6 +605,21 @@ function getFlashcards() { // get all the user's flashcards as (cue, response) o
     });
 }
 
+// get the next flashcard to be reviewed, if available, based on chosen flashcardAlgorithm
+function getFlashcard(){
+  alert(flashcardAlgorithm);
+  if (flashcardAlgorithm == 'random'){
+    return getRandomFlashcard();
+  }
+  else if (flashcardAlgorithm == 'leitner'){
+    return getLeitnerFlashcard();
+  }
+  else{
+    alert("You must choose a flashcard algorithm first");
+    console.error("Invalid flashcard algorithm or none chosen");
+  }
+}
+
 function getRandomFlashcard() {
   getFlashcards()
   .then(data => {
@@ -555,6 +644,92 @@ function getRandomFlashcard() {
   .catch(error => {
     // Handle errors
     console.error('Error:', error);
+  });
+}
+
+function getLeitnerFlashcard(){
+  // to be implemented in 3.11
+  return;
+}
+
+// set all flashcards to their default state as per the algorithm
+function setFlashcards(algorithm){
+
+  // set all flashcards review_date to today (all algorithms)
+  dateToday = todaysDate();
+  alert(dateToday);
+  setReviewDateAll(dateToday);
+
+  // set all priorities to 1 (leitner algorithm)
+  if (algorithm == 'leitner'){
+      // to be implemented in 3.11
+  }
+
+}
+
+async function getFlashcardAlgorithm(globalAlg) {
+  try {
+    const response = await fetch(`/server.php?command=preferences&username=${encodeURIComponent(onlineUsers)}`);
+    const json = await response.json();
+    const flashcardAlgorithm = json.message.map(entry => {
+      return {
+        flashcard_algorithm: entry.flashcard_algorithm,
+      };
+    });
+    globalAlg = flashcardAlgorithm;
+    return flashcardAlgorithm;
+  } catch (error) {
+    console.error('Error fetching flashcard algorithm:', error);
+    throw error;
+  }
+}
+
+// return today's date in 'YYYY-MM-DD' format; ready for POST requests
+function todaysDate(){
+  const dateToday = new Date();
+  const isoDateString = dateToday.toISOString();
+  const dateOnlyString = isoDateString.split('T')[0]; // Extract date part before 'T'
+  return dateOnlyString;
+}
+
+// sets the review date of all flashcards to date
+function setReviewDateAll(date){
+
+  // Get flashcards
+  return getFlashcards()
+    .then(flashcards => {
+      // Iterate over each flashcard and sets its review date to date
+      flashcards.forEach(flashcard => {
+        setReviewDate(date, flashcard.username, flashcard.id, flashcard.cue, flashcard.response);
+      });
+    })
+    .catch(error => {
+      console.error('Error iterating over flashcards:', error);
+      throw error;
+    });
+}
+
+// set the review date of a flashcard with a given username, id, cue, and response to date
+function setReviewDate(date, username, id, cue, response){
+  const formData = new FormData();
+  formData.append('command', 'flashcard-update');
+  formData.append('id', id);
+  formData.append('username', username);
+  formData.append('cue', cue);
+  formData.append('response', response);
+  formData.append('review_date', date);
+
+  return fetch('/server.php', {
+    method: 'POST',
+    body: formData,
+  })
+  .then(response => response.json())
+  .then(json => {
+    if (json.status === 'Success') {
+      return Promise.resolve();
+    } else {
+      return Promise.reject(json.message);
+    }
   });
 }
 
@@ -973,10 +1148,46 @@ document.addEventListener('DOMContentLoaded', function() {
     loadFlashcards(); // Initially load all notes
     const searchButton = document.querySelector('.search-box button[type="submit"]');
     if (searchButton) {
-        searchButton.addEventListener('click', handleSearch);
+        searchButton.addEventListener('click', handleFlashcardSearch);
     }
   }
 });
+
+function handleFlashcardSearch(event) {
+  event.preventDefault(); // Prevent the default form submission
+  const searchQuery = document.querySelector('.search-box input[name="search"]').value;
+  searchFlashcards(searchQuery);
+}
+
+function searchFlashcards(query) {
+  const flashcardsContainer = document.getElementById('flashcard-info');
+  flashcardsContainer.innerHTML = ''; // Always clear the current flashcards
+  if (query.trim() === '') {
+      flashcardsContainer.innerHTML = '<p>Please enter a search query.</p>';
+      return; // Exit the function early if query is empty
+  }
+  // Proceed with fetch if query is not empty
+  fetch(`/server.php?command=search_flashcards&query=${encodeURIComponent(query)}&username=${encodeURIComponent(onlineUsers)}`)
+      .then(response => response.json())
+      .then(data => {
+          if (data.flashcards && data.flashcards.length > 0) {
+              displayFlashcards(data.flashcards, flashcardsContainer);
+          } else {
+              flashcardsContainer.innerHTML = '<p>No flashcards found.</p>';
+          }
+      })
+      .catch(error => {
+          flashcardsContainer.innerHTML = '<p>Error fetching flashcards. Please try again later.</p>';
+      });
+}
+
+function resetFlashcardSearch() {
+  const searchInput = document.querySelector('.search-box input[name="search"]');
+  if (searchInput) {
+      searchInput.value = '';
+  }
+  loadFlashcards();
+}
 
 function loadFlashcards() {
   const flashcardsContainer = document.getElementById('flashcard-info');
@@ -1005,6 +1216,7 @@ function displayFlashcards(flashcards, container) {
       <div class="flashcard-cue">${flashcard.cue}</div>
       <div class="flashcard-response">${flashcard.response}</div>
       <div class="flashcard-review-date">Review Date: ${flashcard.review_date}</div>
+      <button class="edit-button" onclick="location.href='deadlines-view.php?id=${flashcard.id}'">View/Edit</button>
     `;
     container.appendChild(flashcardDiv);
   });

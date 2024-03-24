@@ -132,7 +132,7 @@ a:hover {
     padding: 0;
 }
 
-.flashcard-buttons {
+.flashcard-buttons, .algorithm-buttons {
     display: flex;
     align-items: center;
     justify-content: space-around;

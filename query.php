@@ -34,6 +34,33 @@ class Model {
         return $result;
     }
 
+    public function newPreference($username, $flashcard_algorithm) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false;
+        }
+
+        $stmt = $conn->prepare("INSERT INTO Preferences (username, flashcard_algorithm) VALUES (?,?)");
+        $stmt->bind_param("ss", $username, $flashcard_algorithm);
+        $result = $stmt->execute(); // check if query worked
+        return $result;
+    }
+
+    public function updatePreference($username, $flashcard_algorithm) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+      
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false;
+        }
+        $stmt = $conn->prepare("UPDATE Preferences SET flashcard_algorithm = ? WHERE username = ?;");
+        $stmt->bind_param("ss", $flashcard_algorithm, $username);
+
+        $result = $stmt->execute(); // check if query worked
+        return $result;
+    }  
 
     public function newDeadline($username, $course, $deadline_name, $due_date) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
@@ -131,6 +158,23 @@ class Model {
         }
             return false;
         
+    }
+
+    public function getPreference($username) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false;
+        }
+
+        $stmt = $conn->prepare("SELECT * FROM Preferences, Users WHERE username = ?");
+        $stmt->bind_param("s", $username);
+        $result = $stmt->execute();
+        if ($result) {
+            $result = $stmt->execute(); // check if query worked
+            return $result;
+        }
     }
 
     public function newNote($username, $title, $content) {
@@ -250,6 +294,33 @@ class Model {
             return false; // In case of execution failure or no results
         }
     }
+
+    public function searchFlashcardsByCue($searchQuery, $username) {
+    $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+    if ($conn->connect_error) {
+        die("Connection to database failed: " . $conn->connect_error);
+        return false; // Connection failure
+    }
+    
+    $sql = "SELECT * FROM Flashcards WHERE username = ? AND cue LIKE CONCAT('%', ?, '%')";
+    $stmt = $conn->prepare($sql);
+
+    $stmt->bind_param("ss", $username, $searchQuery);
+    $result = $stmt->execute();
+    
+    if ($result) {
+        $res = $stmt->get_result();
+        $results = [];
+        while ($row = $res->fetch_assoc()) {
+            $results[] = $row;
+        }
+        $stmt->close();
+        return $results;
+    } else {
+        $stmt->close();
+        return false; // Execution failure or no results
+    }
+}
 
 
 
