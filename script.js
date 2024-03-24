@@ -9,6 +9,9 @@ const secretKey = "1Q2W3E4RT5YFDSAQ";
 
 
 
+
+
+
 function encryptMessage(key, message) {
   let encryptedMessage = '';
   for (let i = 0; i < message.length; i++) {
@@ -119,6 +122,10 @@ function handleSignInClick() {
 })
 
 }
+
+
+
+
 
 
 
@@ -516,10 +523,15 @@ if (correct){
   correct.addEventListener('click', function(){ // update flashcard review date if loaded
     alert("clicked!");
     incrementReviewDate(1); // make this variable in a later sprint
+  correct.addEventListener('click', function(){ // update flashcard review date if loaded
+    alert("clicked!");
+    incrementReviewDate(1); // make this variable in a later sprint
   });
 }
 
 if (incorrect){
+  incorrect.addEventListener('click', function(){ // update flashcard review date if loaded
+    incrementReviewDate(3); // make this variable in a later sprint
   incorrect.addEventListener('click', function(){ // update flashcard review date if loaded
     incrementReviewDate(3); // make this variable in a later sprint
   });
@@ -761,6 +773,87 @@ function getFlashcardsnum() {
       });
 }
 
+// function getCourses() {
+//   return fetch('/server.php?commmand=courses&username=userAA') 
+//     .then(response => response.json())
+//     .then(json => {
+//       return json.message.map(entry => {
+//         return {
+//           id: entry.id,
+//           course_name: entry.course_name,
+//         };
+//       });
+//     })
+//     .catch(error => {
+//       console.error('Error fetching courses:', error);
+//       throw error;
+//     });
+// }
+
+// function getTimeslots($courseID){
+//   return fetch('/server.php?command=timeslots&course_id=' + $courseID) // these commands don't exist???
+//     .then(response => response.json())
+//     .then(json => {
+      
+//     })
+// }
+
+// function createSchedule() { // this assumes they have inserted courses with appropriate times.
+//   getCourses()
+//     .then(data => {
+
+
+//     })
+//     .catch(error => {
+//       console.error('Error creating schedule:', error);
+//     })
+// }
+
+// // times will be stored as hour in the week
+// function createFFGraph(courses){ // courses is a dictionary with courseid as key and a list of all timeslot/length pairs as a value
+//   let timeslots = {}; //timeslots is a dictionary with all possible (used) timeslots as keys, and all courses using that timeslot as values
+//   let slots = {};
+//   var course_keys = Object.keys(courses); // enter course_keys[num] to get the corresponding courseid, used at end when translating back
+//   var course_nums = {}; // enter course_nums[courseid] to get the corresponding position of the course
+//   for(let i = 0; i < course_keys.length; i++){
+//     course_nums[i] = course_keys[i];
+//   }
+
+
+//   for(let course in course_keys){ // MAKING TIMESLOTS DICTIONARY
+//     var tempSlots = courses[course]; // tempslots is a list of all timeslots for the current course
+//     for(let time in tempSlots){ // time is a section for the course
+//       time = time[day]*24 + time[start_time];
+//       for(let i = 0; i < time[length];i++){
+//         timeslots[time[start]+i].push(course);
+//       }
+//     }
+//   }
+
+//   var timeslot_keys = Object.keys(timeslots); // enter timeslot_keys[num] to get the corresponding time, used at end when translating back
+//   var timeslot_nums = {}; // enter timeslot_nums[time] to get the corresponding location of the time used to find locations in the graph creation
+//   for(let i = 0; i < timeslot_keys.length; i++){
+//     timeslot_nums[i] = timeslot_keys[i];
+//   }
+
+//   let numNodes = 2+timeslot_keys.length+course_keys.length;
+//   var FFgraph = Array(numNodes).fill(Array(numNodes).fill(0));
+  
+//   for(let i = 2; i < timeslots.length+2;i++){ // creating all edges to times from source
+//     FFgraph[0][i] = 1;
+//   }
+
+//   for(let time in timeslots){  // timeslots has all times, time is a possible time
+//     for(let tempcourse in timeslots[time]){ // timeslots[time] is all courses at time, tempcourse is a course at the time
+//       FFgraph[timeslot_nums[time]+2][course_nums[tempcourse]+2] = 1; // creating all edges from times to courses
+//     }
+//   }
+
+//   for(let course in courses){
+//     FFgraph[course_nums[course]+timeslot_keys.length+2][1] = courses[course][length];
+//   }
+
+//   return [FFgraph,course_keys,course_nums,timeslot_keys,timeslot_nums];
 // function getCourses() {
 //   return fetch('/server.php?commmand=courses&username=userAA') 
 //     .then(response => response.json())
@@ -1275,4 +1368,5 @@ function resetSearch() {
   // Load all notes again
   loadNotes();
 }
+
 
