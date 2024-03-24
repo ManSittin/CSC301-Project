@@ -134,7 +134,7 @@ class Model {
         
     }
 
-    public function newNote($username, $title, $content) {
+    public function newNote($username, $title, $content, $is_public) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
 
         if ($conn->connect_error) {
@@ -142,8 +142,8 @@ class Model {
             return false;
         }
 
-        $stmt = $conn->prepare("INSERT INTO Notes (username, title, content) VALUES (?,?,?)");
-        $stmt->bind_param("sss", $username, $title, $content);
+        $stmt = $conn->prepare("INSERT INTO Notes (username, title, content, is_public) VALUES (?,?,?, ?)");
+        $stmt->bind_param("sssi", $username, $title, $content, $is_public);
         $result = $stmt->execute(); // check if query worked
         return $result;
     }

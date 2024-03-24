@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS Notes (
     -- file_path VARCHAR(255) NOT NULL UNIQUE, 
     -- use this later
     content VARCHAR(255),
+    is_public BIT,
     FOREIGN KEY (username) REFERENCES Users(username)
 );
 -- Create table to store Deadlines created by Users

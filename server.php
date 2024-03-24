@@ -33,8 +33,9 @@ class Controller {
                 $username = $_POST['username'];
                 $title = $_POST['title'];
                 $content = $_POST['content'];
+                $is_public = $_POST['is_public'];
                 
-                $result = $model->newNote($username, $title, $content);
+                $result = $model->newNote($username, $title, $content, $is_public);
 
                 break;
 
