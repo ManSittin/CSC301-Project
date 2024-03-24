@@ -324,7 +324,7 @@ class Model {
 
 
 
-    public function newFlashcard($username, $cue, $response, $review_date, $priority) {
+    public function newFlashcard($username, $cue, $response, $review_date) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
 
         if ($conn->connect_error) {
@@ -332,8 +332,8 @@ class Model {
             return false;
         }
 
-        $stmt = $conn->prepare("INSERT INTO Flashcards (username, cue, response, review_date, priority) VALUES (?,?,?,?,?)");
-        $stmt->bind_param("ssssi", $username, $cue, $response, $review_date, $priority);
+        $stmt = $conn->prepare("INSERT INTO Flashcards (username, cue, response, review_date) VALUES (?,?,?,?)");
+        $stmt->bind_param("ssss", $username, $cue, $response, $review_date);
         $result = $stmt->execute(); // check if query worked
         return $result;
     }
@@ -362,15 +362,15 @@ class Model {
         }
     }
 
-    public function updateFlashcard($id, $username, $cue, $response, $review_date, $priority) {
+    public function updateFlashcard($id, $username, $cue, $response, $review_date) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
       
         if ($conn->connect_error) {
             die("Connection to database failed: " . $conn->connect_error);
             return false;
         }
-        $stmt = $conn->prepare("UPDATE Flashcards SET cue = ?, response = ?, review_date = ?, priority = ? WHERE Flashcards.id = ? AND Flashcards.username = ?;");
-        $stmt->bind_param("sssiis", $cue, $response, $review_date, $priority, $id, $username);
+        $stmt = $conn->prepare("UPDATE Flashcards SET cue = ?, response = ?, review_date = ? WHERE Flashcards.id = ? AND Flashcards.username = ?;");
+        $stmt->bind_param("sssis", $cue, $response, $review_date, $id, $username);
 
         $result = $stmt->execute(); // check if query worked
         return $result;

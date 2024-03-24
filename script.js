@@ -6,6 +6,9 @@ const closed_ham = document.getElementById('sidebar-closed-hamburger')
 const open_ham = document.getElementById('sidebar-open-hamburger')
 const secretKey = "1Q2W3E4RT5YFDSAQ";
 
+
+
+
 function encryptMessage(key, message) {
   let encryptedMessage = '';
   for (let i = 0; i < message.length; i++) {
@@ -116,6 +119,10 @@ function handleSignInClick() {
 })
 
 }
+
+
+
+
 
 function handleSignUpClick() {
   // Prevent the default form submission behavior
@@ -448,9 +455,6 @@ function addFlashcard() { // insert a flashcard
   const formattedDate = `${year}-${month}-${day}`;
   formData.append('review_date', formattedDate);
 
-  // default priority to 0
-  formData.append('priority', 0);
-
   fetch('/server.php', {
       method: 'POST',
       body: formData,
@@ -509,46 +513,15 @@ if (next){
 }
 
 if (correct){
-  correct.addEventListener('click', function(){ // update flashcard review date and/or priority if loaded
-  updateFlashcardReviewData(flashcardAlgorithm, "correct");
-  incrementReviewDate(1); // make this variable in a later sprint
+  correct.addEventListener('click', function(){ // update flashcard review date if loaded
+    alert("clicked!");
+    incrementReviewDate(1); // make this variable in a later sprint
   });
 }
 
 if (incorrect){
-  incorrect.addEventListener('click', function(){ // update flashcard review date and/or priority if loaded
-  updateFlashcardReviewData(flashcardAlgorithm, "incorrect");
-  incrementReviewDate(3); // make this variable in a later sprint
-  });
-}
-
-if (randomAlg){
-  randomAlg.addEventListener('click', function(){ // set flashcard algorithm to random
-    if (flashcardAlgorithm == 'random'){
-      alert("flashcard algorithm is already Random");
-    }
-    else{
-      alert("flashcard algorithm set to Random");
-      flashcardAlgorithm = 'random';
-      sessionStorage.setItem('flashcardAlgorithm', flashcardAlgorithm);
-      updateFlashcardAlgorithm(flashcardAlgorithm);
-      setFlashcards(flashcardAlgorithm);
-    }
-  });
-}
-
-if (leitnerAlg){
-  leitnerAlg.addEventListener('click', function(){ // set flashcard algorithm to leitner
-    if (flashcardAlgorithm == 'leitner'){
-      alert("flashcard algorithm is already Leitner");
-    }
-    else {
-      alert("flashcard algorithm set to Leitner");
-      flashcardAlgorithm = 'leitner';
-      sessionStorage.setItem('flashcardAlgorithm', flashcardAlgorithm);
-      updateFlashcardAlgorithm(flashcardAlgorithm);
-      setFlashcards(flashcardAlgorithm);
-    }
+  incorrect.addEventListener('click', function(){ // update flashcard review date if loaded
+    incrementReviewDate(3); // make this variable in a later sprint
   });
 }
 
@@ -741,7 +714,6 @@ function incrementReviewDate(days) {
     const username = currentFlashcard.username;
     const cue = currentFlashcard.cue;
     const response = currentFlashcard.response;
-    const priority = currentFlashcard.priority;
 
     const formData = new FormData();
     formData.append('command', 'flashcard-update');
@@ -749,7 +721,6 @@ function incrementReviewDate(days) {
     formData.append('username', username);
     formData.append('cue', cue);
     formData.append('response', response);
-    formData.append('priority', priority);
 
     const newReviewDate = new Date();
     newReviewDate.setDate(newReviewDate.getDate() + days); // Increment review date by days
@@ -777,110 +748,6 @@ function incrementReviewDate(days) {
   }
 }
 
-function setPriorityAll(priority){
-
-  // Get flashcards
-  return getFlashcards()
-    .then(flashcards => {
-      // Iterate over each flashcard and sets its review date to date
-      flashcards.forEach(flashcard => {
-        setPriority(flashcard.username, flashcard.id, flashcard.cue, flashcard.response, flashcard.review_date, priority);
-      });
-    })
-    .catch(error => {
-      console.error('Error iterating over flashcards:', error);
-      throw error;
-    });
-}
-
-function setPriority(id, username, cue, response, review_date, priority) {
-
-  if (currentFlashcard) {
-    alert("flashcard found!");
-    const formData = new FormData();
-    formData.append('command', 'flashcard-update');
-    formData.append('id', id);
-    formData.append('username', username);
-    formData.append('cue', cue);
-    formData.append('response', response);
-    formData.append('review_date', review_date);
-    formData.append('priority', priority);
-
-    return fetch('/server.php', {
-      method: 'POST',
-      body: formData,
-    })
-    .then(response => response.json())
-    .then(json => {
-      if (json.status === 'Success') {
-        return Promise.resolve();
-      } else {
-        return Promise.reject(json.message);
-      }
-    });
-  }
-  else {
-    alert("load a flashcard first!");
-    return;
-  }
-}
-
-// set all flashcards to their default state as per the algorithm
-function setFlashcards(algorithm){
-
-  // set all flashcards review_date to today (all algorithms)
-  dateToday = todaysDate();
-  alert(dateToday);
-  setReviewDateAll(dateToday);
-
-  // set all priorities to 0 (leitner algorithm)
-  if (algorithm == 'leitner'){
-      setPriorityAll(0);
-  }
-}
-
-// sets the review date of all flashcards to date
-function setReviewDateAll(date){
-
-  // Get flashcards
-  return getFlashcards()
-    .then(flashcards => {
-      // Iterate over each flashcard and sets its review date to date
-      flashcards.forEach(flashcard => {
-        setReviewDate(date, flashcard.username, flashcard.id, flashcard.cue, flashcard.response, flashcard.priority);
-      });
-    })
-    .catch(error => {
-      console.error('Error iterating over flashcards:', error);
-      throw error;
-    });
-}
-
-// set the review date of a flashcard with a given username, id, cue, and response to date
-function setReviewDate(date, username, id, cue, response, priority){ // really this just updates the flashcard...
-  const formData = new FormData();
-  formData.append('command', 'flashcard-update');
-  formData.append('id', id);
-  formData.append('username', username);
-  formData.append('cue', cue);
-  formData.append('response', response);
-  formData.append('review_date', date);
-  formData.append('priority', priority);
-
-  return fetch('/server.php', {
-    method: 'POST',
-    body: formData,
-  })
-  .then(response => response.json())
-  .then(json => {
-    if (json.status === 'Success') {
-      return Promise.resolve();
-    } else {
-      return Promise.reject(json.message);
-    }
-  });
-}
-
 
 function getFlashcardsnum() {
   return getFlashcards()
@@ -894,63 +761,87 @@ function getFlashcardsnum() {
       });
 }
 
-updateFlashcardReviewData(algorithm, state){
+// function getCourses() {
+//   return fetch('/server.php?commmand=courses&username=userAA') 
+//     .then(response => response.json())
+//     .then(json => {
+//       return json.message.map(entry => {
+//         return {
+//           id: entry.id,
+//           course_name: entry.course_name,
+//         };
+//       });
+//     })
+//     .catch(error => {
+//       console.error('Error fetching courses:', error);
+//       throw error;
+//     });
+// }
 
-  if (algorithm == 'leitner'){
-    updateFlashcardLeitner(state);
-  }
+// function getTimeslots($courseID){
+//   return fetch('/server.php?command=timeslots&course_id=' + $courseID) // these commands don't exist???
+//     .then(response => response.json())
+//     .then(json => {
+      
+//     })
+// }
 
-  else if (algorithm == 'random'){
+// function createSchedule() { // this assumes they have inserted courses with appropriate times.
+//   getCourses()
+//     .then(data => {
 
-    if (state == "correct"){
-      incrementReviewDate(1);
-    }
 
-    else if (state == "incorrect"){
-      incrementReviewDate(3);
-    }
+//     })
+//     .catch(error => {
+//       console.error('Error creating schedule:', error);
+//     })
+// }
 
-  }
-}
+// // times will be stored as hour in the week
+// function createFFGraph(courses){ // courses is a dictionary with courseid as key and a list of all timeslot/length pairs as a value
+//   let timeslots = {}; //timeslots is a dictionary with all possible (used) timeslots as keys, and all courses using that timeslot as values
+//   let slots = {};
+//   var course_keys = Object.keys(courses); // enter course_keys[num] to get the corresponding courseid, used at end when translating back
+//   var course_nums = {}; // enter course_nums[courseid] to get the corresponding position of the course
+//   for(let i = 0; i < course_keys.length; i++){
+//     course_nums[i] = course_keys[i];
+//   }
 
-updateFlashcardLeitner(state){
- /*
-Pre: state = "correct" or "incorrect"
- */
-  // flashcard variables for updating
-  const id = currentFlashcard.id;
-  const username = currentFlashcard.username;
-  const cue = currentFlashcard.cue;
-  const response = currentFlashcard.response;
-  const review_date = currentFlashcard.review_date;
 
-  if (state == "correct"){
-    setPriority(id, username, cue, response, review_date, Math.max(currentFlashcard.priority + 1, 3)); // currently 3 is the highest priority
-  }
-  else {
-    setPriority(id, username, cue, response, review_date, 1); // set to the lowest priority (other than today)
-  }
+//   for(let course in course_keys){ // MAKING TIMESLOTS DICTIONARY
+//     var tempSlots = courses[course]; // tempslots is a list of all timeslots for the current course
+//     for(let time in tempSlots){ // time is a section for the course
+//       time = time[day]*24 + time[start_time];
+//       for(let i = 0; i < time[length];i++){
+//         timeslots[time[start]+i].push(course);
+//       }
+//     }
+//   }
 
-  // update review date based on priority
-  let priority = currentFlashcard.priority;
-  switch(priority) {
+//   var timeslot_keys = Object.keys(timeslots); // enter timeslot_keys[num] to get the corresponding time, used at end when translating back
+//   var timeslot_nums = {}; // enter timeslot_nums[time] to get the corresponding location of the time used to find locations in the graph creation
+//   for(let i = 0; i < timeslot_keys.length; i++){
+//     timeslot_nums[i] = timeslot_keys[i];
+//   }
 
-    case 1:
-      incrementReviewDate(1);
-      break;
-    case 2:
-      incrementReviewDate(3)
-      break;
-    case 3:
-      incrementReviewDate(7);
-      break;
-  }
-
+//   let numNodes = 2+timeslot_keys.length+course_keys.length;
+//   var FFgraph = Array(numNodes).fill(Array(numNodes).fill(0));
   
+//   for(let i = 2; i < timeslots.length+2;i++){ // creating all edges to times from source
+//     FFgraph[0][i] = 1;
+//   }
 
-}
+//   for(let time in timeslots){  // timeslots has all times, time is a possible time
+//     for(let tempcourse in timeslots[time]){ // timeslots[time] is all courses at time, tempcourse is a course at the time
+//       FFgraph[timeslot_nums[time]+2][course_nums[tempcourse]+2] = 1; // creating all edges from times to courses
+//     }
+//   }
 
+//   for(let course in courses){
+//     FFgraph[course_nums[course]+timeslot_keys.length+2][1] = courses[course][length];
+//   }
 
+//   return [FFgraph,course_keys,course_nums,timeslot_keys,timeslot_nums];
 
 function addCourse() {
     var formData = new FormData();
@@ -1385,84 +1276,3 @@ function resetSearch() {
   loadNotes();
 }
 
-// function getCourses() {
-//   return fetch('/server.php?commmand=courses&username=userAA') 
-//     .then(response => response.json())
-//     .then(json => {
-//       return json.message.map(entry => {
-//         return {
-//           id: entry.id,
-//           course_name: entry.course_name,
-//         };
-//       });
-//     })
-//     .catch(error => {
-//       console.error('Error fetching courses:', error);
-//       throw error;
-//     });
-// }
-
-// function getTimeslots($courseID){
-//   return fetch('/server.php?command=timeslots&course_id=' + $courseID) // these commands don't exist???
-//     .then(response => response.json())
-//     .then(json => {
-      
-//     })
-// }
-
-// function createSchedule() { // this assumes they have inserted courses with appropriate times.
-//   getCourses()
-//     .then(data => {
-
-
-//     })
-//     .catch(error => {
-//       console.error('Error creating schedule:', error);
-//     })
-// }
-
-// // times will be stored as hour in the week
-// function createFFGraph(courses){ // courses is a dictionary with courseid as key and a list of all timeslot/length pairs as a value
-//   let timeslots = {}; //timeslots is a dictionary with all possible (used) timeslots as keys, and all courses using that timeslot as values
-//   let slots = {};
-//   var course_keys = Object.keys(courses); // enter course_keys[num] to get the corresponding courseid, used at end when translating back
-//   var course_nums = {}; // enter course_nums[courseid] to get the corresponding position of the course
-//   for(let i = 0; i < course_keys.length; i++){
-//     course_nums[i] = course_keys[i];
-//   }
-
-
-//   for(let course in course_keys){ // MAKING TIMESLOTS DICTIONARY
-//     var tempSlots = courses[course]; // tempslots is a list of all timeslots for the current course
-//     for(let time in tempSlots){ // time is a section for the course
-//       time = time[day]*24 + time[start_time];
-//       for(let i = 0; i < time[length];i++){
-//         timeslots[time[start]+i].push(course);
-//       }
-//     }
-//   }
-
-//   var timeslot_keys = Object.keys(timeslots); // enter timeslot_keys[num] to get the corresponding time, used at end when translating back
-//   var timeslot_nums = {}; // enter timeslot_nums[time] to get the corresponding location of the time used to find locations in the graph creation
-//   for(let i = 0; i < timeslot_keys.length; i++){
-//     timeslot_nums[i] = timeslot_keys[i];
-//   }
-
-//   let numNodes = 2+timeslot_keys.length+course_keys.length;
-//   var FFgraph = Array(numNodes).fill(Array(numNodes).fill(0));
-  
-//   for(let i = 2; i < timeslots.length+2;i++){ // creating all edges to times from source
-//     FFgraph[0][i] = 1;
-//   }
-
-//   for(let time in timeslots){  // timeslots has all times, time is a possible time
-//     for(let tempcourse in timeslots[time]){ // timeslots[time] is all courses at time, tempcourse is a course at the time
-//       FFgraph[timeslot_nums[time]+2][course_nums[tempcourse]+2] = 1; // creating all edges from times to courses
-//     }
-//   }
-
-//   for(let course in courses){
-//     FFgraph[course_nums[course]+timeslot_keys.length+2][1] = courses[course][length];
-//   }
-
-//   return [FFgraph,course_keys,course_nums,timeslot_keys,timeslot_nums];
