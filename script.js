@@ -523,15 +523,10 @@ if (correct){
   correct.addEventListener('click', function(){ // update flashcard review date if loaded
     alert("clicked!");
     incrementReviewDate(1); // make this variable in a later sprint
-  correct.addEventListener('click', function(){ // update flashcard review date if loaded
-    alert("clicked!");
-    incrementReviewDate(1); // make this variable in a later sprint
   });
 }
 
 if (incorrect){
-  incorrect.addEventListener('click', function(){ // update flashcard review date if loaded
-    incrementReviewDate(3); // make this variable in a later sprint
   incorrect.addEventListener('click', function(){ // update flashcard review date if loaded
     incrementReviewDate(3); // make this variable in a later sprint
   });
@@ -569,7 +564,7 @@ if (leitnerAlg){
 
 
 
-
+// flashcard data 
 function getFlashcards() { // get all the user's flashcards as (cue, response) objects
   return fetch(`/server.php?command=flashcards&username=${encodeURIComponent(onlineUsers)}`)
     .then(response => response.json())

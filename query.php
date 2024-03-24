@@ -334,8 +334,6 @@ class Model {
 
         $stmt = $conn->prepare("INSERT INTO Flashcards (username, cue, response, review_date) VALUES (?,?,?,?)");
         $stmt->bind_param("ssss", $username, $cue, $response, $review_date);
-        $stmt = $conn->prepare("INSERT INTO Flashcards (username, cue, response, review_date) VALUES (?,?,?,?)");
-        $stmt->bind_param("ssss", $username, $cue, $response, $review_date);
         $result = $stmt->execute(); // check if query worked
         return $result;
     }
@@ -365,15 +363,12 @@ class Model {
     }
 
     public function updateFlashcard($id, $username, $cue, $response, $review_date) {
-    public function updateFlashcard($id, $username, $cue, $response, $review_date) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
       
         if ($conn->connect_error) {
             die("Connection to database failed: " . $conn->connect_error);
             return false;
         }
-        $stmt = $conn->prepare("UPDATE Flashcards SET cue = ?, response = ?, review_date = ? WHERE Flashcards.id = ? AND Flashcards.username = ?;");
-        $stmt->bind_param("sssis", $cue, $response, $review_date, $id, $username);
         $stmt = $conn->prepare("UPDATE Flashcards SET cue = ?, response = ?, review_date = ? WHERE Flashcards.id = ? AND Flashcards.username = ?;");
         $stmt->bind_param("sssis", $cue, $response, $review_date, $id, $username);
 
