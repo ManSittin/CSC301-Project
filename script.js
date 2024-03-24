@@ -25,6 +25,7 @@ function encryptMessage(key, message) {
 
 var isUserOnline = sessionStorage.getItem('isUserOnline'); // check the user being onlien
 var onlineUsers = sessionStorage.getItem('onlineUsers');
+console.log(isUserOnline, onlineUsers)
 
 console.log(isUserOnline, onlineUsers)
 
@@ -113,7 +114,7 @@ function handleSignInClick() {
      
       console.log('User data:', data.message);
       location.reload();
-      
+
 })
 
 }
