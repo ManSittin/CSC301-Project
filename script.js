@@ -588,7 +588,7 @@ Pre: state = "correct" or "incorrect"
     setPriority(id, username, cue, response, review_date, Math.min(currentFlashcard.priority + 1, 3)); // currently 3 is the highest priority
   }
   else {
-    print("incorrect...")
+    alert("incorrect...");
     setPriority(id, username, cue, response, review_date, 1); // set to the lowest priority (other than today)
   }
 
