@@ -81,7 +81,6 @@ class Model {
 
     public function getDeadlines($username) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
-
         if ($conn->connect_error) {
             die("Connection to database failed: " . $conn->connect_error);
             return false;
@@ -222,6 +221,37 @@ class Model {
             return false; // Execution failure or no results
         }
     }
+
+    public function searchDeadlinesByName($searchQuery, $username) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false; // Connection failure
+        }
+    
+        // Assuming the structure of your Deadlines table matches the expected columns
+        $sql = "SELECT * FROM Deadlines WHERE username = ? AND course LIKE CONCAT('%', ?, '%')";
+        $stmt = $conn->prepare($sql);
+    
+        // Bind the username and search query to the prepared statement
+        $stmt->bind_param("ss", $username, $searchQuery);
+        $result = $stmt->execute();
+    
+        if ($result) {
+            $res = $stmt->get_result(); // Fetch the results of the query
+            $results = [];
+            while ($row = $res->fetch_assoc()) { // Iterate through each row in the result set
+                $results[] = $row;
+            }
+            $stmt->close();
+            return $results; // Return the array of fetched deadlines
+        } else {
+            $stmt->close();
+            return false; // In case of execution failure or no results
+        }
+    }
+
+
 
     public function newFlashcard($username, $cue, $response, $review_date) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
