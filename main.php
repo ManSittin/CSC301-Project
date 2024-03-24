@@ -12,7 +12,6 @@
             <?php
             break;
         case 'deadlines-insertion':
-            $currentDateTime = date('Y-m-d\TH:i'); // Format: YYYY-MM-DDTHH:MM
             ?>
             <!-- Add a Textbox Feature -->
             <div class="textbox-section">
@@ -20,6 +19,7 @@
                 <form id="addDeadlineForm">
                     <p>Enter Course: </p>
                     <textarea rows="1" cols="50" name="tags" id="tags" placeholder="Type your course here..."></textarea>
+                    </select>
                     <p>Enter Deadline Name:</p>
                     <textarea rows="1" cols="50" name="title" id="title" placeholder="Enter the name of your deadline here..."></textarea>
                     <br>
@@ -27,7 +27,7 @@
                         type="datetime-local"
                         id="date"
                         name="date"
-                        value="<?php echo $currentDateTime; ?>" 
+                        value="2024-02-05T15:00"
                         min="0000-00-00T00:00"
                         max="9999-12-31T23:59"
                      />
