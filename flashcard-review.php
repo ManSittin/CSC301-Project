@@ -8,7 +8,6 @@
     <link href='https://fonts.googleapis.com/css?family=Outfit' rel='stylesheet'>
     <title>CourseBind</title>
     <style>
-        /* Existing style here */
     </style>
 </head>
 <body>
@@ -20,7 +19,6 @@
         include_once 'main.php';
         ?>
     </div>
-
     <script src="script.js">
     </script>
 </body>

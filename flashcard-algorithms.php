@@ -8,21 +8,18 @@
     <link href='https://fonts.googleapis.com/css?family=Outfit' rel='stylesheet'>
     <title>CourseBind</title>
     <style>
-        /* Existing style here */
     </style>
 </head>
-<body onload="loadNote(4)">
+<body>
     <?php include_once 'sidebar-content.php'; ?>
     <div class="not-sidebar">
         <?php include_once 'navbar.html';
-        $header_text = "Welcome to the flashcards page. Here you can view all of your flashcards and edit them!";
-        $page = "flashcard-all";
+        $header_text = "Choose a flashcard algorithm below. 'Random' will give you a random flashcard each time. 'Leitner' will prioritize flashcards you struggle the most with. Switching algorithms will reset the state of all flashcards.";
+        $page = "flashcard-algorithms";
         include_once 'main.php';
         ?>
     </div>
-    <script src="script.js"></script>
+    <script src="script.js">
+    </script>
 </body>
-    </div>
-</body>
-
 </html>
