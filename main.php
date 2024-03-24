@@ -378,7 +378,8 @@
             <input type="password" id="password" placeholder="Enter your password" 
             />
           </div>
-          <span className="password-length-info">(Password must be longer than 8 characters)</span>
+
+        <div id="passwordWarning" style="color: red;"></div>
           <button type="button" className="btnformReg" onClick="handleSignUpClick()">
             SIGN UP
           </button>
