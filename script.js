@@ -26,8 +26,6 @@ function encryptMessage(key, message) {
 var isUserOnline = sessionStorage.getItem('isUserOnline'); // check the user being onlien
 var onlineUsers = sessionStorage.getItem('onlineUsers');
 
-console.log(isUserOnline, onlineUsers)
-
 toggle_open.addEventListener('change', (event) => {
   if (event.currentTarget.checked) {
     sidebar.style.display = "inline-block";

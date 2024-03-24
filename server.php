@@ -111,6 +111,19 @@ class Controller {
                 $result = $model->newUser($username, $email, $first_name, $last_name, $password);
 
                 break;
+
+            case ('preferences'):
+                $flashcard_algorithm = $_POST['flashcard_algorithm'];
+                $username = $_POST['username'];
+                $result = $model->newPreference($username, $flashcard_algorithm);
+                    break;
+            
+            case ('preferences-update'):
+                $flashcard_algorithm = $_POST['flashcard_algorithm'];
+                $username = $_POST['username'];
+                $result = $model->updatePreference($username, $flashcard_algorithm);
+                break;
+
             case ('connect'):
                     $email = $_POST['email'];
                     $password = $_POST['password'];
@@ -232,6 +245,21 @@ class Controller {
                     http_response_code(500);
                     header('Content-Type: application/json');
                     echo json_encode("");
+                    exit();
+                }
+                break;
+            case 'preferences':
+                $username = $_GET['username'];
+                $results = $model->getPreference($username);
+                if($results) {
+                    http_response_code(200);
+                    header('Content-Type: application/json');
+                    echo json_encode(['status' => 'Success: ' . $command, 'message' => $results]);
+                    exit();
+                } else {
+                    http_response_code(500);
+                    header('Content-Type: application/json');
+                    echo json_encode(['status' => 'Failure: ' . $command, 'message' => ""]);
                     exit();
                 }
                 break;
