@@ -111,6 +111,19 @@ class Controller {
                 $result = $model->newUser($username, $email, $first_name, $last_name, $password);
 
                 break;
+
+            case ('preferences'):
+                $flashcard_algorithm = $_POST['flashcard_algorithm'];
+                $username = $_POST['username'];
+                $result = $model->newPreference($username, $flashcard_algorithm);
+                    break;
+            
+            case ('preferences-update'):
+                $flashcard_algorithm = $_POST['flashcard_algorithm'];
+                $username = $_POST['username'];
+                $result = $model->updatePreference($username, $flashcard_algorithm);
+                break;
+
             case ('connect'):
                     $email = $_POST['email'];
                     $password = $_POST['password'];
@@ -236,6 +249,24 @@ class Controller {
                 }
                 break;
 
+            case 'preferences':
+                $username = $_GET['username'];
+                $results = $model->getPreference($username);
+                if($results) {
+                    http_response_code(200);
+                    header('Content-Type: application/json');
+                    echo json_encode(['status' => 'Success: ' . $command, 'message' => $results]);
+                    exit();
+                } else {
+                    http_response_code(500);
+                    header('Content-Type: application/json');
+                    echo json_encode(['status' => 'Failure: ' . $command, 'message' => ""]);
+                    exit();
+                }
+                break;
+            
+
+
                 case 'search_notes':
                     // Assuming the search query parameter is named 'query'
                     $query = $_GET['query'];
@@ -268,7 +299,37 @@ class Controller {
                         }
                         exit();
                         break;
-                        
+
+                    case 'search_flashcards':
+                        $query = $_GET['query'];
+                        $username = $_GET['username'];
+                        $flashcardsFiltered = $model->searchFlashcardsByCue($query, $username);
+                        if ($flashcardsFiltered) {
+                            http_response_code(200);
+                            header('Content-Type: application/json');
+                            echo json_encode(['status' => 'Success', 'flashcards' => $flashcardsFiltered]);
+                            } else {
+                                http_response_code(404); // Use 404 for "Not Found" if there are no results
+                                header('Content-Type: application/json');
+                                echo json_encode(['status' => 'Failure', 'message' => 'No flashcards found']);
+                            }
+                        exit();
+                    break;
+
+                    case 'load_all_flashcards':
+                        $username = $_GET['username']; // Obtain the username
+                        $flashcards = $model->getFlashcards($username); // Assume this function exists and fetches flashcards for the user
+                        if ($flashcards) {
+                            http_response_code(200);
+                            header('Content-Type: application/json');
+                            echo json_encode(['flashcards' => $flashcards]);
+                        } else {
+                            http_response_code(404); // No flashcards found
+                            header('Content-Type: application/json');
+                            echo json_encode(['message' => 'No flashcards found']);
+                        }
+                        exit();
+                        break;
 
                     case 'load_all_notes':
                         $username = $_GET['username'];
@@ -299,6 +360,7 @@ class Controller {
                         }
                         exit();
                         break;
+
 
             default:
             

@@ -8,18 +8,21 @@
     <link href='https://fonts.googleapis.com/css?family=Outfit' rel='stylesheet'>
     <title>CourseBind</title>
     <style>
+        /* Existing style here */
     </style>
 </head>
-<body>
+<body onload="loadNote(4)">
     <?php include_once 'sidebar-content.php'; ?>
     <div class="not-sidebar">
         <?php include_once 'navbar.html';
-        $header_text = "Recall the cue, and click 'reveal response' to check. If right, press &#x1F44D ; if not, press &#x1F44E. Hit 'next cue' to proceed!";
-        $page = "flashcard-review";
+        $header_text = "Welcome to the flashcards page. Here you can view all of your flashcards and edit them!";
+        $page = "flashcard-all";
         include_once 'main.php';
         ?>
     </div>
-    <script src="script.js">
-    </script>
+    <script src="script.js"></script>
 </body>
+    </div>
+</body>
+
 </html>
