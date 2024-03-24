@@ -133,7 +133,7 @@ function handleSignInClick() {
 
 function handleSignUpClick() {
   // Prevent the default form submission behavior
-  console.log(document.getElementById("signup").elements)
+  // console.log(document.getElementById("signup").elements)
  // event.preventDefault();
 
   // Retrieve the email and password from the input fields
@@ -203,14 +203,6 @@ function handleSignUpClick() {
   console.error('Error:', data.message);
 }
 })
-        
-}
-
-function handleSignupClick() {
-
-window.location.href = "signup.php";
-
-
 }
 
 
@@ -462,6 +454,9 @@ function addFlashcard() { // insert a flashcard
   const formattedDate = `${year}-${month}-${day}`;
   formData.append('review_date', formattedDate);
 
+  // default priority to 0
+  formData.append('priority', 0);
+
   fetch('/server.php', {
       method: 'POST',
       body: formData,
@@ -520,15 +515,14 @@ if (next){
 }
 
 if (correct){
-  correct.addEventListener('click', function(){ // update flashcard review date if loaded
-    alert("clicked!");
-    incrementReviewDate(1); // make this variable in a later sprint
+  correct.addEventListener('click', function(){ // update flashcard review date and/or priority if loaded
+    updateFlashcardReviewData(flashcardAlgorithm, "correct");
   });
 }
 
 if (incorrect){
-  incorrect.addEventListener('click', function(){ // update flashcard review date if loaded
-    incrementReviewDate(3); // make this variable in a later sprint
+  incorrect.addEventListener('click', function(){ // update flashcard review date and/or priority if loaded
+    updateFlashcardReviewData(flashcardAlgorithm, "incorrect");
   });
 }
 
@@ -559,10 +553,58 @@ if (leitnerAlg){
       updateFlashcardAlgorithm(flashcardAlgorithm);
       setFlashcards(flashcardAlgorithm);
     }
-  });
+  })
 }
 
+function updateFlashcardReviewData(algorithm, state){
 
+  if (algorithm == 'leitner'){
+    updateFlashcardLeitner(state);
+  }
+
+  else if (algorithm == 'random'){
+    if (state == "correct"){
+      incrementReviewDate(1);
+    }
+    else if (state == "incorrect"){
+      incrementReviewDate(3);
+    }
+  }
+}
+
+function updateFlashcardLeitner(state){
+  /*
+Pre: state = "correct" or "incorrect"
+ */
+  // flashcard variables for updating
+  const id = currentFlashcard.id;
+  const username = currentFlashcard.username;
+  const cue = currentFlashcard.cue;
+  const response = currentFlashcard.response;
+  const review_date = currentFlashcard.review_date;
+
+  if (state == "correct"){
+    setPriority(id, username, cue, response, review_date, Math.min(currentFlashcard.priority + 1, 3)); // currently 3 is the highest priority
+  }
+  else {
+    setPriority(id, username, cue, response, review_date, 1); // set to the lowest priority (other than today)
+  }
+
+  // update review date based on priority
+  let priority = currentFlashcard.priority;
+  switch(priority) {
+
+    case 1:
+      incrementReviewDate(1);
+      break;
+    case 2:
+      incrementReviewDate(3)
+      break;
+    case 3:
+      incrementReviewDate(7);
+      break;
+  }
+}
 
 // flashcard data 
 function getFlashcards() { // get all the user's flashcards as (cue, response) objects
@@ -575,7 +617,8 @@ function getFlashcards() { // get all the user's flashcards as (cue, response) o
           username: entry.username,
           cue: entry.cue,
           response: entry.response,
-          review_date: entry.review_date
+          review_date: entry.review_date,
+          priority: entry.priority
         };
       });
     })
@@ -597,6 +640,54 @@ function getFlashcard(){
   else{
     alert("You must choose a flashcard algorithm first");
     console.error("Invalid flashcard algorithm or none chosen");
+  }
+}
+
+function setPriorityAll(priority){
+
+  // Get flashcards
+  return getFlashcards()
+    .then(flashcards => {
+      // Iterate over each flashcard and sets its review date to date
+      flashcards.forEach(flashcard => {
+        setPriority(flashcard.username, flashcard.id, flashcard.cue, flashcard.response, flashcard.review_date, priority);
+      });
+    })
+    .catch(error => {
+      console.error('Error iterating over flashcards:', error);
+      throw error;
+    });
+}
+
+function setPriority(id, username, cue, response, review_date, priority) {
+
+  if (currentFlashcard) {
+    alert("flashcard found!");
+    const formData = new FormData();
+    formData.append('command', 'flashcard-update');
+    formData.append('id', id);
+    formData.append('username', username);
+    formData.append('cue', cue);
+    formData.append('response', response);
+    formData.append('review_date', review_date);
+    formData.append('priority', priority);
+
+    return fetch('/server.php', {
+      method: 'POST',
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(json => {
+      if (json.status === 'Success') {
+        return Promise.resolve();
+      } else {
+        return Promise.reject(json.message);
+      }
+    });
+  }
+  else {
+    alert("load a flashcard first!");
+    return;
   }
 }
 
@@ -640,9 +731,9 @@ function setFlashcards(algorithm){
   alert(dateToday);
   setReviewDateAll(dateToday);
 
-  // set all priorities to 1 (leitner algorithm)
+  // set all priorities to 0 (leitner algorithm)
   if (algorithm == 'leitner'){
-      // to be implemented in 3.11
+    setPriorityAll(0);
   }
 
 }
@@ -680,7 +771,7 @@ function setReviewDateAll(date){
     .then(flashcards => {
       // Iterate over each flashcard and sets its review date to date
       flashcards.forEach(flashcard => {
-        setReviewDate(date, flashcard.username, flashcard.id, flashcard.cue, flashcard.response);
+        setReviewDate(date, flashcard.username, flashcard.id, flashcard.cue, flashcard.response, flashcard.priority);
       });
     })
     .catch(error => {
@@ -690,7 +781,7 @@ function setReviewDateAll(date){
 }
 
 // set the review date of a flashcard with a given username, id, cue, and response to date
-function setReviewDate(date, username, id, cue, response){
+function setReviewDate(date, username, id, cue, response, priority){
   const formData = new FormData();
   formData.append('command', 'flashcard-update');
   formData.append('id', id);
@@ -698,6 +789,7 @@ function setReviewDate(date, username, id, cue, response){
   formData.append('cue', cue);
   formData.append('response', response);
   formData.append('review_date', date);
+  formData.append('priority', priority);
 
   return fetch('/server.php', {
     method: 'POST',
@@ -721,6 +813,7 @@ function incrementReviewDate(days) {
     const username = currentFlashcard.username;
     const cue = currentFlashcard.cue;
     const response = currentFlashcard.response;
+    const priority = currentFlashcard.priority;
 
     const formData = new FormData();
     formData.append('command', 'flashcard-update');
@@ -728,6 +821,7 @@ function incrementReviewDate(days) {
     formData.append('username', username);
     formData.append('cue', cue);
     formData.append('response', response);
+    formData.append('priority', priority);
 
     const newReviewDate = new Date();
     newReviewDate.setDate(newReviewDate.getDate() + days); // Increment review date by days
@@ -754,6 +848,8 @@ function incrementReviewDate(days) {
     return;
   }
 }
+
+
 
 
 function getFlashcardsnum() {
@@ -1363,5 +1459,12 @@ function resetSearch() {
   // Load all notes again
   loadNotes();
 }
+
+function handleSignupClick() {
+
+  window.location.href = "signup.php";
+  
+  
+  }
 
 
