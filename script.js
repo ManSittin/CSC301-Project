@@ -584,7 +584,7 @@ if (leitnerAlg){
 
 
 
-// flashcard data 
+
 function getFlashcards() { // get all the user's flashcards as (cue, response) objects
   return fetch(`/server.php?command=flashcards&username=${encodeURIComponent(onlineUsers)}`)
     .then(response => response.json())
@@ -1126,6 +1126,8 @@ function showTimeslots() {
     });
 }
 
+
+
 document.addEventListener('DOMContentLoaded', function() {
   // Example: Check if the URL path contains "notes-all"
   if (window.location.pathname.includes('notes-all')) {
@@ -1142,7 +1144,17 @@ document.addEventListener('DOMContentLoaded', function() {
       if (searchButton) {
           searchButton.addEventListener('click', handleDeadlineSearch);
       }
+
+
     }
+
+    if (window.location.pathname.includes('flashcard-review.php')) {
+      // Code specific to 'flashcard-review.php'
+      getRandomFlashcard();
+      alert('This is the flashcard review page.');
+      // Fetch and display flashcard, etc.
+  } 
+
 
   if (window.location.pathname.includes('flashcard-all')) {
     loadFlashcards(); // Initially load all notes
@@ -1151,6 +1163,7 @@ document.addEventListener('DOMContentLoaded', function() {
         searchButton.addEventListener('click', handleFlashcardSearch);
     }
   }
+
 });
 
 function handleFlashcardSearch(event) {
