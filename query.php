@@ -251,6 +251,33 @@ class Model {
         }
     }
 
+    public function searchFlashcardsByCue($searchQuery, $username) {
+    $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+    if ($conn->connect_error) {
+        die("Connection to database failed: " . $conn->connect_error);
+        return false; // Connection failure
+    }
+    
+    $sql = "SELECT * FROM Flashcards WHERE username = ? AND cue LIKE CONCAT('%', ?, '%')";
+    $stmt = $conn->prepare($sql);
+
+    $stmt->bind_param("ss", $username, $searchQuery);
+    $result = $stmt->execute();
+    
+    if ($result) {
+        $res = $stmt->get_result();
+        $results = [];
+        while ($row = $res->fetch_assoc()) {
+            $results[] = $row;
+        }
+        $stmt->close();
+        return $results;
+    } else {
+        $stmt->close();
+        return false; // Execution failure or no results
+    }
+}
+
 
 
     public function newFlashcard($username, $cue, $response, $review_date) {

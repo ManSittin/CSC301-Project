@@ -268,7 +268,23 @@ class Controller {
                         }
                         exit();
                         break;
-                        
+
+                    case 'search_flashcards':
+                        $query = $_GET['query'];
+                        $username = $_GET['username'];
+                        $flashcardsFiltered = $model->searchFlashcardsByCue($query, $username);
+                        if ($flashcardsFiltered) {
+                            http_response_code(200);
+                            header('Content-Type: application/json');
+                            echo json_encode(['status' => 'Success', 'flashcards' => $flashcardsFiltered]);
+                            } else {
+                                http_response_code(404); // Use 404 for "Not Found" if there are no results
+                                header('Content-Type: application/json');
+                                echo json_encode(['status' => 'Failure', 'message' => 'No flashcards found']);
+                            }
+                        exit();
+                    break;
+
                     case 'load_all_flashcards':
                         $username = $_GET['username']; // Obtain the username
                         $flashcards = $model->getFlashcards($username); // Assume this function exists and fetches flashcards for the user
