@@ -63,42 +63,20 @@
         
             <?php
             break;
+
         case 'deadlines-all':
             ?>
-            <div id="deadline info">
-        <h2>Recent Deadlines</h2>
-        <?php
-            if ($numDeadlines > 0) {
-                while ($deadline = mysqli_fetch_assoc($deadlines)) {
-                    echo '<div class="info-block">' . htmlspecialchars($deadline["course"]) . '</div>';
-                }
-                // Reset the data pointer for $notes
-                mysqli_data_seek($deadlines, 0);
-            }
-        ?>
-        </div>
-        <?php
-        if ($numDeadlines > 0) {
-            while ($deadline = mysqli_fetch_assoc($deadlines)) {
-                echo '<div class="note-container">';
-                echo '<div class="deadline-course">' . htmlspecialchars($deadline['course']) . '</div>';
-                echo '<div class="note-content">' . htmlspecialchars(substr($deadline['deadline_name'], 0, 50)) . '...</div>'; // preview
-                echo '<div class="deadline-date">Due: ' . htmlspecialchars($deadline['due_date']) . '</div>'; // Displaying the due date
-
-            
-                // Update the onclick attribute below
-                echo '<button class="edit-button" onclick="location.href=\'deadlines-view.php?id=' . $deadline['id'] . '\'">View/Edit</button>';
-                echo '</div>';
-            }
-        } else {
-            echo '<p>No deadlines found.</p>';
-        }
-    ?>
-    </div>
-            
+            <form action="javascript:void(0);" method="get" class="search-box" onsubmit="handleDeadlineSearch(event)">
+            <input type="hidden" name="action" value="deadlines-all">
+            <input type="text" name="search" placeholder="Search by course name..." id="deadline-search-input">
+            <button type="submit" id="search-button">Search</button>
+            <button type="button" id="reset-deadline-search-button" onclick="resetDeadlineSearch()">Reset Search</button>
+        </form>
+        <div id="deadline-info">
+            <!-- Dynamically inserted deadlines will go here -->
+        </div>  
             <?php
             break;
-
 
         // NOTES PAGES
         case 'notes':
@@ -154,36 +132,18 @@
             <?php
             break;
 
-        case 'notes-all':
-            ?>
-            <div id="note info">
-        <?php
-            if ($numNotes > 0) {
-                while ($note = mysqli_fetch_assoc($notes)) {
-                    echo '<div class="info-block">' . htmlspecialchars($note["title"]) . '</div>';
-                }
-                // Reset the data pointer for $notes
-                mysqli_data_seek($notes, 0);
-            }
-        ?>
-        </div>
-        <?php
-        if ($numNotes > 0) {
-            while ($note = mysqli_fetch_assoc($notes)) {
-                echo '<div class="note-container">';
-                echo '<div class="note-title">' . htmlspecialchars($note['title']) . '</div>';
-                echo '<div class="note-content">' . htmlspecialchars(substr($note['content'], 0, 50)) . '...</div>'; // preview
+            case 'notes-all':
+                ?>
+                <form action="javascript:void(0);" method="get" class="search-box" onsubmit="handleSearch(event)">
+                <input type="hidden" name="action" value="notes-all">
+                <input type="text" name="search" placeholder="Search by title..." id="search-input">
+                <button type="submit" id="search-button">Search</button>
+                <button type="button" id="reset-search-button" onclick="resetSearch()">Reset Search</button>
+            </form>
+            <div id="note-info">
+                <!-- Dynamically inserted notes will go here -->
+            </div>
 
-                // Update the onclick attribute below
-                echo '<button class="edit-button" onclick="location.href=\'notes-view.php?id=' . $note['id'] . '\'">View/Edit</button>';
-                echo '</div>';
-            }
-        } else {
-            echo '<p>No notes found.</p>';
-        }
-    ?>
-        </div>
-            
             <?php
             break;
 
