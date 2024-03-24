@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS Course_Timeslots (
 -- Create table to store Preferences that Users have
 CREATE TABLE IF NOT EXISTS Preferences (
     preference_id INT AUTO_INCREMENT PRIMARY KEY,
-    username,
-    flashcard_algorithm VARCHAR,
+    username VARCHAR(16) NOT NULL UNIQUE,
+    flashcard_algorithm VARCHAR(16),
     FOREIGN KEY (username) REFERENCES Users(username)
 );

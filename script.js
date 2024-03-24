@@ -111,7 +111,11 @@ function handleSignInClick() {
      
       console.log('User data:', data.message);
       location.reload();
-      
+  
+  // store the user's preferences for this session
+  getFlashcardAlgorithm(flashcardAlgorithm);
+  sessionStorage.setItem('flashcardAlgorithm', flashcardAlgorithm);
+  alert(flashcardAlgorithm);
 })
 
 }
@@ -137,34 +141,61 @@ function handleSignUpClick() {
   // Perform sign-in logic (e.g., send AJAX request to the server)
   // Here, you can use fetch() or any other method to send the data to the server
   // For demonstration purposes, we'll simply log the email and password
+
+  // CREATE NEW USER
   var formData = new FormData();
-          formData.append('command', 'users');
-          formData.append('first_name', document.getElementById("firstName").value);
-          formData.append('last_name', document.getElementById("lastName").value);
-          formData.append('email', document.getElementById("email").value);
-          formData.append('username', document.getElementById("username").value);
-          formData.append('password', passi);
+  formData.append('command', 'users');
+  formData.append('first_name', document.getElementById("firstName").value);
+  formData.append('last_name', document.getElementById("lastName").value);
+  formData.append('email', document.getElementById("email").value);
+  formData.append('username', document.getElementById("username").value);
+  formData.append('password', passi);
 
-      fetch('/server.php', {
-              method: 'POST',
-              body: formData,
-          })
-      .then(data => {
-  // Handle the data returned by the server
-      console.log('Response:', data);
+    fetch('/server.php', {
+            method: 'POST',
+            body: formData,
+        })
+    .then(data => {
+// Handle the data returned by the server
+    console.log('Response:', data);
 
-  // Check the status field in the response
-      if (data.status ===  200) {
-          alert('user online !');
-      // User data retrieval was successful
-      // You can access the user data from the 'message' field in the response
-      console.log('User data:', data.message);
-  } else {
-      // User data retrieval failed
-      console.error('Error:', data.message);
-  }
+// Check the status field in the response
+    if (data.status ===  200) {
+        alert('user online !');
+    // User data retrieval was successful
+    // You can access the user data from the 'message' field in the response
+    console.log('User data:', data.message);
+} else {
+    // User data retrieval failed
+    console.error('Error:', data.message);
+}
 })
   
+  // CREATE NEW PREFERENCES FOR THE USER (can default some here if we want)
+  var formData = new FormData();
+  formData.append('command', 'preferences');
+  formData.append('username', document.getElementById("username").value);
+  formData.append('flashcard_algorithm', 'random'); // DEFAULT
+
+  fetch('/server.php', {
+          method: 'POST',
+          body: formData,
+      })
+  .then(data => {
+// Handle the data returned by the server
+  console.log('Response:', data);
+
+// Check the status field in the response
+  if (data.status ===  200) {
+      alert('user online !');
+  // User data retrieval was successful
+  // You can access the user data from the 'message' field in the response
+  console.log('User data:', data.message);
+} else {
+  // User data retrieval failed
+  console.error('Error:', data.message);
+}
+})
         
 }
 
@@ -406,7 +437,7 @@ if (updateNoteBtn) {
 
 // FLASHCARDS
 let currentFlashcard;
-var flashcardAlgorithm = localStorage.getItem('flashcardAlgorithm');
+var flashcardAlgorithm = sessionStorage.getItem('flashcardAlgorithm');
 
 function addFlashcard() { // insert a flashcard
   // Add logic to send the note to the server and store it in the database
@@ -429,6 +460,18 @@ function addFlashcard() { // insert a flashcard
       body: formData,
   });
   alert('Flashcard added!');
+}
+
+function updateFlashcardAlgorithm(algo) {
+  var formData = new FormData();
+  formData.append('command', 'preferences-update');
+  formData.append('username', onlineUsers);
+  formData.append('flashcard_algorithm', algo);
+  fetch('/server.php', {
+      method: 'POST',
+      body: formData,
+  });
+  alert('Flashcard Algorithm Updated!');
 }
 
 
@@ -490,7 +533,8 @@ if (randomAlg){
     else{
       alert("flashcard algorithm set to Random");
       flashcardAlgorithm = 'random';
-      localStorage.setItem('flashcardAlgorithm', flashcardAlgorithm);
+      sessionStorage.setItem('flashcardAlgorithm', flashcardAlgorithm);
+      updateFlashcardAlgorithm(flashcardAlgorithm);
       setFlashcards(flashcardAlgorithm);
     }
   });
@@ -504,7 +548,8 @@ if (leitnerAlg){
     else {
       alert("flashcard algorithm set to Leitner");
       flashcardAlgorithm = 'leitner';
-      localStorage.setItem('flashcardAlgorithm', flashcardAlgorithm);
+      sessionStorage.setItem('flashcardAlgorithm', flashcardAlgorithm);
+      updateFlashcardAlgorithm(flashcardAlgorithm);
       setFlashcards(flashcardAlgorithm);
     }
   });
@@ -593,6 +638,23 @@ function setFlashcards(algorithm){
       // to be implemented in 3.11
   }
 
+}
+
+async function getFlashcardAlgorithm(globalAlg) {
+  try {
+    const response = await fetch(`/server.php?command=preferences&username=${encodeURIComponent(onlineUsers)}`);
+    const json = await response.json();
+    const flashcardAlgorithm = json.message.map(entry => {
+      return {
+        flashcard_algorithm: entry.flashcard_algorithm,
+      };
+    });
+    globalAlg = flashcardAlgorithm;
+    return flashcardAlgorithm;
+  } catch (error) {
+    console.error('Error fetching flashcard algorithm:', error);
+    throw error;
+  }
 }
 
 // return today's date in 'YYYY-MM-DD' format; ready for POST requests
