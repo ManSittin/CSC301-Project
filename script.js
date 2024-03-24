@@ -9,6 +9,9 @@ const secretKey = "1Q2W3E4RT5YFDSAQ";
 
 
 
+
+
+
 function encryptMessage(key, message) {
   let encryptedMessage = '';
   for (let i = 0; i < message.length; i++) {
@@ -25,7 +28,6 @@ function encryptMessage(key, message) {
 
 var isUserOnline = sessionStorage.getItem('isUserOnline'); // check the user being onlien
 var onlineUsers = sessionStorage.getItem('onlineUsers');
-console.log(isUserOnline, onlineUsers)
 
 console.log(isUserOnline, onlineUsers)
 
@@ -114,7 +116,7 @@ function handleSignInClick() {
      
       console.log('User data:', data.message);
       location.reload();
-
+      
 })
 
 }
@@ -123,9 +125,13 @@ function handleSignInClick() {
 
 
 
+
+
+
+
 function handleSignUpClick() {
   // Prevent the default form submission behavior
-  console.log(document.getElementById("signup").elements)
+  // console.log(document.getElementById("signup").elements)
  // event.preventDefault();
 
   // Retrieve the email and password from the input fields
@@ -175,15 +181,12 @@ function handleSignUpClick() {
       // User data retrieval failed
       console.error('Error:', data.message);
   }
-})
-  
-        
+})        
 }
 
 function handleSignupClick() {
 
 window.location.href = "signup.php";
-
 
 }
 
@@ -435,6 +438,9 @@ function addFlashcard() { // insert a flashcard
   const formattedDate = `${year}-${month}-${day}`;
   formData.append('review_date', formattedDate);
 
+  // default priority to 0
+  formData.append('priority', 0);
+
   fetch('/server.php', {
       method: 'POST',
       body: formData,
@@ -479,19 +485,99 @@ if (next){
 }
 
 if (correct){
-  correct.addEventListener('click', function(){ // update flashcard review date if loaded
-    alert("clicked!");
-    incrementReviewDate(1); // make this variable in a later sprint
+    correct.addEventListener('click', function(){ // update flashcard review date and/or priority if loaded
+    updateFlashcardReviewData(flashcardAlgorithm, "correct");
   });
 }
 
 if (incorrect){
-  incorrect.addEventListener('click', function(){ // update flashcard review date if loaded
-    incrementReviewDate(3); // make this variable in a later sprint
+  incorrect.addEventListener('click', function(){ // update flashcard review date and/or priority if loaded
+    updateFlashcardReviewData(flashcardAlgorithm, "incorrect");
   });
 }
 
 
+if (randomAlg){
+  randomAlg.addEventListener('click', function(){ // set flashcard algorithm to random
+    if (flashcardAlgorithm == 'random'){
+      alert("flashcard algorithm is already Random");
+    }
+    else{
+      alert("flashcard algorithm set to Random");
+      flashcardAlgorithm = 'random';
+      sessionStorage.setItem('flashcardAlgorithm', flashcardAlgorithm);
+      updateFlashcardAlgorithm(flashcardAlgorithm);
+      setFlashcards(flashcardAlgorithm);
+    }
+  });
+}
+
+if (leitnerAlg){
+  leitnerAlg.addEventListener('click', function(){ // set flashcard algorithm to leitner
+    if (flashcardAlgorithm == 'leitner'){
+      alert("flashcard algorithm is already Leitner");
+    }
+    else {
+      alert("flashcard algorithm set to Leitner");
+      flashcardAlgorithm = 'leitner';
+      sessionStorage.setItem('flashcardAlgorithm', flashcardAlgorithm);
+      updateFlashcardAlgorithm(flashcardAlgorithm);
+      setFlashcards(flashcardAlgorithm);
+    }
+  })
+}
+
+function updateFlashcardReviewData(algorithm, state){
+
+  if (algorithm == 'leitner'){
+    updateFlashcardLeitner(state);
+  }
+
+  else if (algorithm == 'random'){
+    if (state == "correct"){
+      incrementReviewDate(1);
+    }
+    else if (state == "incorrect"){
+      incrementReviewDate(3);
+    }
+  }
+}
+
+function updateFlashcardLeitner(state){
+  /*
+Pre: state = "correct" or "incorrect"
+ */
+  // flashcard variables for updating
+  const id = currentFlashcard.id;
+  const username = currentFlashcard.username;
+  const cue = currentFlashcard.cue;
+  const response = currentFlashcard.response;
+  const review_date = currentFlashcard.review_date;
+  alert(currentFlashcard.priority);
+
+  if (state == "correct"){
+    setPriority(id, username, cue, response, review_date, Math.min(currentFlashcard.priority + 1, 3)); // currently 3 is the highest priority
+  }
+  else {
+    print("incorrect...")
+    setPriority(id, username, cue, response, review_date, 1); // set to the lowest priority (other than today)
+  }
+
+
+  // update review date based on priority
+  let priority = currentFlashcard.priority;
+  switch(priority) {
+    case 1:
+      incrementReviewDate(1);
+      break;
+    case 2:
+      incrementReviewDate(3)
+      break;
+    case 3:
+      incrementReviewDate(7);
+      break;
+  }
+}
 
 // flashcard data 
 function getFlashcards() { // get all the user's flashcards as (cue, response) objects
@@ -504,7 +590,8 @@ function getFlashcards() { // get all the user's flashcards as (cue, response) o
           username: entry.username,
           cue: entry.cue,
           response: entry.response,
-          review_date: entry.review_date
+          review_date: entry.review_date,
+          priority: entry.priority
         };
       });
     })
@@ -512,6 +599,71 @@ function getFlashcards() { // get all the user's flashcards as (cue, response) o
       console.error('Error fetching flashcards:', error);
       throw error;
     });
+}
+
+
+// get the next flashcard to be reviewed, if available, based on chosen flashcardAlgorithm
+function getFlashcard(){
+  alert(flashcardAlgorithm);
+  if (flashcardAlgorithm == 'random'){
+    return getRandomFlashcard();
+  }
+  else if (flashcardAlgorithm == 'leitner'){
+    return getLeitnerFlashcard();
+  }
+  else{
+    alert("You must choose a flashcard algorithm first");
+    console.error("Invalid flashcard algorithm or none chosen");
+  }
+}
+
+function setPriorityAll(priority){
+
+  // Get flashcards
+  return getFlashcards()
+    .then(flashcards => {
+      // Iterate over each flashcard and sets its review date to date
+      flashcards.forEach(flashcard => {
+        setPriority(flashcard.id, flashcard.username, flashcard.cue, flashcard.response, flashcard.review_date, priority);
+      });
+    })
+    .catch(error => {
+      console.error('Error iterating over flashcards:', error);
+      throw error;
+    });
+}
+
+function setPriority(id, username, cue, response, review_date, priority) {
+
+  if (currentFlashcard) {
+    alert("flashcard found! - priority");
+    currentFlashcard.priority = priority;
+    const formData = new FormData();
+    formData.append('command', 'flashcard-update');
+    formData.append('id', id);
+    formData.append('username', username);
+    formData.append('cue', cue);
+    formData.append('response', response);
+    formData.append('review_date', review_date);
+    formData.append('priority', priority);
+    alert("hi");
+    return fetch('/server.php', {
+      method: 'POST',
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(json => {
+      if (json.status === 'Success') {
+        return Promise.resolve();
+      } else {
+        return Promise.reject(json.message);
+      }
+    });
+  }
+  else {
+    alert("load a flashcard first!");
+    return;
+  }
 }
 
 function getRandomFlashcard() {
@@ -527,6 +679,8 @@ function getRandomFlashcard() {
       // If there are valid flashcards, select a random one
       const randomIndex = Math.floor(Math.random() * validFlashcards.length);
       currentFlashcard = validFlashcards[randomIndex];
+
+      // display the flashcard
       cue.innerHTML = `<h3>${currentFlashcard.cue}</h3>`;
       response.innerHTML = `<h3>${currentFlashcard.response}</h3>`;
       alert('Flashcards Loaded!');
@@ -541,14 +695,149 @@ function getRandomFlashcard() {
   });
 }
 
+
+function groupBy(array, property) {
+  return array.reduce((acc, obj) => {
+    const key = obj[property];
+    if (!acc[key]) {
+      acc[key] = [];
+    }
+    acc[key].push(obj);
+    return acc;
+  }, {});
+}
+
+function getLeitnerFlashcard(){
+  getFlashcards()
+  .then(data => {
+    // Filter flashcards with review dates on or before today
+    const validFlashcards = data.filter(flashcard => {
+      const reviewDate = new Date(flashcard.review_date);
+      return reviewDate <= new Date(); // Compare review date with today
+    });
+
+    if (validFlashcards.length > 0) {
+
+       // Group valid flashcards by priority
+       const groupedByPriority = groupBy(validFlashcards, 'priority');
+
+       // Find the group with the lowest priority
+       const lowestPriorityGroup = Math.min(...Object.keys(groupedByPriority));
+
+       // Select flashcards from the lowest priority group
+       const lowestPriorityFlashcards = groupedByPriority[lowestPriorityGroup];
+
+       // Randomly select a flashcard from the lowest priority group
+       const randomIndex = Math.floor(Math.random() * lowestPriorityFlashcards.length);
+       currentFlashcard = lowestPriorityFlashcards[randomIndex];
+
+      // display the flashcard
+      cue.innerHTML = `<h3>${currentFlashcard.cue}</h3>`;
+      response.innerHTML = `<h3>${currentFlashcard.response}</h3>`;
+      alert('Flashcards Loaded!');
+    } else {
+      // No valid flashcards found
+      alert('No flashcards available for review.');
+    }
+  })
+  .catch(error => {
+    // Handle errors
+    console.error('Error:', error);
+  });
+}
+
+// set all flashcards to their default state as per the algorithm
+function setFlashcards(algorithm){
+
+  // set all flashcards review_date to today (all algorithms)
+  dateToday = todaysDate();
+  alert(dateToday);
+  setReviewDateAll(dateToday);
+
+  // set all priorities to 0 (leitner algorithm)
+  if (algorithm == 'leitner'){
+    setPriorityAll(0);
+  }
+
+}
+
+async function getFlashcardAlgorithm(globalAlg) {
+  try {
+    const response = await fetch(`/server.php?command=preferences&username=${encodeURIComponent(onlineUsers)}`);
+    const json = await response.json();
+    const flashcardAlgorithm = json.message.map(entry => {
+      return {
+        flashcard_algorithm: entry.flashcard_algorithm,
+      };
+    });
+    globalAlg = flashcardAlgorithm;
+    return flashcardAlgorithm;
+  } catch (error) {
+    console.error('Error fetching flashcard algorithm:', error);
+    throw error;
+  }
+}
+
+// return today's date in 'YYYY-MM-DD' format; ready for POST requests
+function todaysDate(){
+  const dateToday = new Date();
+  const isoDateString = dateToday.toISOString();
+  const dateOnlyString = isoDateString.split('T')[0]; // Extract date part before 'T'
+  return dateOnlyString;
+}
+
+// sets the review date of all flashcards to date
+function setReviewDateAll(date){
+
+  // Get flashcards
+  return getFlashcards()
+    .then(flashcards => {
+      // Iterate over each flashcard and sets its review date to date
+      flashcards.forEach(flashcard => {
+        setReviewDate(date, flashcard.username, flashcard.id, flashcard.cue, flashcard.response, flashcard.priority);
+      });
+    })
+    .catch(error => {
+      console.error('Error iterating over flashcards:', error);
+      throw error;
+    });
+}
+
+// set the review date of a flashcard with a given username, id, cue, and response to date
+function setReviewDate(date, username, id, cue, response, priority){
+  const formData = new FormData();
+  formData.append('command', 'flashcard-update');
+  formData.append('id', id);
+  formData.append('username', username);
+  formData.append('cue', cue);
+  formData.append('response', response);
+  formData.append('review_date', date);
+  formData.append('priority', priority);
+
+  return fetch('/server.php', {
+    method: 'POST',
+    body: formData,
+  })
+  .then(response => response.json())
+  .then(json => {
+    if (json.status === 'Success') {
+      return Promise.resolve();
+    } else {
+      return Promise.reject(json.message);
+    }
+  });
+}
+
 function incrementReviewDate(days) {
 
   if (currentFlashcard) {
-    alert("flashcard found!");
+    alert("flashcard found! - review date");
     const id = currentFlashcard.id;
     const username = currentFlashcard.username;
     const cue = currentFlashcard.cue;
     const response = currentFlashcard.response;
+    const priority = currentFlashcard.priority;
+    alert(cue);
 
     const formData = new FormData();
     formData.append('command', 'flashcard-update');
@@ -556,6 +845,7 @@ function incrementReviewDate(days) {
     formData.append('username', username);
     formData.append('cue', cue);
     formData.append('response', response);
+    formData.append('priority', priority);
 
     const newReviewDate = new Date();
     newReviewDate.setDate(newReviewDate.getDate() + days); // Increment review date by days
@@ -584,6 +874,8 @@ function incrementReviewDate(days) {
 }
 
 
+
+
 function getFlashcardsnum() {
   return getFlashcards()
       .then(flashcards => {
@@ -596,6 +888,87 @@ function getFlashcardsnum() {
       });
 }
 
+// function getCourses() {
+//   return fetch('/server.php?commmand=courses&username=userAA') 
+//     .then(response => response.json())
+//     .then(json => {
+//       return json.message.map(entry => {
+//         return {
+//           id: entry.id,
+//           course_name: entry.course_name,
+//         };
+//       });
+//     })
+//     .catch(error => {
+//       console.error('Error fetching courses:', error);
+//       throw error;
+//     });
+// }
+
+// function getTimeslots($courseID){
+//   return fetch('/server.php?command=timeslots&course_id=' + $courseID) // these commands don't exist???
+//     .then(response => response.json())
+//     .then(json => {
+      
+//     })
+// }
+
+// function createSchedule() { // this assumes they have inserted courses with appropriate times.
+//   getCourses()
+//     .then(data => {
+
+
+//     })
+//     .catch(error => {
+//       console.error('Error creating schedule:', error);
+//     })
+// }
+
+// // times will be stored as hour in the week
+// function createFFGraph(courses){ // courses is a dictionary with courseid as key and a list of all timeslot/length pairs as a value
+//   let timeslots = {}; //timeslots is a dictionary with all possible (used) timeslots as keys, and all courses using that timeslot as values
+//   let slots = {};
+//   var course_keys = Object.keys(courses); // enter course_keys[num] to get the corresponding courseid, used at end when translating back
+//   var course_nums = {}; // enter course_nums[courseid] to get the corresponding position of the course
+//   for(let i = 0; i < course_keys.length; i++){
+//     course_nums[i] = course_keys[i];
+//   }
+
+
+//   for(let course in course_keys){ // MAKING TIMESLOTS DICTIONARY
+//     var tempSlots = courses[course]; // tempslots is a list of all timeslots for the current course
+//     for(let time in tempSlots){ // time is a section for the course
+//       time = time[day]*24 + time[start_time];
+//       for(let i = 0; i < time[length];i++){
+//         timeslots[time[start]+i].push(course);
+//       }
+//     }
+//   }
+
+//   var timeslot_keys = Object.keys(timeslots); // enter timeslot_keys[num] to get the corresponding time, used at end when translating back
+//   var timeslot_nums = {}; // enter timeslot_nums[time] to get the corresponding location of the time used to find locations in the graph creation
+//   for(let i = 0; i < timeslot_keys.length; i++){
+//     timeslot_nums[i] = timeslot_keys[i];
+//   }
+
+//   let numNodes = 2+timeslot_keys.length+course_keys.length;
+//   var FFgraph = Array(numNodes).fill(Array(numNodes).fill(0));
+  
+//   for(let i = 2; i < timeslots.length+2;i++){ // creating all edges to times from source
+//     FFgraph[0][i] = 1;
+//   }
+
+//   for(let time in timeslots){  // timeslots has all times, time is a possible time
+//     for(let tempcourse in timeslots[time]){ // timeslots[time] is all courses at time, tempcourse is a course at the time
+//       FFgraph[timeslot_nums[time]+2][course_nums[tempcourse]+2] = 1; // creating all edges from times to courses
+//     }
+//   }
+
+//   for(let course in courses){
+//     FFgraph[course_nums[course]+timeslot_keys.length+2][1] = courses[course][length];
+//   }
+
+//   return [FFgraph,course_keys,course_nums,timeslot_keys,timeslot_nums];
 // function getCourses() {
 //   return fetch('/server.php?commmand=courses&username=userAA') 
 //     .then(response => response.json())
@@ -862,6 +1235,26 @@ document.addEventListener('DOMContentLoaded', function() {
       }
   }
 
+  // Example: Check if the URL path contains "deadlines-all"
+  if (window.location.pathname.includes('deadlines-all')) {
+      loadDeadlines(); // Initially load all deadlines
+      const searchButton = document.querySelector('.search-box button[type="submit"]');
+      if (searchButton) {
+          searchButton.addEventListener('click', handleDeadlineSearch);
+      }
+
+
+    }
+
+    if (window.location.pathname.includes('flashcard-review.php')) {
+      // Code specific to 'flashcard-review.php'
+      getFlashcard();
+      alert('This is the flashcard review page.');
+      // Fetch and display flashcard, etc.
+  } 
+
+
+
   if (window.location.pathname.includes('flashcard-all')) {
     loadFlashcards(); // Initially load all notes
     const searchButton = document.querySelector('.search-box button[type="submit"]');
@@ -869,15 +1262,6 @@ document.addEventListener('DOMContentLoaded', function() {
       searchButton.addEventListener('click', handleFlashcardSearch);
     }
   }
-
-  if (window.location.pathname.includes('deadlines-all')) {
-    loadDeadlines(); // Initially load all deadlines
-    const searchButton = document.querySelector('.search-box button[type="submit"]');
-    if (searchButton) {
-        searchButton.addEventListener('click', handleDeadlineSearch);
-    }
-  }
-
 
 });
 

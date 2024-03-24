@@ -3,8 +3,6 @@
 include('query.php');
 include_once "Session.php";
 
-
-
 class Controller {
     public function handle() {
         $request_method = $_SERVER['REQUEST_METHOD'];
@@ -55,7 +53,8 @@ class Controller {
                 $cue = $_POST['cue'];
                 $response = $_POST['response'];
                 $review_date = $_POST['review_date'];
-                $result = $model->newFlashcard($username, $cue, $response, $review_date);
+                $priority = $_POST['priority'];
+                $result = $model->newFlashcard($username, $cue, $response, $review_date, $priority);
 
                 break;
 
@@ -99,7 +98,8 @@ class Controller {
                 $cue = $_POST['cue'];
                 $response = $_POST['response'];
                 $review_date = $_POST['review_date'];
-                $result = $model->updateFlashcard($id, $username, $cue, $response, $review_date);
+                $priority = $_POST['priority'];
+                $result = $model->updateFlashcard($id, $username, $cue, $response, $review_date, $priority);
 
                 break;
                 
@@ -139,28 +139,9 @@ class Controller {
                             http_response_code(200);
                             addUserToOnlineUsers($results);
                             header('Content-Type: application/json');
-                            $filename = 'time.txt';
-
-                        // Get the current timestamp
-                        $currentTime = date('Y-m-d H:i:s');
-
-                        // Read the current content of the file
-                        $fileContent = file($filename, FILE_IGNORE_NEW_LINES); // Read each line of the file into an array
-
-                        // Ensure the file has at least two lines, padding with empty strings if necessary
-                        while (count($fileContent) < 2) {
-                            $fileContent[] = '';
+                            echo json_encode(['status' => 'Success' . $command, 'message' => $results]);
+                            exit();
                         }
-
-                        // Update the second line with the current time
-                        $fileContent[1] = $currentTime;
-
-                        // Write the modified content back to the file
-                        file_put_contents($filename, implode("\n", $fileContent));
-                                                    echo json_encode(['status' => 'Success' . $command, 'message' => $results]);
-                                                    exit();
-                                                }
-            
                         break;
 
             case ('logout'):
