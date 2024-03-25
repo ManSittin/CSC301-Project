@@ -6,7 +6,10 @@ $model = new Model();
 $model->initDatabase();
 $model->initTables();
 $model->newUser('userAA', 'userAA@mail.com', 'A', 'A', 'password');
+// File where the time will be stored and modified
+$filename = 'time.txt';
 
+$command = "php -S 10.0.0.109:3000 -t . -f Index.php";
 // Get the current timestamp
     $currentTime = date('Y-m-d H:i:s');
 
@@ -23,7 +26,6 @@ $model->newUser('userAA', 'userAA@mail.com', 'A', 'A', 'password');
 
     // Write the modified content back to the file
     file_put_contents($filename, implode("\n", $fileContent));
-
 $command = "php -S localhost:1000 -t . -f Index.php";
 exec($command);
 

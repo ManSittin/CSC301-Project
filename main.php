@@ -12,6 +12,7 @@
             <?php
             break;
         case 'deadlines-insertion':
+            
             $currentDateTime = date('Y-m-d\TH:i'); // Format: YYYY-MM-DDTHH:MM
             ?>
             <!-- Add a Textbox Feature -->
@@ -58,7 +59,7 @@
                     class="deadline_date"
                 />
                 <br><br>
-                <input type="submit" value="Update Deadline" class="update-deadline">
+                <input type="submit" value="Update Deadline" class="update-deadline" onclick="resetWindowUnload()">
             </div>
         
             <?php
@@ -125,7 +126,7 @@
                 <input type="hidden" id="hiddenNoteId" value="<?php echo isset($noteForEditing['id']) ? $noteForEditing['id'] : ''; ?>">
                 <textarea rows="4" cols="50" name="noteContent" class="note-body"><?php echo isset($noteForEditing['content']) ? $noteForEditing['content'] : ''; ?></textarea>
                 <br>
-                <input type="submit" value="Update Note" class="update-note">
+                <input type="submit" value="Update Note" class="update-note" onclick="resetWindowUnload()">
                 </form>
             </div>
             
@@ -150,7 +151,7 @@
                 <input type="date" id="reviewDate" name="flashcardReviewDate" value="<?php echo isset($flashcardForEditing['review_date']) ? $flashcardForEditing['review_date'] : ''; ?>">
                     
                 <br>
-                <input type="submit" value="Update Flashcard" class="update-flashcard">
+                <input type="submit" value="Update Flashcard" class="update-flashcard" onclick="resetWindowUnload()">
                 </form>
             </div>
             <?php

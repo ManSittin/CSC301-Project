@@ -124,8 +124,12 @@ function setWindowUnload(){
   }
 }
 
+function setWindowPreload(){
+  window.onload = setWindowUnload();
+}
+
 function resetWindowUnload(){
-  window.onbeforeunload = null;
+ window.onbeforeunload = null;
 }
 
 
@@ -213,6 +217,7 @@ fetch('/server.php', {
 
 function addDeadline() { // insert a deadline
   // need to collect all data and send to db..
+  resetWindowUnload();
   console.log(onlineUsers)
   var formData = new FormData();
   formData.append('command', 'deadlines');
@@ -230,6 +235,7 @@ function addDeadline() { // insert a deadline
 
 function addNote() { // insert a note
   // Add logic to send the note to the server and store it in the database
+  resetWindowUnload();
   var formData = new FormData();
   formData.append('command', 'notes');
   formData.append('username', onlineUsers);
@@ -342,6 +348,7 @@ function updateDeadline($deadlineID) {
 
 // button click listener
 if (updateDeadlineBtn){
+  setWindowUnload();
   updateDeadlineBtn.addEventListener('click', function(){ // reveal response
   const deadlineID = document.getElementById('hiddenDeadlineId').value; // Get the note ID from the hidden input
   updateDeadline(deadlineID); // was hard coded before
@@ -389,7 +396,6 @@ async function getNote($noteID){
 
 // given a note object, display its title in the note-title section and content in the note-body section
 async function loadNote($noteID){
-  setWindowUnload();
   try {
     const data = await getNote($noteID);
     title.innerHTML = `${data.title}`;
@@ -417,6 +423,7 @@ function updateNote($noteID) {
 }
 
 if (updateNoteBtn) {
+  setWindowUnload();
   updateNoteBtn.addEventListener('click', function(){
     const noteID = document.getElementById('hiddenNoteId').value; // Get the note ID from the hidden input
     updateNote(noteID);
@@ -429,6 +436,7 @@ let currentFlashcard;
 
 function addFlashcard() { // insert a flashcard
   // Add logic to send the note to the server and store it in the database
+  resetWindowUnload();
   var formData = new FormData();
   formData.append('command', 'flashcards');
   formData.append('username', onlineUsers);
@@ -875,12 +883,16 @@ function showTimeslots() {
 
 document.addEventListener('DOMContentLoaded', function() {
   // Example: Check if the URL path contains "notes-all"
-  if (window.location.pathname.includes('notes-all')) {
+  var name = window.location.pathname;
+  if (name.includes('notes-all')) {
       loadNotes(); // Initially load all notes
       const searchButton = document.querySelector('.search-box button[type="submit"]');
       if (searchButton) {
           searchButton.addEventListener('click', handleSearch);
       }
+  }
+  if (name.includes('insertion')){
+    setWindowUnload();
   }
 });
 
