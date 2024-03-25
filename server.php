@@ -54,7 +54,8 @@ class Controller {
                 $response = $_POST['response'];
                 $review_date = $_POST['review_date'];
                 $priority = $_POST['priority'];
-                $result = $model->newFlashcard($username, $cue, $response, $review_date, $priority);
+                $is_public = $_POST['is_public'];
+                $result = $model->newFlashcard($username, $cue, $response, $review_date, $priority, $is_public);
 
                 break;
 
