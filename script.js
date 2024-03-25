@@ -9,6 +9,9 @@ const secretKey = "1Q2W3E4RT5YFDSAQ";
 
 
 
+
+
+
 function encryptMessage(key, message) {
   let encryptedMessage = '';
   for (let i = 0; i < message.length; i++) {
@@ -25,7 +28,6 @@ function encryptMessage(key, message) {
 
 var isUserOnline = sessionStorage.getItem('isUserOnline'); // check the user being onlien
 var onlineUsers = sessionStorage.getItem('onlineUsers');
-
 console.log(isUserOnline, onlineUsers)
 
 toggle_open.addEventListener('change', (event) => {
@@ -113,7 +115,9 @@ function handleSignInClick() {
      
       console.log('User data:', data.message);
       location.reload();
-      
+      getFlashcardAlgorithm(flashcardAlgorithm);
+      sessionStorage.setItem('flashcardAlgorithm', flashcardAlgorithm);
+      alert(flashcardAlgorithm);
 })
 
 }
@@ -122,9 +126,13 @@ function handleSignInClick() {
 
 
 
+
+
+
+
 function handleSignUpClick() {
   // Prevent the default form submission behavior
-  console.log(document.getElementById("signup").elements)
+  // console.log(document.getElementById("signup").elements)
  // event.preventDefault();
 
   // Retrieve the email and password from the input fields
@@ -134,56 +142,76 @@ function handleSignUpClick() {
   var username =  document.getElementById("username").value;
   var password =  document.getElementById("password").value;
 
-    // Clear previous warning messages
+      // Clear previous warning messages
     passwordWarning.textContent = '';
-    
+
     // Check if the password is longer than 8 characters
     if(password.length <= 8) {
         // If the password is not long enough, display the warning and exit the function
         passwordWarning.textContent = 'Password must be longer than 8 characters.';
         return; // Exit the function early
     }
+  
   // Perform validation if needed
   var passi = encryptMessage(password, secretKey);
   // Perform sign-in logic (e.g., send AJAX request to the server)
   // Here, you can use fetch() or any other method to send the data to the server
   // For demonstration purposes, we'll simply log the email and password
+
+  // CREATE NEW USER
   var formData = new FormData();
-          formData.append('command', 'users');
-          formData.append('first_name', document.getElementById("firstName").value);
-          formData.append('last_name', document.getElementById("lastName").value);
-          formData.append('email', document.getElementById("email").value);
-          formData.append('username', document.getElementById("username").value);
-          formData.append('password', passi);
+  formData.append('command', 'users');
+  formData.append('first_name', document.getElementById("firstName").value);
+  formData.append('last_name', document.getElementById("lastName").value);
+  formData.append('email', document.getElementById("email").value);
+  formData.append('username', document.getElementById("username").value);
+  formData.append('password', passi);
 
-      fetch('/server.php', {
-              method: 'POST',
-              body: formData,
-          })
-      .then(data => {
-  // Handle the data returned by the server
-      console.log('Response:', data);
+    fetch('/server.php', {
+            method: 'POST',
+            body: formData,
+        })
+    .then(data => {
+// Handle the data returned by the server
+    console.log('Response:', data);
 
-  // Check the status field in the response
-      if (data.status ===  200) {
-          alert('user online !');
-      // User data retrieval was successful
-      // You can access the user data from the 'message' field in the response
-      console.log('User data:', data.message);
-  } else {
-      // User data retrieval failed
-      console.error('Error:', data.message);
-  }
+// Check the status field in the response
+    if (data.status ===  200) {
+        alert('user online !');
+    // User data retrieval was successful
+    // You can access the user data from the 'message' field in the response
+    console.log('User data:', data.message);
+} else {
+    // User data retrieval failed
+    console.error('Error:', data.message);
+}
 })
   
-        
+  // CREATE NEW PREFERENCES FOR THE USER (can default some here if we want)
+  var formData = new FormData();
+  formData.append('command', 'preferences');
+  formData.append('username', document.getElementById("username").value);
+  formData.append('flashcard_algorithm', 'random'); // DEFAULT
+
+  fetch('/server.php', {
+          method: 'POST',
+          body: formData,
+      })
+  .then(data => {
+// Handle the data returned by the server
+  console.log('Response:', data);
+
+// Check the status field in the response
+  if (data.status ===  200) {
+      alert('user online !');
+  // User data retrieval was successful
+  // You can access the user data from the 'message' field in the response
+  console.log('User data:', data.message);
+} else {
+  // User data retrieval failed
+  console.error('Error:', data.message);
 }
-
-function handleSignupClick() {
-
-window.location.href = "signup.php";
-
-
+})
 }
 
 
@@ -212,6 +240,7 @@ function addDeadline() { // insert a deadline
   formData.append('course', document.getElementById("addDeadlineForm").elements[0].value);
   formData.append('deadline_name', document.getElementById("addDeadlineForm").elements[1].value);
   formData.append('duedate', document.getElementById("addDeadlineForm").elements[2].value);
+  formData.append('tag', document.getElementById("addDeadlineForm").elements[3].value);
   
   fetch('/server.php', {
       method: 'POST',
@@ -227,6 +256,8 @@ function addNote() { // insert a note
   formData.append('username', onlineUsers);
   formData.append('title', document.getElementById("addNoteForm").elements[0].value);
   formData.append('content', document.getElementById("addNoteForm").elements[1].value);
+  formData.append('is_public', document.getElementById("addNoteForm").elements[2].checked ? 1 : 0);
+  formData.append('tag', document.getElementById("addNoteForm").elements[2].value);
   fetch('/server.php', {
       method: 'POST',
       body: formData,
@@ -446,6 +477,7 @@ if (updateNoteBtn) {
 
 // FLASHCARDS
 let currentFlashcard;
+var flashcardAlgorithm = sessionStorage.getItem('flashcardAlgorithm');
 
 function addFlashcard() { // insert a flashcard
   // Add logic to send the note to the server and store it in the database
@@ -454,6 +486,7 @@ function addFlashcard() { // insert a flashcard
   formData.append('username', onlineUsers);
   formData.append('cue', document.getElementById("addFlashcardForm").elements[0].value);
   formData.append('response', document.getElementById("addFlashcardForm").elements[1].value);
+  formData.append('is_public', document.getElementById("addFlashcardForm").elements[2].checked ? 1 : 0);
 
   // default review_date to today
   const today = new Date();
@@ -463,11 +496,26 @@ function addFlashcard() { // insert a flashcard
   const formattedDate = `${year}-${month}-${day}`;
   formData.append('review_date', formattedDate);
 
+  // default priority to 0
+  formData.append('priority', 0);
+
   fetch('/server.php', {
       method: 'POST',
       body: formData,
   });
   alert('Flashcard added!');
+}
+
+function updateFlashcardAlgorithm(algo) {
+  var formData = new FormData();
+  formData.append('command', 'preferences-update');
+  formData.append('username', onlineUsers);
+  formData.append('flashcard_algorithm', algo);
+  fetch('/server.php', {
+      method: 'POST',
+      body: formData,
+  });
+  alert('Flashcard Algorithm Updated!');
 }
 
 
@@ -491,6 +539,8 @@ const reveal = document.querySelector('.reveal');
 const next = document.querySelector('.next');
 const correct = document.querySelector('.correct');
 const incorrect = document.querySelector('.incorrect');
+const randomAlg = document.querySelector('.randomAlg');
+const leitnerAlg = document.querySelector('.leitnerAlg');
 
 // button click listeners
 if (reveal){
@@ -500,26 +550,103 @@ if (reveal){
 }
 
 if (next){
-  next.addEventListener('click', function(){ // populate cue, response with a random flashcard
-    getRandomFlashcard();
+  next.addEventListener('click', function(){ // populate cue, response with the next flashcard
+    getFlashcard();
     response.style.display = 'none';
   });
 }
 
 if (correct){
-  correct.addEventListener('click', function(){ // update flashcard review date if loaded
-    alert("clicked!");
-    incrementReviewDate(1); // make this variable in a later sprint
+    correct.addEventListener('click', function(){ // update flashcard review date and/or priority if loaded
+    updateFlashcardReviewData(flashcardAlgorithm, "correct");
   });
 }
 
 if (incorrect){
-  incorrect.addEventListener('click', function(){ // update flashcard review date if loaded
-    incrementReviewDate(3); // make this variable in a later sprint
+  incorrect.addEventListener('click', function(){ // update flashcard review date and/or priority if loaded
+    updateFlashcardReviewData(flashcardAlgorithm, "incorrect");
   });
 }
 
+if (randomAlg){
+  randomAlg.addEventListener('click', function(){ // set flashcard algorithm to random
+    if (flashcardAlgorithm == 'random'){
+      alert("flashcard algorithm is already Random");
+    }
+    else{
+      alert("flashcard algorithm set to Random");
+      flashcardAlgorithm = 'random';
+      sessionStorage.setItem('flashcardAlgorithm', flashcardAlgorithm);
+      updateFlashcardAlgorithm(flashcardAlgorithm);
+      setFlashcards(flashcardAlgorithm);
+    }
+  });
+}
 
+if (leitnerAlg){
+  leitnerAlg.addEventListener('click', function(){ // set flashcard algorithm to leitner
+    if (flashcardAlgorithm == 'leitner'){
+      alert("flashcard algorithm is already Leitner");
+    }
+    else {
+      alert("flashcard algorithm set to Leitner");
+      flashcardAlgorithm = 'leitner';
+      sessionStorage.setItem('flashcardAlgorithm', flashcardAlgorithm);
+      updateFlashcardAlgorithm(flashcardAlgorithm);
+      setFlashcards(flashcardAlgorithm);
+    }
+  })
+}
+
+function updateFlashcardReviewData(algorithm, state){
+
+  if (algorithm == 'leitner'){
+    updateFlashcardLeitner(state);
+  }
+
+  else if (algorithm == 'random'){
+    if (state == "correct"){
+      incrementReviewDate(1);
+    }
+    else if (state == "incorrect"){
+      incrementReviewDate(3);
+    }
+  }
+}
+
+function updateFlashcardLeitner(state){
+  /*
+Pre: state = "correct" or "incorrect"
+ */
+  // flashcard variables for updating
+  const id = currentFlashcard.id;
+  const username = currentFlashcard.username;
+  const cue = currentFlashcard.cue;
+  const response = currentFlashcard.response;
+  const review_date = currentFlashcard.review_date;
+  alert(currentFlashcard.priority);
+
+  if (state == "correct"){
+    setPriority(id, username, cue, response, review_date, Math.min(currentFlashcard.priority + 1, 3)); // currently 3 is the highest priority
+  }
+  else {
+    setPriority(id, username, cue, response, review_date, 1); // set to the lowest priority (other than today)
+  }
+
+  // update review date based on priority
+  let priority = currentFlashcard.priority;
+  switch(priority) {
+    case 1:
+      incrementReviewDate(1);
+      break;
+    case 2:
+      incrementReviewDate(3)
+      break;
+    case 3:
+      incrementReviewDate(7);
+      break;
+  }
+}
 
 // flashcard data 
 function getFlashcards() { // get all the user's flashcards as (cue, response) objects
@@ -532,7 +659,8 @@ function getFlashcards() { // get all the user's flashcards as (cue, response) o
           username: entry.username,
           cue: entry.cue,
           response: entry.response,
-          review_date: entry.review_date
+          review_date: entry.review_date,
+          priority: entry.priority
         };
       });
     })
@@ -540,6 +668,69 @@ function getFlashcards() { // get all the user's flashcards as (cue, response) o
       console.error('Error fetching flashcards:', error);
       throw error;
     });
+}
+
+// get the next flashcard to be reviewed, if available, based on chosen flashcardAlgorithm
+function getFlashcard(){
+  alert(flashcardAlgorithm);
+  if (flashcardAlgorithm == 'random'){
+    return getRandomFlashcard();
+  }
+  else if (flashcardAlgorithm == 'leitner'){
+    return getLeitnerFlashcard();
+  }
+  else{
+    alert("You must choose a flashcard algorithm first");
+    console.error("Invalid flashcard algorithm or none chosen");
+  }
+}
+
+function setPriorityAll(priority){
+
+  // Get flashcards
+  return getFlashcards()
+    .then(flashcards => {
+      // Iterate over each flashcard and sets its review date to date
+      flashcards.forEach(flashcard => {
+        setPriority(flashcard.id, flashcard.username, flashcard.cue, flashcard.response, flashcard.review_date, priority);
+      });
+    })
+    .catch(error => {
+      console.error('Error iterating over flashcards:', error);
+      throw error;
+    });
+}
+
+function setPriority(id, username, cue, response, review_date, priority) {
+
+  if (currentFlashcard) {
+    alert("flashcard found! - priority");
+    currentFlashcard.priority = priority;
+    const formData = new FormData();
+    formData.append('command', 'flashcard-update');
+    formData.append('id', id);
+    formData.append('username', username);
+    formData.append('cue', cue);
+    formData.append('response', response);
+    formData.append('review_date', review_date);
+    formData.append('priority', priority);
+    alert("hi");
+    return fetch('/server.php', {
+      method: 'POST',
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(json => {
+      if (json.status === 'Success') {
+        return Promise.resolve();
+      } else {
+        return Promise.reject(json.message);
+      }
+    });
+  }
+  else {
+    return;
+  }
 }
 
 function getRandomFlashcard() {
@@ -555,6 +746,8 @@ function getRandomFlashcard() {
       // If there are valid flashcards, select a random one
       const randomIndex = Math.floor(Math.random() * validFlashcards.length);
       currentFlashcard = validFlashcards[randomIndex];
+
+      // display the flashcard
       cue.innerHTML = `<h3>${currentFlashcard.cue}</h3>`;
       response.innerHTML = `<h3>${currentFlashcard.response}</h3>`;
       alert('Flashcards Loaded!');
@@ -569,14 +762,148 @@ function getRandomFlashcard() {
   });
 }
 
+function groupBy(array, property) {
+  return array.reduce((acc, obj) => {
+    const key = obj[property];
+    if (!acc[key]) {
+      acc[key] = [];
+    }
+    acc[key].push(obj);
+    return acc;
+  }, {});
+}
+
+function getLeitnerFlashcard(){
+  getFlashcards()
+  .then(data => {
+    // Filter flashcards with review dates on or before today
+    const validFlashcards = data.filter(flashcard => {
+      const reviewDate = new Date(flashcard.review_date);
+      return reviewDate <= new Date(); // Compare review date with today
+    });
+
+    if (validFlashcards.length > 0) {
+
+       // Group valid flashcards by priority
+       const groupedByPriority = groupBy(validFlashcards, 'priority');
+
+       // Find the group with the lowest priority
+       const lowestPriorityGroup = Math.min(...Object.keys(groupedByPriority));
+
+       // Select flashcards from the lowest priority group
+       const lowestPriorityFlashcards = groupedByPriority[lowestPriorityGroup];
+
+       // Randomly select a flashcard from the lowest priority group
+       const randomIndex = Math.floor(Math.random() * lowestPriorityFlashcards.length);
+       currentFlashcard = lowestPriorityFlashcards[randomIndex];
+
+      // display the flashcard
+      cue.innerHTML = `<h3>${currentFlashcard.cue}</h3>`;
+      response.innerHTML = `<h3>${currentFlashcard.response}</h3>`;
+      alert('Flashcards Loaded!');
+    } else {
+      // No valid flashcards found
+      alert('No flashcards available for review.');
+    }
+  })
+  .catch(error => {
+    // Handle errors
+    console.error('Error:', error);
+  });
+}
+
+// set all flashcards to their default state as per the algorithm
+function setFlashcards(algorithm){
+
+  // set all flashcards review_date to today (all algorithms)
+  dateToday = todaysDate();
+  alert(dateToday);
+  setReviewDateAll(dateToday);
+
+  // set all priorities to 0 (leitner algorithm)
+  if (algorithm == 'leitner'){
+    setPriorityAll(0);
+  }
+
+}
+
+async function getFlashcardAlgorithm(globalAlg) {
+  try {
+    const response = await fetch(`/server.php?command=preferences&username=${encodeURIComponent(onlineUsers)}`);
+    const json = await response.json();
+    const flashcardAlgorithm = json.message.map(entry => {
+      return {
+        flashcard_algorithm: entry.flashcard_algorithm,
+      };
+    });
+    globalAlg = flashcardAlgorithm;
+    return flashcardAlgorithm;
+  } catch (error) {
+    console.error('Error fetching flashcard algorithm:', error);
+    throw error;
+  }
+}
+
+// return today's date in 'YYYY-MM-DD' format; ready for POST requests
+function todaysDate(){
+  const dateToday = new Date();
+  const isoDateString = dateToday.toISOString();
+  const dateOnlyString = isoDateString.split('T')[0]; // Extract date part before 'T'
+  return dateOnlyString;
+}
+
+// sets the review date of all flashcards to date
+function setReviewDateAll(date){
+
+  // Get flashcards
+  return getFlashcards()
+    .then(flashcards => {
+      // Iterate over each flashcard and sets its review date to date
+      flashcards.forEach(flashcard => {
+        setReviewDate(date, flashcard.username, flashcard.id, flashcard.cue, flashcard.response, flashcard.priority);
+      });
+    })
+    .catch(error => {
+      console.error('Error iterating over flashcards:', error);
+      throw error;
+    });
+}
+
+// set the review date of a flashcard with a given username, id, cue, and response to date
+function setReviewDate(date, username, id, cue, response, priority){
+  const formData = new FormData();
+  formData.append('command', 'flashcard-update');
+  formData.append('id', id);
+  formData.append('username', username);
+  formData.append('cue', cue);
+  formData.append('response', response);
+  formData.append('review_date', date);
+  formData.append('priority', priority);
+
+  return fetch('/server.php', {
+    method: 'POST',
+    body: formData,
+  })
+  .then(response => response.json())
+  .then(json => {
+    if (json.status === 'Success') {
+      return Promise.resolve();
+    } else {
+      return Promise.reject(json.message);
+    }
+  });
+}
+
 function incrementReviewDate(days) {
 
   if (currentFlashcard) {
-    alert("flashcard found!");
+    alert("flashcard found! - review date");
     const id = currentFlashcard.id;
     const username = currentFlashcard.username;
     const cue = currentFlashcard.cue;
     const response = currentFlashcard.response;
+    const priority = currentFlashcard.priority;
+    alert(cue);
 
     const formData = new FormData();
     formData.append('command', 'flashcard-update');
@@ -584,6 +911,7 @@ function incrementReviewDate(days) {
     formData.append('username', username);
     formData.append('cue', cue);
     formData.append('response', response);
+    formData.append('priority', priority);
 
     const newReviewDate = new Date();
     newReviewDate.setDate(newReviewDate.getDate() + days); // Increment review date by days
@@ -606,10 +934,11 @@ function incrementReviewDate(days) {
     });
   }
   else {
-    alert("load a flashcard first!");
     return;
   }
 }
+
+
 
 
 function getFlashcardsnum() {
@@ -624,6 +953,96 @@ function getFlashcardsnum() {
       });
 }
 
+function addOptions(courses, container) {
+
+    courses.forEach(course => {
+        const newOption = document.createElement('option');
+        newOption.value = course.id;
+        newOption.text = course.course_name;
+        container.appendChild(newOption);
+    });
+}
+
+function notesInsertionLoad() {
+  //const notesContainer = document.getElementById('note-info');
+  //notesContainer.innerHTML = '<p>Loading notes...</p>'; // Provide a loading indicator
+  const tagsContainer = document.getElementById('tag');
+  fetch('/server.php?command=courses&username=' + encodeURIComponent(onlineUsers))
+      .then(response => response.json())
+      .then(data => {
+          if (data.courses && data.courses.length > 0) {
+              addOptions(data.courses, tagsContainer);
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+      });
+}
+
+// function getTimeslots($courseID){
+//   return fetch('/server.php?command=timeslots&course_id=' + $courseID) // these commands don't exist???
+//     .then(response => response.json())
+//     .then(json => {
+      
+//     })
+// }
+
+// function createSchedule() { // this assumes they have inserted courses with appropriate times.
+//   getCourses()
+//     .then(data => {
+
+
+//     })
+//     .catch(error => {
+//       console.error('Error creating schedule:', error);
+//     })
+// }
+
+// // times will be stored as hour in the week
+// function createFFGraph(courses){ // courses is a dictionary with courseid as key and a list of all timeslot/length pairs as a value
+//   let timeslots = {}; //timeslots is a dictionary with all possible (used) timeslots as keys, and all courses using that timeslot as values
+//   let slots = {};
+//   var course_keys = Object.keys(courses); // enter course_keys[num] to get the corresponding courseid, used at end when translating back
+//   var course_nums = {}; // enter course_nums[courseid] to get the corresponding position of the course
+//   for(let i = 0; i < course_keys.length; i++){
+//     course_nums[i] = course_keys[i];
+//   }
+
+
+//   for(let course in course_keys){ // MAKING TIMESLOTS DICTIONARY
+//     var tempSlots = courses[course]; // tempslots is a list of all timeslots for the current course
+//     for(let time in tempSlots){ // time is a section for the course
+//       time = time[day]*24 + time[start_time];
+//       for(let i = 0; i < time[length];i++){
+//         timeslots[time[start]+i].push(course);
+//       }
+//     }
+//   }
+
+//   var timeslot_keys = Object.keys(timeslots); // enter timeslot_keys[num] to get the corresponding time, used at end when translating back
+//   var timeslot_nums = {}; // enter timeslot_nums[time] to get the corresponding location of the time used to find locations in the graph creation
+//   for(let i = 0; i < timeslot_keys.length; i++){
+//     timeslot_nums[i] = timeslot_keys[i];
+//   }
+
+//   let numNodes = 2+timeslot_keys.length+course_keys.length;
+//   var FFgraph = Array(numNodes).fill(Array(numNodes).fill(0));
+  
+//   for(let i = 2; i < timeslots.length+2;i++){ // creating all edges to times from source
+//     FFgraph[0][i] = 1;
+//   }
+
+//   for(let time in timeslots){  // timeslots has all times, time is a possible time
+//     for(let tempcourse in timeslots[time]){ // timeslots[time] is all courses at time, tempcourse is a course at the time
+//       FFgraph[timeslot_nums[time]+2][course_nums[tempcourse]+2] = 1; // creating all edges from times to courses
+//     }
+//   }
+
+//   for(let course in courses){
+//     FFgraph[course_nums[course]+timeslot_keys.length+2][1] = courses[course][length];
+//   }
+
+//   return [FFgraph,course_keys,course_nums,timeslot_keys,timeslot_nums];
 // function getCourses() {
 //   return fetch('/server.php?commmand=courses&username=userAA') 
 //     .then(response => response.json())
@@ -806,7 +1225,7 @@ function showCourses() {
     .then(console.log(response))
     .then(response => response.json())
     .then(data => {
-        const main = document.getElementById('course-main');
+        const main = document.getElementsByClassName('main')[0];
 
         data.forEach(item => {
 
@@ -843,7 +1262,7 @@ function showTimeslots() {
     .then(console.log(response))
     .then(response => response.json())
     .then(data => {
-        const main = document.getElementById('course-main');
+        const main = document.getElementsByClassName('main')[0];
         const button = document.createElement('button');
         button.classList.add('edit-button');
         button.textContent = 'Add a timeslot';
@@ -880,6 +1299,8 @@ function showTimeslots() {
     });
 }
 
+
+
 document.addEventListener('DOMContentLoaded', function() {
   // Example: Check if the URL path contains "notes-all"
   if (window.location.pathname.includes('notes-all')) {
@@ -889,25 +1310,104 @@ document.addEventListener('DOMContentLoaded', function() {
           searchButton.addEventListener('click', handleSearch);
       }
   }
+  // Example: Check if the URL path contains "deadlines-all"
+  if (window.location.pathname.includes('deadlines-all')) {
+      loadDeadlines(); // Initially load all deadlines
+      const searchButton = document.querySelector('.search-box button[type="submit"]');
+      if (searchButton) {
+          searchButton.addEventListener('click', handleDeadlineSearch);
+      }
+
+
+    }
+
+    if (window.location.pathname.includes('flashcard-review.php')) {
+      // Code specific to 'flashcard-review.php'
+      getFlashcard();
+      alert('This is the flashcard review page.');
+      // Fetch and display flashcard, etc.
+  } 
+
 
   if (window.location.pathname.includes('flashcard-all')) {
     loadFlashcards(); // Initially load all notes
     const searchButton = document.querySelector('.search-box button[type="submit"]');
     if (searchButton) {
-      searchButton.addEventListener('click', handleFlashcardSearch);
+        searchButton.addEventListener('click', handleFlashcardSearch);
     }
   }
-
-  if (window.location.pathname.includes('deadlines-all')) {
-    loadDeadlines(); // Initially load all deadlines
-    const searchButton = document.querySelector('.search-box button[type="submit"]');
-    if (searchButton) {
-        searchButton.addEventListener('click', handleDeadlineSearch);
-    }
-  }
-
 
 });
+
+function handleFlashcardSearch(event) {
+  event.preventDefault(); // Prevent the default form submission
+  const searchQuery = document.querySelector('.search-box input[name="search"]').value;
+  searchFlashcards(searchQuery);
+}
+
+function searchFlashcards(query) {
+  const flashcardsContainer = document.getElementById('flashcard-info');
+  flashcardsContainer.innerHTML = ''; // Always clear the current flashcards
+  if (query.trim() === '') {
+      flashcardsContainer.innerHTML = '<p>Please enter a search query.</p>';
+      return; // Exit the function early if query is empty
+  }
+  // Proceed with fetch if query is not empty
+  fetch(`/server.php?command=search_flashcards&query=${encodeURIComponent(query)}&username=${encodeURIComponent(onlineUsers)}`)
+      .then(response => response.json())
+      .then(data => {
+          if (data.flashcards && data.flashcards.length > 0) {
+              displayFlashcards(data.flashcards, flashcardsContainer);
+          } else {
+              flashcardsContainer.innerHTML = '<p>No flashcards found.</p>';
+          }
+      })
+      .catch(error => {
+          flashcardsContainer.innerHTML = '<p>Error fetching flashcards. Please try again later.</p>';
+      });
+}
+
+function resetFlashcardSearch() {
+  const searchInput = document.querySelector('.search-box input[name="search"]');
+  if (searchInput) {
+      searchInput.value = '';
+  }
+  loadFlashcards();
+}
+
+function loadFlashcards() {
+  const flashcardsContainer = document.getElementById('flashcard-info');
+  flashcardsContainer.innerHTML = '<p>Loading flashcards...</p>';
+  fetch('/server.php?command=load_all_flashcards&username=' + encodeURIComponent(onlineUsers))
+    .then(response => response.json())
+    .then(data => {
+      if (data.flashcards && data.flashcards.length > 0) {
+        displayFlashcards(data.flashcards, flashcardsContainer);
+      } else {
+        flashcardsContainer.innerHTML = '<p>No flashcards found.</p>';
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      flashcardsContainer.innerHTML = '<p>Error loading flashcards. Please try again later.</p>';
+    });
+}
+
+function displayFlashcards(flashcards, container) {
+  container.innerHTML = ''; // Clear container
+  flashcards.forEach(flashcard => {
+    const flashcardDiv = document.createElement('div');
+    flashcardDiv.className = 'note-container'; // Use an appropriate class for styling
+    flashcardDiv.innerHTML = `
+      <div class="flashcard-cue">${flashcard.cue}</div>
+      <div class="flashcard-response">${flashcard.response}</div>
+      <div class="flashcard-review-date">Review Date: ${flashcard.review_date}</div>
+      <button class="edit-button" onclick="location.href='deadlines-view.php?id=${flashcard.id}'">View/Edit</button>
+    `;
+    container.appendChild(flashcardDiv);
+  });
+}
+
 
 function handleDeadlineSearch(event) {
   event.preventDefault(); // Prevent the default form submission
@@ -978,76 +1478,6 @@ function resetDeadlineSearch() {
   }
   loadDeadlines();
 }
-
-function handleFlashcardSearch(event) {
-  event.preventDefault(); // Prevent the default form submission
-  const searchQuery = document.querySelector('.search-box input[name="search"]').value;
-  searchFlashcards(searchQuery);
-}
-
-function searchFlashcards(query) {
-  const flashcardsContainer = document.getElementById('flashcard-info');
-  flashcardsContainer.innerHTML = ''; // Always clear the current flashcards
-  if (query.trim() === '') {
-      flashcardsContainer.innerHTML = '<p>Please enter a search query.</p>';
-      return; // Exit the function early if query is empty
-  }
-  // Proceed with fetch if query is not empty
-  fetch(`/server.php?command=search_flashcards&query=${encodeURIComponent(query)}&username=${encodeURIComponent(onlineUsers)}`)
-      .then(response => response.json())
-      .then(data => {
-          if (data.flashcards && data.flashcards.length > 0) {
-              displayFlashcards(data.flashcards, flashcardsContainer);
-          } else {
-              flashcardsContainer.innerHTML = '<p>No flashcards found.</p>';
-          }
-      })
-      .catch(error => {
-          flashcardsContainer.innerHTML = '<p>Error fetching flashcards. Please try again later.</p>';
-      });
-}
-
-function resetFlashcardSearch() {
-  const searchInput = document.querySelector('.search-box input[name="search"]');
-  if (searchInput) {
-      searchInput.value = '';
-  }
-  loadFlashcards();
-}
-
-function loadFlashcards() {
-  const flashcardsContainer = document.getElementById('flashcard-info');
-  flashcardsContainer.innerHTML = '<p>Loading flashcards...</p>';
-  fetch('/server.php?command=load_all_flashcards&username=' + encodeURIComponent(onlineUsers))
-    .then(response => response.json())
-    .then(data => {
-      if (data.flashcards && data.flashcards.length > 0) {
-        displayFlashcards(data.flashcards, flashcardsContainer);
-      } else {
-        flashcardsContainer.innerHTML = '<p>No flashcards found.</p>';
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      flashcardsContainer.innerHTML = '<p>Error loading flashcards. Please try again later.</p>';
-    });
-}
-
-function displayFlashcards(flashcards, container) {
-  container.innerHTML = ''; // Clear container
-  flashcards.forEach(flashcard => {
-    const flashcardDiv = document.createElement('div');
-    flashcardDiv.className = 'note-container'; // Use an appropriate class for styling
-    flashcardDiv.innerHTML = `
-      <div class="flashcard-cue">${flashcard.cue}</div>
-      <div class="flashcard-response">${flashcard.response}</div>
-      <div class="flashcard-review-date">Review Date: ${flashcard.review_date}</div>
-      <button class="edit-button" onclick="location.href='flashcard-view.php?id=${flashcard.id}'">View/Edit</button>
-    `;
-    container.appendChild(flashcardDiv);
-  });
-}
-
 
 function handleSearch(event) {
   event.preventDefault(); // Prevent the default form submission
@@ -1128,4 +1558,36 @@ function resetSearch() {
   loadNotes();
 }
 
+function handleSignupClick() {
 
+  window.location.href = "signup.php";
+  
+  
+  }
+
+
+function addOptions(courses, container) {
+
+    courses.forEach(course => {
+        const newOption = document.createElement('option');
+        newOption.value = course.id;
+        newOption.text = course.course_name;
+        container.appendChild(newOption);
+    });
+}
+
+function getCoursesLoad() {
+  //const notesContainer = document.getElementById('note-info');
+  //notesContainer.innerHTML = '<p>Loading notes...</p>'; // Provide a loading indicator
+  const tagsContainer = document.getElementById('tag');
+  fetch('/server.php?command=courses&username=' + encodeURIComponent(onlineUsers))
+      .then(response => response.json())
+      .then(data => {
+          if (data.courses && data.courses.length > 0) {
+              addOptions(data.courses, tagsContainer);
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+      });
+}

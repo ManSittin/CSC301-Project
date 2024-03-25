@@ -31,7 +31,12 @@
                         min="0000-00-00T00:00"
                         max="9999-12-31T23:59"
                      />
-                    <br><br>
+                    <br>
+                    <p>Add course tag:</p>
+                    <select id="tag">
+                        <option></option>
+                    </select>
+                    <br>
                     <input type="button" value="Submit deadline" onclick="addDeadline()">
                 </form>
             </div>
@@ -103,6 +108,15 @@
                     </select>
                     <p>Enter your note:</p>
                     <textarea rows="4" cols="50" name="note" id="note" placeholder="Type your note here..."></textarea>
+                    <br>
+                    <div>
+                        <p>Public note:</p>
+                        <input type="checkbox" id="public", value="public">
+                    </div>
+                    <p>Add course tag:</p>
+                    <select id="tag">
+                        <option></option>
+                    </select>
                     <br>
                     <input type="button" value="Add Note" onclick="addNote()">
                 </form>
@@ -198,6 +212,9 @@
                     <p>Response:</p>
                     <textarea rows="4" cols="50" name="response" id="enter-response" placeholder="Type your response here..."></textarea>
                     <br>
+                    <p>Public flashcard:</p>
+                    <input type="checkbox" id="public">
+                    <br>
                     <input type="button" value="Add Flashcard" onclick="addFlashcard()">
                 </form>
             </div>
@@ -286,15 +303,14 @@
 
         case 'course_view':
             ?>
-            
+
             
             <?php
             break;
 
         case 'courses-all':
             ?>
-            
-            
+
             <?php
             break;
 
@@ -378,8 +394,8 @@
             <input type="password" id="password" placeholder="Enter your password" 
             />
           </div>
-
-        <div id="passwordWarning" style="color: red;"></div>
+          <div id="passwordWarning" style="color: red;"></div>
+          <span className="password-length-info">(Password must be longer than 8 characters)</span>
           <button type="button" className="btnformReg" onClick="handleSignUpClick()">
             SIGN UP
           </button>
