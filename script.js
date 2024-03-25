@@ -504,6 +504,40 @@ document.getElementById("result").innerHTML = "The number of flashcards is: " + 
 });
 
 
+
+document.getElementById("flashcardnum").innerHTML = "The number of flashcard left to do is : " + Last_flashcard()
+.then(num => {
+  // This code block will execute once the promise is resolved
+  document.getElementById("flashcardnum").innerHTML = "The number of flashcard left to do is : " +  num.toString();
+})
+.catch(error => {
+  // Handle any errors that might occur during the promise chain
+  console.error('Error:', error);
+  // Optionally, you can set a default value if there's an error
+  document.getElementById("flashcardnum").innerHTML = " Please connect and create flashcards to study" ;
+})
+
+function Last_flashcard(){
+ return  getFlashcards()
+  .then(data => {
+    // Filter flashcards with review dates on or before today
+    const validFlashcards = data.filter(flashcard => {
+      const reviewDate = new Date(flashcard.review_date);
+      return reviewDate <= new Date(); // Compare review date with today
+    });
+    return validFlashcards.length;
+
+
+  })
+  .catch(error => {
+    // Handle errors
+    console.error('Error:', error);
+  });
+
+}
+
+
+
 const cue = document.querySelector('.cue');
 const response = document.querySelector('.response');
 const reveal = document.querySelector('.reveal');
@@ -745,7 +779,7 @@ function groupBy(array, property) {
 }
 
 function getLeitnerFlashcard(){
-  getFlashcards()
+   getFlashcards()
   .then(data => {
     // Filter flashcards with review dates on or before today
     const validFlashcards = data.filter(flashcard => {
@@ -915,7 +949,6 @@ function incrementReviewDate(days) {
 function getFlashcardsnum() {
   return getFlashcards()
       .then(flashcards => {
-          console.log(flashcards);
           return flashcards.length;
       })
       .catch(error => {
