@@ -9,7 +9,7 @@
                 if( $_SESSION['onlineUsers']){
                  
                   
-                  echo  '<button class = "logoutbutton" onClick="handlelogout()"> Logout </button>';
+                  echo  '<button onClick="handlelogout()"> Logout </button>';
                 }
                 ?>
         </div>
@@ -35,11 +35,6 @@
                         }
                     }
                 ?>
-
-            </div >
-            <h2> Flashcards Information</h2>
-            
-
             </div>
 
                 <div id="flashcard-info">
@@ -55,8 +50,7 @@
         </div>
                 
 
-            <div class = "info-block" id = "result"> </div>
-            <div class = "info-block" id = "flashcardnum"> </div>
-
+            <div id = "result"> </div>
+            <div id = "flashcardnum"> </div>
         </div>
     </div>

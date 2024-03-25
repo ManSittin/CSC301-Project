@@ -7,13 +7,6 @@ CREATE TABLE IF NOT EXISTS Users (
     last_name VARCHAR(40) NOT NULL,
     password VARCHAR(255) NOT NULL
 );
-
-CREATE TABLE IF NOT EXISTS Courses (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(16),
-    course_name VARCHAR(255),
-    FOREIGN KEY (username) REFERENCES Users(username)
-);
 -- Create table to store Notes created by Users
 CREATE TABLE IF NOT EXISTS Notes (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -51,7 +44,12 @@ CREATE TABLE IF NOT EXISTS Flashcards (
 );
 
 -- Create table to store Courses added by Users
-
+CREATE TABLE IF NOT EXISTS Courses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(16),
+    course_name VARCHAR(255),
+    FOREIGN KEY (username) REFERENCES Users(username)
+);
 
 CREATE TABLE IF NOT EXISTS Course_Timeslots (
     course_id INT,
