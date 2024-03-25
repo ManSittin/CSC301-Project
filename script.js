@@ -1540,7 +1540,13 @@ function searchNotes(query) {
       return; // Exit the function early if query is empty
   }
   // Proceed with fetch if query is not empty
-  fetch(`/server.php?command=search_notes&query=${encodeURIComponent(query)}&username=${encodeURIComponent(onlineUsers)}`)
+  var request = `/server.php?command=search_notes&query=${encodeURIComponent(query)}&username=`;
+  if (window.location.pathname.includes('notes-all-public')) {
+    request += -1;
+  } else {
+    request += encodeURIComponent(onlineUsers);
+  }
+  fetch(request)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -1565,7 +1571,13 @@ function searchNotes(query) {
 function loadNotes() {
   const notesContainer = document.getElementById('note-info');
   notesContainer.innerHTML = '<p>Loading notes...</p>'; // Provide a loading indicator
-  fetch('/server.php?command=load_all_notes&username=' + encodeURIComponent(onlineUsers))
+  var request = '/server.php?command=load_all_notes&username=';
+  if (window.location.pathname.includes('notes-all-public')) {
+    request += '-1'
+  } else {
+    request += encodeURIComponent(onlineUsers);
+  }
+  fetch(request)
       .then(response => response.json())
       .then(data => {
           if (data.notes && data.notes.length > 0) {
