@@ -118,7 +118,15 @@ function handleSignInClick() {
 
 }
 
+function setWindowUnload(){
+  window.onbeforeunload = function(){
+    return "Unsaved data";
+  }
+}
 
+function resetWindowUnload(){
+  window.onbeforeunload = null;
+}
 
 
 
@@ -381,6 +389,7 @@ async function getNote($noteID){
 
 // given a note object, display its title in the note-title section and content in the note-body section
 async function loadNote($noteID){
+  setWindowUnload();
   try {
     const data = await getNote($noteID);
     title.innerHTML = `${data.title}`;
@@ -678,6 +687,7 @@ function getFlashcardsnum() {
 //   return [FFgraph,course_keys,course_nums,timeslot_keys,timeslot_nums];
 
 function addCourse() {
+    resetWindowUnload();
     var formData = new FormData();
     formData.append('command', 'courses');
     formData.append('username', onlineUsers);
