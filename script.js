@@ -1387,8 +1387,14 @@ function searchFlashcards(query) {
       flashcardsContainer.innerHTML = '<p>Please enter a search query.</p>';
       return; // Exit the function early if query is empty
   }
+  var request = `/server.php?command=search_flashcards&query=${encodeURIComponent(query)}&username=`;
+  if (window.location.pathname.includes('flashcard-all-public.php')) {
+    request += -1;
+  } else {
+    request += encodeURIComponent(onlineUsers);
+  }
   // Proceed with fetch if query is not empty
-  fetch(`/server.php?command=search_flashcards&query=${encodeURIComponent(query)}&username=${encodeURIComponent(onlineUsers)}`)
+  fetch(request)
       .then(response => response.json())
       .then(data => {
           if (data.flashcards && data.flashcards.length > 0) {
@@ -1413,7 +1419,13 @@ function resetFlashcardSearch() {
 function loadFlashcards() {
   const flashcardsContainer = document.getElementById('flashcard-info');
   flashcardsContainer.innerHTML = '<p>Loading flashcards...</p>';
-  fetch('/server.php?command=load_all_flashcards&username=' + encodeURIComponent(onlineUsers))
+  var request = '/server.php?command=load_all_flashcards&username=';
+  if (window.location.pathname.includes('flashcard-all-public')) {
+    request += -1;
+  } else {
+    request += encodeURIComponent(onlineUsers);
+  }
+  fetch(request)
     .then(response => response.json())
     .then(data => {
       if (data.flashcards && data.flashcards.length > 0) {
