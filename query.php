@@ -244,7 +244,7 @@ class Model {
         $stmt->bind_param("s", $username);
         $result = $stmt->execute();
         if ($result) {
-            $stmt->bind_result($id, $username, $title, $content, $tag);
+            $stmt->bind_result($id, $username, $title, $content, $is_public, $tag);
 
             $results = [];
             while ($stmt->fetch()) {
@@ -320,11 +320,18 @@ class Model {
         die("Connection to database failed: " . $conn->connect_error);
         return false; // Connection failure
     }
-    
-    $sql = "SELECT * FROM Flashcards WHERE username = ? AND cue LIKE CONCAT('%', ?, '%')";
-    $stmt = $conn->prepare($sql);
 
-    $stmt->bind_param("ss", $username, $searchQuery);
+    if ($username == -1) {
+        $sql = "SELECT * FROM Flashcards WHERE is_public = 1 AND cue LIKE CONCAT('%', ?, '%')";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $searchQuery);
+    } else {
+        $sql = "SELECT * FROM Flashcards WHERE username = ? AND cue LIKE CONCAT('%', ?, '%')";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ss", $username, $searchQuery);
+    }
+
+
     $result = $stmt->execute();
     
     if ($result) {
@@ -364,11 +371,16 @@ class Model {
             die("Connection to database failed: " . $conn->connect_error);
             return false; // TODO
         }
-        $stmt = $conn->prepare("SELECT * FROM Flashcards WHERE Flashcards.username = ?");
-        $stmt->bind_param("s", $username);
+
+        if ($username == -1) {
+             $stmt = $conn->prepare("SELECT * FROM Flashcards WHERE is_public = 1");
+        } else {
+             $stmt = $conn->prepare("SELECT * FROM Flashcards WHERE Flashcards.username = ?");
+             $stmt->bind_param("s", $username);
+        }
         $result = $stmt->execute();
         if ($result) {
-            $stmt->bind_result($id, $username, $cue, $response, $review_date, $priority);
+            $stmt->bind_result($id, $username, $cue, $response, $review_date, $priority, $is_public);
 
             $results = [];
             while ($stmt->fetch()) {

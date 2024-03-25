@@ -193,6 +193,7 @@
             <div class="textbox-section">
                 <div><a href="flashcard-insertion.php">Add Flashcards</a></div>
                 <div><a href="flashcard-all.php">View Flashcards</a></div>
+                <div><a href="flashcard-all-public.php">Public Flashcards</a></div>
                 <div><a href="flashcard-review.php">Review Flashcards</a></div>
                 <div><a href="flashcard-algorithms.php">Modify Flashcard Algorithm</a></div>
             </div>
