@@ -141,6 +141,16 @@ function handleSignUpClick() {
   var email =  document.getElementById("email").value;
   var username =  document.getElementById("username").value;
   var password =  document.getElementById("password").value;
+
+      // Clear previous warning messages
+    passwordWarning.textContent = '';
+
+    // Check if the password is longer than 8 characters
+    if(password.length <= 8) {
+        // If the password is not long enough, display the warning and exit the function
+        passwordWarning.textContent = 'Password must be longer than 8 characters.';
+        return; // Exit the function early
+    }
   
   // Perform validation if needed
   var passi = encryptMessage(password, secretKey);
