@@ -71,7 +71,7 @@ class Model {
         }
         
         $stmt = $conn->prepare("INSERT INTO Deadlines (username, course, deadline_name, due_date, tag_id) VALUES (?,?,?,?,?)");
-        $stmt->bind_param("ssssi", $username, $course, $deadline_name, $due_date, $tag);
+        $stmt->bind_param("ssssi", $username, $course, $deadline_name, $due_date, $tag_id);
         $result = $stmt->execute();
         $stmt->close();
 
@@ -135,11 +135,11 @@ class Model {
         $result = $stmt->execute();
         
         if ($result) {
-            $stmt->bind_result($id, $username, $course, $deadline_name, $due_date, $tag);
+            $stmt->bind_result($id, $username, $course, $deadline_name, $due_date, $tag_id);
     
             $results = [];
             while ($stmt->fetch()) {
-                $results[] = ['id' => $id, 'username' => $username, 'course' => $course, 'deadline_name' => $deadline_name, 'due_date' => $due_date];
+                $results[] = ['id' => $id, 'username' => $username, 'course' => $course, 'deadline_name' => $deadline_name, 'due_date' => $due_date, 'tag_id' => $tag_id];
             }
             $stmt->close();
             return $results;
@@ -205,7 +205,7 @@ class Model {
         }
 
         $stmt = $conn->prepare("INSERT INTO Notes (username, title, content, is_public, tag_id) VALUES (?,?,?,?,?)");
-        $stmt->bind_param("sssii", $username, $title, $content, $is_public, $tag);
+        $stmt->bind_param("sssii", $username, $title, $content, $is_public, $tag_id);
         $result = $stmt->execute(); // check if query worked
         return $result;
     }
@@ -244,11 +244,11 @@ class Model {
         $stmt->bind_param("s", $username);
         $result = $stmt->execute();
         if ($result) {
-            $stmt->bind_result($id, $username, $title, $content, $tag);
+            $stmt->bind_result($id, $username, $title, $content, $is_public, $tag_id);
 
             $results = [];
             while ($stmt->fetch()) {
-                $results[] = ['id' => $id, 'username' => $username, 'title' => $title, 'content' => $content];
+                $results[] = ['id' => $id, 'username' => $username, 'title' => $title, 'content' => $content, 'is_public' => $is_public, 'content' => $content, 'tag_id' => $tag_id ];
             }
             $stmt->close();
             return $results;
@@ -368,11 +368,11 @@ class Model {
         $stmt->bind_param("s", $username);
         $result = $stmt->execute();
         if ($result) {
-            $stmt->bind_result($id, $username, $cue, $response, $review_date, $priority);
+            $stmt->bind_result($id, $username, $cue, $response, $review_date, $priority, $is_public);
 
             $results = [];
             while ($stmt->fetch()) {
-                $results[] = ['id' => $id, 'username' => $username, 'cue' => $cue, 'response' => $response, 'review_date' => $review_date, 'priority' => $priority];
+                $results[] = ['id' => $id, 'username' => $username, 'cue' => $cue, 'response' => $response, 'review_date' => $review_date, 'priority' => $priority, 'is_public' => $is_public];
             }
             $stmt->close();
             return $results;
@@ -381,15 +381,15 @@ class Model {
         }
     }
 
-    public function updateFlashcard($id, $username, $cue, $response, $review_date, $priority) {
+    public function updateFlashcard($id, $username, $cue, $response, $review_date, $priority, $is_public) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
       
         if ($conn->connect_error) {
             die("Connection to database failed: " . $conn->connect_error);
             return false;
         }
-        $stmt = $conn->prepare("UPDATE Flashcards SET cue = ?, response = ?, review_date = ?, priority = ? WHERE Flashcards.id = ? AND Flashcards.username = ?;");
-        $stmt->bind_param("sssiis", $cue, $response, $review_date, $priority, $id, $username);
+        $stmt = $conn->prepare("UPDATE Flashcards SET cue = ?, response = ?, review_date = ?, priority = ?, is_public = ? WHERE Flashcards.id = ? AND Flashcards.username = ?;");
+        $stmt->bind_param("sssiisi", $cue, $response, $review_date, $priority, $id, $username, $is_public);
 
         $result = $stmt->execute(); // check if query worked
         return $result;

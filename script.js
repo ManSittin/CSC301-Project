@@ -1437,7 +1437,7 @@ function displayFlashcards(flashcards, container) {
       <div class="flashcard-cue">${flashcard.cue}</div>
       <div class="flashcard-response">${flashcard.response}</div>
       <div class="flashcard-review-date">Review Date: ${flashcard.review_date}</div>
-      <button class="edit-button" onclick="location.href='deadlines-view.php?id=${flashcard.id}'">View/Edit</button>
+      <button class="edit-button" onclick="location.href='flashcard-view.php?id=${flashcard.id}'">View/Edit</button>
     `;
     container.appendChild(flashcardDiv);
   });

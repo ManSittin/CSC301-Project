@@ -81,6 +81,7 @@ class Controller {
                 $username = $_POST['username'];
                 $title = $_POST['title'];
                 $content = $_POST['content'];
+
                 $result = $model->updateNote($id, $username, $title, $content);
 
                 break;
@@ -102,7 +103,8 @@ class Controller {
                 $response = $_POST['response'];
                 $review_date = $_POST['review_date'];
                 $priority = $_POST['priority'];
-                $result = $model->updateFlashcard($id, $username, $cue, $response, $review_date, $priority);
+                $is_public = $_POST['is_public'];
+                $result = $model->updateFlashcard($id, $username, $cue, $response, $review_date, $priority, $is_public);
 
                 break;
                 
