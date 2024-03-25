@@ -196,7 +196,7 @@ class Model {
         }
     }
 
-    public function newNote($username, $title, $content, $is_public, $tag_id) {
+    public function newNote($username, $title, $content, $is_public, $tag) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
 
         if ($conn->connect_error) {
@@ -205,7 +205,7 @@ class Model {
         }
 
         $stmt = $conn->prepare("INSERT INTO Notes (username, title, content, is_public, tag_id) VALUES (?,?,?,?,?)");
-        $stmt->bind_param("sssii", $username, $title, $content, $is_public, $tag_id);
+        $stmt->bind_param("sssii", $username, $title, $content, $is_public, $tag);
         $result = $stmt->execute(); // check if query worked
         return $result;
     }

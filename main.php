@@ -322,21 +322,19 @@
                 <div className='userlogin'>
                 <div className='signin'>
                 <h1>Sign in</h1>
-                <span> use your account</span>
+                <span>or use your account</span>
                 <form className='form' id = "login">
-                <fieldset class='empty_field'>
-                <input type='email'  class='form-input'
+                <fieldset>
+                <input type='email'
                 placeholder='Email' />
                 </fieldset>
-                <fieldset class= "empty_field">
-                <input type='password'  
-                placeholder='Password'  class='form-input-password'/>
+                <fieldset>
+                <input type='password'
+                placeholder='Password' />
                 </fieldset>
-                <button type='button' className='btnsignin' class= loginbutton onClick="handleSignInClick()">
-                SIGN IN
+                <button type='button' className='btnsignin' onClick="handleSignInClick()">
+                SIGN In
                 </button>
-
-                <form class='form-login' id="login">
 
                 </form>
                 <span className='forgotpassword' onClick={handlePassword}>
@@ -348,7 +346,7 @@
                 <div className='signup1'>
                 <h1> Join us today</h1>
                 </div>
-                <button type='button' className='btnsignup' class= loginbutton  onClick="handleSignupClick()">
+                <button type='button' className='btnsignup' onClick="handleSignupClick()">
                 SIGN UP
                 </button>
         </div>
@@ -362,22 +360,22 @@
         <h1>Join Us Today!</h1>
         <p>Sign up and start exploring our platform!</p>
         <form id = "signup" className="formReg">
-          <div >
+          <div className="inputField">
             <label htmlFor="firstName">First Name*</label>
-            <input type="text" id="firstName" class = 'form-input' placeholder="Enter your first name" 
+            <input type="text" id="firstName" placeholder="Enter your first name" 
             />
           </div>
           <div className="inputField">
             <label htmlFor="lastName">Last Name*</label>
-            <input type="text" id="lastName" class = 'form-input' placeholder="Enter your last name"
+            <input type="text" id="lastName" placeholder="Enter your last name"
             />
             
           </div>
 
 
           <div className="inputField">
-            <label htmlFor="email"  >Email*</label>
-            <input type="email"  class = 'form-input' id="email" placeholder="Enter your email"
+            <label htmlFor="email">Email*</label>
+            <input type="email" id="email" placeholder="Enter your email"
             />
 
           
@@ -385,21 +383,20 @@
           </div>
 
           <div className="inputField">
-            <label htmlFor="user"  >Username*</label>
-            <input type="user" id="username" class = 'form-input' placeholder="Enter your username"
+            <label htmlFor="user">Username*</label>
+            <input type="user" id="username" placeholder="Enter your username"
 
             /> 
           </div>
 
           <div className="inputField">
-            <label htmlFor="password" class = 'form-input'>Password*</label>
-            <input type="password" id="password" class = 'form-input' placeholder="Enter your password" 
+            <label htmlFor="password">Password*</label>
+            <input type="password" id="password" placeholder="Enter your password" 
             />
           </div>
           <div id="passwordWarning" style="color: red;"></div>
           <span className="password-length-info">(Password must be longer than 8 characters)</span>
-
-          <button type="button" className="btnformReg" class= 'loginbutton' onClick="handleSignUpClick()">
+          <button type="button" className="btnformReg" onClick="handleSignUpClick()">
             SIGN UP
           </button>
         </form>
