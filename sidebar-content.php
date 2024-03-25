@@ -37,7 +37,7 @@
                 ?>
             </div>
 
-                <div id="flashcard-info">
+            <div id="flashcard-info">
                 <h2>Flashcards</h2>
                 <?php
                     // Assuming $flashcards is your array of flashcard data fetched from the database
@@ -47,7 +47,7 @@
                         }
                     }
             ?>
-        </div>
+            </div>
                 
 
             <div id = "result"> </div>
