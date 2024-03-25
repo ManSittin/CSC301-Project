@@ -106,6 +106,23 @@ class Model {
         return $result;
     }
 
+    public function deleteFlashcard($flashcard_id) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+    
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false; // Indicate failure
+        }
+    
+        $stmt = $conn->prepare("DELETE FROM Flashcards WHERE id = ?"); 
+        $stmt->bind_param("s", $flashcard_id); // Assuming id is an integer, use "i"
+      
+        $result = $stmt->execute(); // Execute the query and check if it worked
+        $stmt->close(); // Close the statement
+        return $result; // Return true (success) or false (failure)
+    }
+
+
     public function getDeadlines($username) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
         if ($conn->connect_error) {
