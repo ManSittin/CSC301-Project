@@ -11,12 +11,12 @@
         /* Existing style here */
     </style>
 </head>
-<body onload='getCoursesLoad()'>
+<body onload="loadNote(4)">
     <?php include_once 'sidebar-content.php'; ?>
     <div class="not-sidebar">
         <?php include_once 'navbar.html';
-        $header_text = "Welcome to the notes page. Here you can view all of your notes and edit them!";
-        $page = "notes-all";
+        $header_text = "Welcome to the flashcards page. Here you can view all of your flashcards and edit them!";
+        $page = "flashcard-all";
         include_once 'main.php';
         ?>
     </div>
@@ -24,4 +24,5 @@
 </body>
     </div>
 </body>
+
 </html>

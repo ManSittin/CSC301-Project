@@ -7,6 +7,29 @@ if (!isset($_SESSION['onlineUsers'])) {
     // Initialize the 'onlineUsers' session variable as an array if it's not already set
     $_SESSION['onlineUsers']= False;
 }
+
+$filename = 'time.txt';
+
+// Read the file into an array, where each line is an array element
+$fileContent = file($filename, FILE_IGNORE_NEW_LINES);
+
+// Check if we have at least two lines
+if (count($fileContent) >= 2) {
+    // Extract times from the first two lines
+    $timeLine1 = $fileContent[0];
+    $timeLine2 = $fileContent[1];
+    
+    // Convert times to timestamps for comparison
+    $timestamp1 = strtotime($timeLine1);
+    $timestamp2 = strtotime($timeLine2);
+
+    // Compare the timestamps
+    if ($timestamp1 > $timestamp2) {
+        $_SESSION['onlineUsers']= False;
+    }
+} 
+
+
 // Function to add a user to the list of online users
 function addUserToOnlineUsers($userId) {
     $_SESSION['onlineUsers'] = $userId;

@@ -11,9 +11,9 @@
             </div>
             <?php
             break;
-        case 'deadlines-insertion':
-            
+        case 'deadlines-insertion':            
             $currentDateTime = date('Y-m-d\TH:i'); // Format: YYYY-MM-DDTHH:MM
+
             ?>
             <!-- Add a Textbox Feature -->
             <div class="textbox-section">
@@ -21,6 +21,7 @@
                 <form id="addDeadlineForm">
                     <p>Enter Course: </p>
                     <textarea rows="1" cols="50" name="tags" id="tags" placeholder="Type your course here..."></textarea>
+                    </select>
                     <p>Enter Deadline Name:</p>
                     <textarea rows="1" cols="50" name="title" id="title" placeholder="Enter the name of your deadline here..."></textarea>
                     <br>
@@ -28,11 +29,16 @@
                         type="datetime-local"
                         id="date"
                         name="date"
-                        value="<?php echo $currentDateTime; ?>" 
+                        value="2024-02-05T15:00"
                         min="0000-00-00T00:00"
                         max="9999-12-31T23:59"
                      />
-                    <br><br>
+                    <br>
+                    <p>Add course tag:</p>
+                    <select id="tag">
+                        <option></option>
+                    </select>
+                    <br>
                     <input type="button" value="Submit deadline" onclick="addDeadline()">
                 </form>
             </div>
@@ -86,6 +92,7 @@
             <div class="textbox-section">
                 <div><a href="notes-insertion.php">Add Notes</a></div>
                 <div><a href="notes-all.php">View Notes</a></div>
+                <div><a href="notes-all-public.php">Public Notes</a></div>
             </div>
             
             <?php
@@ -104,6 +111,15 @@
                     </select>
                     <p>Enter your note:</p>
                     <textarea rows="4" cols="50" name="note" id="note" placeholder="Type your note here..."></textarea>
+                    <br>
+                    <div>
+                        <p>Public note:</p>
+                        <input type="checkbox" id="public", value="public">
+                    </div>
+                    <p>Add course tag:</p>
+                    <select id="tag">
+                        <option></option>
+                    </select>
                     <br>
                     <input type="button" value="Add Note" onclick="addNote()">
                 </form>
@@ -138,18 +154,29 @@
             <div class="textbox-section">
                 <!-- Loaded flashcard info preloads here... -->
                 <h2 class="flashcard-title">Your Flashcard</h2> 
-                <form id="editFlashcardForm" method="post" action="flashcards-view.php">
+                <form id="editFlashcardForm" method="post" action="flashcard-view.php">
+                <br>
                 <input type="hidden" id="hiddenFlashcardId" value="<?php echo isset($flashcardForEditing['id']) ? $flashcardForEditing['id'] : ''; ?>">
-                    
+                <br>
                 <label for="cue">Cue:</label>
                 <textarea rows="2" cols="50" name="flashcardCue" class="flashcard-cue"><?php echo isset($flashcardForEditing['cue']) ? $flashcardForEditing['cue'] : ''; ?></textarea>
-                    
+                <br>
                 <label for="response">Response:</label>
                 <textarea rows="4" cols="50" name="flashcardResponse" class="flashcard-response"><?php echo isset($flashcardForEditing['response']) ? $flashcardForEditing['response'] : ''; ?></textarea>
-                    
+                <br>
+                <label for="priority" >Priority:</label>
+                <select name="priority" id="priority" class="flashcard-priority">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                </select>
+                <br>
                 <label for="reviewDate">Review Date:</label>
-                <input type="date" id="reviewDate" name="flashcardReviewDate" value="<?php echo isset($flashcardForEditing['review_date']) ? $flashcardForEditing['review_date'] : ''; ?>">
-                    
+                <input type="date" id="reviewDate" name="flashcardReviewDate" class="flashcard-date" value="<?php echo isset($flashcardForEditing['review_date']) ? $flashcardForEditing['review_date'] : ''; ?>">
+                <br>
+                <label for="public">Public flashcard:</label>
+                <input type="checkbox" id="public" class="flashcard-ispublic">
                 <br>
                 <input type="submit" value="Update Flashcard" class="update-flashcard" onclick="resetWindowUnload()">
                 </form>
@@ -161,6 +188,10 @@
                 ?>
                 <form action="javascript:void(0);" method="get" class="search-box" onsubmit="handleSearch(event)">
                 <input type="hidden" name="action" value="notes-all">
+                <h4>Filter by course:</h4>
+                <select id="tag">
+                    <option></option>
+                </select>
                 <input type="text" name="search" placeholder="Search by title..." id="search-input">
                 <button type="submit" id="search-button">Search</button>
                 <button type="button" id="reset-search-button" onclick="resetSearch()">Reset Search</button>
@@ -172,6 +203,22 @@
             <?php
             break;
 
+        case 'notes-public':
+            ?>
+            <form action="javascript:void(0);" method="get" class="search-box" onsubmit="handleSearch(event)">
+            <input type="hidden" name="action" value="notes-all">
+            <input type="text" name="search" placeholder="Search by title..." id="search-input">
+            <button type="submit" id="search-button">Search</button>
+            <button type="button" id="reset-search-button" onclick="resetSearch()">Reset Search</button>
+            </form>
+            <div id="note-info">
+                <!-- Dynamically inserted notes will go here -->
+            </div>
+
+            <?php
+            break;
+
+
 
         // FLASHCARDS PAGES
         case 'flashcards':
@@ -180,6 +227,7 @@
             <div class="textbox-section">
                 <div><a href="flashcard-insertion.php">Add Flashcards</a></div>
                 <div><a href="flashcard-all.php">View Flashcards</a></div>
+                <div><a href="flashcard-all-public.php">Public Flashcards</a></div>
                 <div><a href="flashcard-review.php">Review Flashcards</a></div>
                 <div><a href="flashcard-algorithms.php">Modify Flashcard Algorithm</a></div>
             </div>
@@ -199,6 +247,14 @@
                     <p>Response:</p>
                     <textarea rows="4" cols="50" name="response" id="enter-response" placeholder="Type your response here..."></textarea>
                     <br>
+                    <p>Add course tag:</p>
+                    <select id='tag'>
+                        <option></option>
+                    </select>
+                    <br>
+                    <p>Public flashcard:</p>
+                    <input type="checkbox" id="public">
+                    <br>
                     <input type="button" value="Add Flashcard" onclick="addFlashcard()">
                 </form>
             </div>
@@ -214,8 +270,8 @@
                 <button type="submit" id="search-button">Search</button>
                 <button type="button" id="reset-search-button" onclick="resetFlashcardSearch()">Reset Search</button>
             </form>
-            <div id="flashcard-info">
-                <!-- Dynamically inserted notes will go here -->
+            <div id="flashcard-list">
+                <!-- Dynamically inserted flashcards will go here -->
             </div>
 
             <?php
@@ -287,22 +343,22 @@
 
         case 'course_view':
             ?>
-            <h2>HI THIS IS OPTION 1</h2>
+      
             <div id="course-main">
                 <!-- Dynamically inserted courses will go here -->
             </div>
-            
+           
             
             <?php
             break;
 
         case 'courses-all':
             ?>
-            <h2>HI THIS IS OPTION 2</h2>
+            
             <div id="course-main">
                 <!-- Dynamically inserted courses will go here -->
             </div>
-            
+
             <?php
             break;
 
@@ -386,8 +442,8 @@
             <input type="password" id="password" placeholder="Enter your password" 
             />
           </div>
-
-        <div id="passwordWarning" style="color: red;"></div>
+          <div id="passwordWarning" style="color: red;"></div>
+          <span className="password-length-info">(Password must be longer than 8 characters)</span>
           <button type="button" className="btnformReg" onClick="handleSignUpClick()">
             SIGN UP
           </button>

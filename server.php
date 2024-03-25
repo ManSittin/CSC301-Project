@@ -33,9 +33,10 @@ class Controller {
                 $username = $_POST['username'];
                 $title = $_POST['title'];
                 $content = $_POST['content'];
-                
-                $result = $model->newNote($username, $title, $content);
-
+                $is_public = $_POST['is_public'];
+                $tag = $_POST['tag'];
+            
+                $result = $model->newNote($username, $title, $content, $is_public, $tag);
                 break;
 
             case ('deadlines'):
@@ -43,8 +44,9 @@ class Controller {
                 $course = $_POST['course'];
                 $name = $_POST['deadline_name'];
                 $due_date = $_POST['duedate'];
+                $tag = $_POST['tag'];
 
-                $result = $model->newDeadline($username, $course, $name, $due_date);
+                $result = $model->newDeadline($username, $course, $name, $due_date, $tag);
 
                 break;
             
@@ -53,8 +55,10 @@ class Controller {
                 $cue = $_POST['cue'];
                 $response = $_POST['response'];
                 $review_date = $_POST['review_date'];
-                $result = $model->newFlashcard($username, $cue, $response, $review_date);
-
+                $priority = $_POST['priority'];  
+                $is_public = $_POST['is_public'];
+                $tag = $_POST['tag'];
+                $result = $model->newFlashcard($username, $cue, $response, $review_date, $priority, $is_public, $tag);
                 break;
 
             case ('courses'):
@@ -77,6 +81,7 @@ class Controller {
                 $username = $_POST['username'];
                 $title = $_POST['title'];
                 $content = $_POST['content'];
+
                 $result = $model->updateNote($id, $username, $title, $content);
 
                 break;
@@ -97,7 +102,9 @@ class Controller {
                 $cue = $_POST['cue'];
                 $response = $_POST['response'];
                 $review_date = $_POST['review_date'];
-                $result = $model->updateFlashcard($id, $username, $cue, $response, $review_date);
+                $priority = $_POST['priority'];
+                $is_public = $_POST['is_public'];
+                $result = $model->updateFlashcard($id, $username, $cue, $response, $review_date, $priority, $is_public);
 
                 break;
                 
@@ -136,6 +143,27 @@ class Controller {
                         } else {
                             http_response_code(200);
                             addUserToOnlineUsers($results);
+
+
+                    // File where the time will be stored and modified
+                    $filename = 'time.txt';
+
+                    // Get the current timestamp
+                        $currentTime = date('Y-m-d H:i:s');
+
+                        // Read the current content of the file
+                        $fileContent = file($filename, FILE_IGNORE_NEW_LINES); // Read each line of the file into an array
+
+                        // Ensure the file has at least two lines, padding with empty strings if necessary
+                        while (count($fileContent) < 2) {
+                        $fileContent[] = '';
+                        }
+
+                        // Update the second line with the current time
+                        $fileContent[1] = $currentTime;
+
+                        // Write the modified content back to the file
+                        file_put_contents($filename, implode("\n", $fileContent));
                             header('Content-Type: application/json');
                             echo json_encode(['status' => 'Success' . $command, 'message' => $results]);
                             exit();
@@ -225,7 +253,7 @@ class Controller {
                 if($results) {
                     http_response_code(200);
                     header('Content-Type: application/json');
-                    echo json_encode($results);
+                    echo json_encode(['courses' => $results]);
                     exit();
                 } else {
                     http_response_code(500);
@@ -272,7 +300,8 @@ class Controller {
                     // Assuming the search query parameter is named 'query'
                     $query = $_GET['query'];
                     $username = $_GET['username'];
-                    $notesfiltered = $model->searchNotesByTitle($query, $username);
+                    $tag = $_GET['tag'];
+                    $notesfiltered = $model->searchNotesByTitle($query, $username, $tag);
                     if ($notesfiltered) {
                         http_response_code(200);
                         header('Content-Type: application/json');
@@ -399,6 +428,9 @@ class Controller {
                 break;
             case 'notes':
                 $results = $model->deleteNote($id);
+                break;
+            case 'flashcards':
+                $results = $model->deleteFlashcard($id);
                 break;
             default:
                 http_response_code(400);

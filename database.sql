@@ -15,7 +15,10 @@ CREATE TABLE IF NOT EXISTS Notes (
     -- file_path VARCHAR(255) NOT NULL UNIQUE, 
     -- use this later
     content VARCHAR(255),
-    FOREIGN KEY (username) REFERENCES Users(username)
+    is_public BIT,
+    tag_id INT DEFAULT NULL,
+    FOREIGN KEY (username) REFERENCES Users(username),
+    FOREIGN KEY (tag_id) REFERENCES Courses(id)
 );
 -- Create table to store Deadlines created by Users
 CREATE TABLE IF NOT EXISTS Deadlines (
@@ -24,7 +27,9 @@ CREATE TABLE IF NOT EXISTS Deadlines (
     course VARCHAR(255) NOT NULL,
     deadline_name VARCHAR(255) NOT NULL,
     due_date date NOT NULL,
-    FOREIGN KEY (username) REFERENCES Users(username)
+    tag_id INT DEFAULT NULL,
+    FOREIGN KEY (username) REFERENCES Users(username),
+    FOREIGN KEY (tag_id) REFERENCES Courses(id)
 );
 -- Create table to store Flashcards created by Users
 CREATE TABLE IF NOT EXISTS Flashcards (
@@ -33,7 +38,12 @@ CREATE TABLE IF NOT EXISTS Flashcards (
     cue VARCHAR(50) NOT NULL,
     response VARCHAR(255) NOT NULL,
     review_date DATE NOT NULL,
-    FOREIGN KEY (username) REFERENCES Users(username)
+    priority INT NOT NULL,
+
+    is_public BIT,
+    tag_id INT DEFAULT NULL,
+    FOREIGN KEY (username) REFERENCES Users(username),
+    FOREIGN KEY (tag_id) REFERENCES Courses(id)
 );
 
 -- Create table to store Courses added by Users
