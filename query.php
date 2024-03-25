@@ -250,7 +250,6 @@ class Model {
         $result = $stmt->execute();
         if ($result) {
             $stmt->bind_result($id, $username, $title, $content, $is_public, $tag_id);
-
             $results = [];
             while ($stmt->fetch()) {
                 $results[] = ['id' => $id, 'username' => $username, 'title' => $title, 'content' => $content, 'is_public' => $is_public, 'content' => $content, 'tag_id' => $tag_id ];
@@ -261,21 +260,20 @@ class Model {
             return false;
         }
     }
-    public function searchNotesByTitle($searchQuery, $username) {
+    public function searchNotesByTitle($searchQuery, $username, $tag) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
         if ($conn->connect_error) {
             die("Connection to database failed: " . $conn->connect_error);
             return false; // Connection failure
         }
-
         if ($username == -1) {
-            $sql = "SELECT * FROM Notes WHERE is_public = 1 AND title LIKE CONCAT('%', ?, '%')";
+            $sql = "SELECT * FROM Notes WHERE is_public = 1 AND title LIKE CONCAT('%', ?, '%') AND (? = '' OR tag_id = ?)";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("s", $searchQuery);
+            $stmt->bind_param("sii", $searchQuery, $tag, $tag);
         } else {
-            $sql = "SELECT * FROM Notes WHERE username = ? AND title LIKE CONCAT('%', ?, '%')";
+            $sql = "SELECT * FROM Notes WHERE username = ? AND title LIKE CONCAT('%', ?, '%') AND (? = '' OR tag_id = ?)";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ss", $username, $searchQuery);
+            $stmt->bind_param("ssii", $username, $searchQuery, $tag, $tag);
         }
     
         // "SELECT * FROM Notes WHERE username = do AND title LIKE CONCAT('%', ?, '%')";

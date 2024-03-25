@@ -299,7 +299,8 @@ class Controller {
                     // Assuming the search query parameter is named 'query'
                     $query = $_GET['query'];
                     $username = $_GET['username'];
-                    $notesfiltered = $model->searchNotesByTitle($query, $username);
+                    $tag = $_GET['tag'];
+                    $notesfiltered = $model->searchNotesByTitle($query, $username, $tag);
                     if ($notesfiltered) {
                         http_response_code(200);
                         header('Content-Type: application/json');

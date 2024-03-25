@@ -1589,13 +1589,14 @@ function handleSearch(event) {
 
 function searchNotes(query) {
   const notesContainer = document.getElementById('note-info');
+  const tag = document.getElementById('tag').value;
   notesContainer.innerHTML = ''; // Always clear the current notes
-  if (query.trim() === '') {
+  /*if (query.trim() === '') {
       notesContainer.innerHTML = '<p>Please enter a search query.</p>';
       return; // Exit the function early if query is empty
-  }
+  }*/
   // Proceed with fetch if query is not empty
-  var request = `/server.php?command=search_notes&query=${encodeURIComponent(query)}&username=`;
+  var request = `/server.php?command=search_notes&tag=${tag}&query=${encodeURIComponent(query)}&username=`;
   if (window.location.pathname.includes('notes-all-public')) {
     request += -1;
   } else {

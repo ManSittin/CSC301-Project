@@ -182,13 +182,17 @@
             <?php
             break;
             
-        case 'notes-all':
-            ?>
-            <form action="javascript:void(0);" method="get" class="search-box" onsubmit="handleSearch(event)">
-            <input type="hidden" name="action" value="notes-all">
-            <input type="text" name="search" placeholder="Search by title..." id="search-input">
-            <button type="submit" id="search-button">Search</button>
-            <button type="button" id="reset-search-button" onclick="resetSearch()">Reset Search</button>
+            case 'notes-all':
+                ?>
+                <form action="javascript:void(0);" method="get" class="search-box" onsubmit="handleSearch(event)">
+                <input type="hidden" name="action" value="notes-all">
+                <h4>Filter by course:</h4>
+                <select id="tag">
+                    <option></option>
+                </select>
+                <input type="text" name="search" placeholder="Search by title..." id="search-input">
+                <button type="submit" id="search-button">Search</button>
+                <button type="button" id="reset-search-button" onclick="resetSearch()">Reset Search</button>
             </form>
             <div id="note-info">
                 <!-- Dynamically inserted notes will go here -->
