@@ -138,6 +138,27 @@ class Controller {
                         } else {
                             http_response_code(200);
                             addUserToOnlineUsers($results);
+
+
+                    // File where the time will be stored and modified
+                    $filename = 'time.txt';
+
+                    // Get the current timestamp
+                        $currentTime = date('Y-m-d H:i:s');
+
+                        // Read the current content of the file
+                        $fileContent = file($filename, FILE_IGNORE_NEW_LINES); // Read each line of the file into an array
+
+                        // Ensure the file has at least two lines, padding with empty strings if necessary
+                        while (count($fileContent) < 2) {
+                        $fileContent[] = '';
+                        }
+
+                        // Update the second line with the current time
+                        $fileContent[1] = $currentTime;
+
+                        // Write the modified content back to the file
+                        file_put_contents($filename, implode("\n", $fileContent));
                             header('Content-Type: application/json');
                             echo json_encode(['status' => 'Success' . $command, 'message' => $results]);
                             exit();
