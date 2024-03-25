@@ -31,7 +31,12 @@
                         min="0000-00-00T00:00"
                         max="9999-12-31T23:59"
                      />
-                    <br><br>
+                    <br>
+                    <p>Add course tag:</p>
+                    <select id="tag">
+                        <option></option>
+                    </select>
+                    <br>
                     <input type="button" value="Submit deadline" onclick="addDeadline()">
                 </form>
             </div>

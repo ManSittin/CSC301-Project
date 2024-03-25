@@ -240,6 +240,7 @@ function addDeadline() { // insert a deadline
   formData.append('course', document.getElementById("addDeadlineForm").elements[0].value);
   formData.append('deadline_name', document.getElementById("addDeadlineForm").elements[1].value);
   formData.append('duedate', document.getElementById("addDeadlineForm").elements[2].value);
+  formData.append('tag', document.getElementById("addDeadlineForm").elements[3].value);
   
   fetch('/server.php', {
       method: 'POST',
@@ -1535,3 +1536,28 @@ function handleSignupClick() {
   }
 
 
+function addOptions(courses, container) {
+
+    courses.forEach(course => {
+        const newOption = document.createElement('option');
+        newOption.value = course.id;
+        newOption.text = course.course_name;
+        container.appendChild(newOption);
+    });
+}
+
+function getCoursesLoad() {
+  //const notesContainer = document.getElementById('note-info');
+  //notesContainer.innerHTML = '<p>Loading notes...</p>'; // Provide a loading indicator
+  const tagsContainer = document.getElementById('tag');
+  fetch('/server.php?command=courses&username=' + encodeURIComponent(onlineUsers))
+      .then(response => response.json())
+      .then(data => {
+          if (data.courses && data.courses.length > 0) {
+              addOptions(data.courses, tagsContainer);
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+      });
+}
