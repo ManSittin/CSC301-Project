@@ -42,6 +42,6 @@
     $loggedInUserId = false;
     $numDeadlines = 0;
     $numNotes = 0;
-
+    $numFlashcards = 0;
    }
 ?>
