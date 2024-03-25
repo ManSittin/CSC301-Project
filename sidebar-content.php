@@ -35,9 +35,28 @@
                         }
                     }
                 ?>
+
             </div >
             <h2> Flashcards Information</h2>
+            
+
+            </div>
+
+                <div id="flashcard-info">
+                <h2>Flashcards</h2>
+                <?php
+                    // Assuming $flashcards is your array of flashcard data fetched from the database
+                    if ($numFlashcards > 0) {
+                        while ($flashcard = mysqli_fetch_assoc($flashcards)) {
+                            echo '<div class="info-block">' . $flashcard["cue"] . '<button class="del-button" id="' . $flashcard["id"] . '" onclick="handleFlashcardDelete(event)">✖</button></div>';
+                        }
+                    }
+            ?>
+        </div>
+                
+
             <div class = "info-block" id = "result"> </div>
             <div class = "info-block" id = "flashcardnum"> </div>
+
         </div>
     </div>
