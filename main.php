@@ -90,6 +90,7 @@
             <div class="textbox-section">
                 <div><a href="notes-insertion.php">Add Notes</a></div>
                 <div><a href="notes-all.php">View Notes</a></div>
+                <div><a href="notes-all-public.php">Public Notes</a></div>
             </div>
             
             <?php
@@ -181,13 +182,28 @@
             <?php
             break;
             
-            case 'notes-all':
-                ?>
-                <form action="javascript:void(0);" method="get" class="search-box" onsubmit="handleSearch(event)">
-                <input type="hidden" name="action" value="notes-all">
-                <input type="text" name="search" placeholder="Search by title..." id="search-input">
-                <button type="submit" id="search-button">Search</button>
-                <button type="button" id="reset-search-button" onclick="resetSearch()">Reset Search</button>
+        case 'notes-all':
+            ?>
+            <form action="javascript:void(0);" method="get" class="search-box" onsubmit="handleSearch(event)">
+            <input type="hidden" name="action" value="notes-all">
+            <input type="text" name="search" placeholder="Search by title..." id="search-input">
+            <button type="submit" id="search-button">Search</button>
+            <button type="button" id="reset-search-button" onclick="resetSearch()">Reset Search</button>
+            </form>
+            <div id="note-info">
+                <!-- Dynamically inserted notes will go here -->
+            </div>
+
+            <?php
+            break;
+
+        case 'notes-public':
+            ?>
+            <form action="javascript:void(0);" method="get" class="search-box" onsubmit="handleSearch(event)">
+            <input type="hidden" name="action" value="notes-all">
+            <input type="text" name="search" placeholder="Search by title..." id="search-input">
+            <button type="submit" id="search-button">Search</button>
+            <button type="button" id="reset-search-button" onclick="resetSearch()">Reset Search</button>
             </form>
             <div id="note-info">
                 <!-- Dynamically inserted notes will go here -->
@@ -197,6 +213,7 @@
             break;
 
 
+
         // FLASHCARDS PAGES
         case 'flashcards':
             ?>
@@ -204,6 +221,7 @@
             <div class="textbox-section">
                 <div><a href="flashcard-insertion.php">Add Flashcards</a></div>
                 <div><a href="flashcard-all.php">View Flashcards</a></div>
+                <div><a href="flashcard-all-public.php">Public Flashcards</a></div>
                 <div><a href="flashcard-review.php">Review Flashcards</a></div>
                 <div><a href="flashcard-algorithms.php">Modify Flashcard Algorithm</a></div>
             </div>

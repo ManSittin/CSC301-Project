@@ -240,8 +240,13 @@ class Model {
             die("Connection to database failed: " . $conn->connect_error);
             return false; // TODO
         }
-        $stmt = $conn->prepare("SELECT * FROM Notes WHERE Notes.username = ?");
-        $stmt->bind_param("s", $username);
+        if ($username == -1) {
+            $stmt = $conn->prepare("SELECT * FROM Notes WHERE is_public = 1");
+        } else {
+            $stmt = $conn->prepare("SELECT * FROM Notes WHERE Notes.username = ?");
+            $stmt->bind_param("s", $username);
+        }
+
         $result = $stmt->execute();
         if ($result) {
             $stmt->bind_result($id, $username, $title, $content, $is_public, $tag_id);
@@ -262,13 +267,22 @@ class Model {
             die("Connection to database failed: " . $conn->connect_error);
             return false; // Connection failure
         }
+
+        if ($username == -1) {
+            $sql = "SELECT * FROM Notes WHERE is_public = 1 AND title LIKE CONCAT('%', ?, '%')";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("s", $searchQuery);
+        } else {
+            $sql = "SELECT * FROM Notes WHERE username = ? AND title LIKE CONCAT('%', ?, '%')";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("ss", $username, $searchQuery);
+        }
     
         // "SELECT * FROM Notes WHERE username = do AND title LIKE CONCAT('%', ?, '%')";
-        $sql = "SELECT * FROM Notes WHERE username = ? AND title LIKE CONCAT('%', ?, '%')";
-        $stmt = $conn->prepare($sql);
+
 
         // Now, this matches the number of ? in the query
-        $stmt->bind_param("ss", $username, $searchQuery);
+
         $result = $stmt->execute();    
         // Bind both the username and the search query parameters
         if ($result) {
@@ -320,11 +334,18 @@ class Model {
         die("Connection to database failed: " . $conn->connect_error);
         return false; // Connection failure
     }
-    
-    $sql = "SELECT * FROM Flashcards WHERE username = ? AND cue LIKE CONCAT('%', ?, '%')";
-    $stmt = $conn->prepare($sql);
 
-    $stmt->bind_param("ss", $username, $searchQuery);
+    if ($username == -1) {
+        $sql = "SELECT * FROM Flashcards WHERE is_public = 1 AND cue LIKE CONCAT('%', ?, '%')";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $searchQuery);
+    } else {
+        $sql = "SELECT * FROM Flashcards WHERE username = ? AND cue LIKE CONCAT('%', ?, '%')";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ss", $username, $searchQuery);
+    }
+
+
     $result = $stmt->execute();
     
     if ($result) {
@@ -364,12 +385,16 @@ class Model {
             die("Connection to database failed: " . $conn->connect_error);
             return false; // TODO
         }
-        $stmt = $conn->prepare("SELECT * FROM Flashcards WHERE Flashcards.username = ?");
-        $stmt->bind_param("s", $username);
+
+        if ($username == -1) {
+             $stmt = $conn->prepare("SELECT * FROM Flashcards WHERE is_public = 1");
+        } else {
+             $stmt = $conn->prepare("SELECT * FROM Flashcards WHERE Flashcards.username = ?");
+             $stmt->bind_param("s", $username);
+        }
         $result = $stmt->execute();
         if ($result) {
-            $stmt->bind_result($id, $username, $cue, $response, $review_date, $priority, $is_public);
-
+            $stmt->bind_result($id, $username, $cue, $response, $review_date, $priority, $is_public, $tag);
             $results = [];
             while ($stmt->fetch()) {
                 $results[] = ['id' => $id, 'username' => $username, 'cue' => $cue, 'response' => $response, 'review_date' => $review_date, 'priority' => $priority, 'is_public' => $is_public];

@@ -257,7 +257,7 @@ function addNote() { // insert a note
   formData.append('title', document.getElementById("addNoteForm").elements[0].value);
   formData.append('content', document.getElementById("addNoteForm").elements[1].value);
   formData.append('is_public', document.getElementById("addNoteForm").elements[2].checked ? 1 : 0);
-  formData.append('tag', document.getElementById("addNoteForm").elements[2].value);
+  formData.append('tag', document.getElementById("addNoteForm").elements[3].value);
   fetch('/server.php', {
       method: 'POST',
       body: formData,
@@ -1441,8 +1441,14 @@ function searchFlashcards(query) {
       flashcardsContainer.innerHTML = '<p>Please enter a search query.</p>';
       return; // Exit the function early if query is empty
   }
+  var request = `/server.php?command=search_flashcards&query=${encodeURIComponent(query)}&username=`;
+  if (window.location.pathname.includes('flashcard-all-public.php')) {
+    request += -1;
+  } else {
+    request += encodeURIComponent(onlineUsers);
+  }
   // Proceed with fetch if query is not empty
-  fetch(`/server.php?command=search_flashcards&query=${encodeURIComponent(query)}&username=${encodeURIComponent(onlineUsers)}`)
+  fetch(request)
       .then(response => response.json())
       .then(data => {
           if (data.flashcards && data.flashcards.length > 0) {
@@ -1467,7 +1473,13 @@ function resetFlashcardSearch() {
 function loadFlashcards() {
   const flashcardsContainer = document.getElementById('flashcard-list');
   flashcardsContainer.innerHTML = '<p>Loading flashcards...</p>';
-  fetch('/server.php?command=load_all_flashcards&username=' + encodeURIComponent(onlineUsers))
+  var request = '/server.php?command=load_all_flashcards&username=';
+  if (window.location.pathname.includes('flashcard-all-public')) {
+    request += -1;
+  } else {
+    request += encodeURIComponent(onlineUsers);
+  }
+  fetch(request)
     .then(response => response.json())
     .then(data => {
       if (data.flashcards && data.flashcards.length > 0) {
@@ -1582,7 +1594,13 @@ function searchNotes(query) {
       return; // Exit the function early if query is empty
   }
   // Proceed with fetch if query is not empty
-  fetch(`/server.php?command=search_notes&query=${encodeURIComponent(query)}&username=${encodeURIComponent(onlineUsers)}`)
+  var request = `/server.php?command=search_notes&query=${encodeURIComponent(query)}&username=`;
+  if (window.location.pathname.includes('notes-all-public')) {
+    request += -1;
+  } else {
+    request += encodeURIComponent(onlineUsers);
+  }
+  fetch(request)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -1607,7 +1625,13 @@ function searchNotes(query) {
 function loadNotes() {
   const notesContainer = document.getElementById('note-info');
   notesContainer.innerHTML = '<p>Loading notes...</p>'; // Provide a loading indicator
-  fetch('/server.php?command=load_all_notes&username=' + encodeURIComponent(onlineUsers))
+  var request = '/server.php?command=load_all_notes&username=';
+  if (window.location.pathname.includes('notes-all-public')) {
+    request += '-1'
+  } else {
+    request += encodeURIComponent(onlineUsers);
+  }
+  fetch(request)
       .then(response => response.json())
       .then(data => {
           if (data.notes && data.notes.length > 0) {
