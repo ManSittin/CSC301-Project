@@ -36,6 +36,7 @@
                     }
                 ?>
             </div>
+
                 <div id="flashcard-info">
                 <h2>Flashcards</h2>
                 <?php
@@ -48,6 +49,8 @@
             ?>
         </div>
                 
+
             <div id = "result"> </div>
+            <div id = "flashcardnum"> </div>
         </div>
     </div>

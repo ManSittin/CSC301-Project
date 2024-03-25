@@ -106,6 +106,7 @@ class Model {
         return $result;
     }
 
+
     public function deleteFlashcard($flashcard_id) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
 

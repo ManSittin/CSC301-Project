@@ -425,9 +425,6 @@ class Controller {
             case 'notes':
                 $results = $model->deleteNote($id);
                 break;
-            case 'flashcards':
-                $results = $model->deleteFlashcard($id);
-                break;
             default:
                 http_response_code(400);
                 header('Content-Type: application/json');
