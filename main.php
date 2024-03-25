@@ -230,8 +230,8 @@
                 <button type="submit" id="search-button">Search</button>
                 <button type="button" id="reset-search-button" onclick="resetFlashcardSearch()">Reset Search</button>
             </form>
-            <div id="flashcard-info">
-                <!-- Dynamically inserted notes will go here -->
+            <div id="flashcard-list">
+                <!-- Dynamically inserted flashcards will go here -->
             </div>
 
             <?php

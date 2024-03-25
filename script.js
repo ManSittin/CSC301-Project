@@ -1381,7 +1381,7 @@ function handleFlashcardSearch(event) {
 }
 
 function searchFlashcards(query) {
-  const flashcardsContainer = document.getElementById('flashcard-info');
+  const flashcardsContainer = document.getElementById('flashcard-list');
   flashcardsContainer.innerHTML = ''; // Always clear the current flashcards
   if (query.trim() === '') {
       flashcardsContainer.innerHTML = '<p>Please enter a search query.</p>';
@@ -1411,7 +1411,7 @@ function resetFlashcardSearch() {
 }
 
 function loadFlashcards() {
-  const flashcardsContainer = document.getElementById('flashcard-info');
+  const flashcardsContainer = document.getElementById('flashcard-list');
   flashcardsContainer.innerHTML = '<p>Loading flashcards...</p>';
   fetch('/server.php?command=load_all_flashcards&username=' + encodeURIComponent(onlineUsers))
     .then(response => response.json())
