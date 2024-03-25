@@ -588,7 +588,6 @@ Pre: state = "correct" or "incorrect"
     setPriority(id, username, cue, response, review_date, Math.min(currentFlashcard.priority + 1, 3)); // currently 3 is the highest priority
   }
   else {
-    print("incorrect...")
     setPriority(id, username, cue, response, review_date, 1); // set to the lowest priority (other than today)
   }
 
@@ -688,7 +687,6 @@ function setPriority(id, username, cue, response, review_date, priority) {
     });
   }
   else {
-    alert("load a flashcard first!");
     return;
   }
 }
@@ -894,7 +892,6 @@ function incrementReviewDate(days) {
     });
   }
   else {
-    alert("load a flashcard first!");
     return;
   }
 }
