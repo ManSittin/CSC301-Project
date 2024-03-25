@@ -360,25 +360,7 @@ async function loadDeadline($deadlineID){
 }
 
 
-async function loadFlashcard($flashcardID){
-  try {
-    const data = await getFlashcard($flashcardID);
-    course.innerHTML = `${data.course}`;
-    flashcard_name.innerHTML = `${data.flashcard_name}`;
-    // Convert due_date to string format "yyyy-MM-ddThh:mm"
-    const dueDate = new Date(data.due_date);
-    const dateString = dueDate.toISOString().slice(0, 16);
-    date.value = dateString;
-    alert('Deadline Loaded!');
-  } catch (error) {
-    // Handle errors
-    console.error('Error:', error);
-  }
-}
-
-
 // update the user's deadline in the DB with this deadlineID based on the info stored in deadline_course, deadline_name, and deadline_date elements
-
 function updateDeadline($deadlineID) {
   var formData = new FormData();
   formData.append('command', 'deadline-update');
@@ -401,6 +383,145 @@ if (updateDeadlineBtn){
   updateDeadline(deadlineID); // was hard coded before
   });
 }
+
+
+// FLASHCARD UPDATES
+// Front-end deadline view elements
+const cueUpdate = document.querySelector('.flashcard-cue');
+const responseUpdate = document.querySelector('.flashcard-response');
+const reviewDateUpdate = document.querySelector('.flashcard-date');
+const priorityUpdate = document.querySelector('.flashcard-priority');
+const isPublicUpdate = document.querySelector('.flashcard-ispublic');
+const updateFlashcardBtn = document.querySelector('.update-flashcard');
+// flashcard data 
+function getFlashcards() { // get all the user's flashcards as (cue, response) objects
+  return fetch(`/server.php?command=flashcards&username=${encodeURIComponent(onlineUsers)}`)
+    .then(response => response.json())
+    .then(json => {
+      return json.message.map(entry => {
+        return {
+          id: entry.id,
+          username: entry.username,
+          cue: entry.cue,
+          response: entry.response,
+          review_date: entry.review_date,
+          priority: entry.priority
+        };
+      });
+    })
+    .catch(error => {
+      console.error('Error fetching flashcards:', error);
+      throw error;
+    });
+}
+
+// get the next flashcard to be reviewed, if available, based on chosen flashcardAlgorithm
+function getFlashcard(){
+  alert(flashcardAlgorithm);
+  if (flashcardAlgorithm == 'random'){
+    return getRandomFlashcard();
+  }
+  else if (flashcardAlgorithm == 'leitner'){
+    return getLeitnerFlashcard();
+  }
+  else{
+    alert("You must choose a flashcard algorithm first");
+    console.error("Invalid flashcard algorithm or none chosen");
+  }
+}
+
+// given a flashcard object, display its cue in the flashcard-cue section and response in the flashcard-response section
+async function loadFlashcard($flashcardID){
+  try {
+    const data = await getFlashcard($flashcardID);
+    course.innerHTML = `${data.course}`;
+    flashcard_name.innerHTML = `${data.flashcard_name}`;
+    // Convert due_date to string format "yyyy-MM-ddThh:mm"
+    const dueDate = new Date(data.due_date);
+    const dateString = dueDate.toISOString().slice(0, 16);
+    date.value = dateString;
+    alert('Deadline Loaded!');
+  } catch (error) {
+    // Handle errors
+    console.error('Error:', error);
+  }
+}
+
+
+// update the user's flashcard in the DB with this flashcardID based on the info stored in the flashcard-cue and flashcard-response elements
+function updateThisFlashcard($flashcardID) {
+  var formData = new FormData();
+  formData.append('command', 'flashcard-update');
+  formData.append('id', $flashcardID);
+  formData.append('username', onlineUsers);
+  formData.append('cue', cueUpdate.value);
+  formData.append('response', responseUpdate.value);
+  formData.append('review_date', reviewDateUpdate.value);
+  formData.append('priority', priorityUpdate.value);
+
+  let isPublic;
+  if (isPublicUpdate.ischecked){
+    isPublic = 1;
+  }
+  else{
+    isPublic = 0;
+  }
+  formData.append('is_public', isPublic);
+
+  fetch('/server.php', {
+      method: 'POST',
+      body: formData,
+  });
+  // alert('Flashcard updated!');
+}
+
+function updateFlashcard(id, username, cue, response, review_date, priority) {
+
+  if (currentFlashcard) {
+    alert("flashcard found! - priority");
+    currentFlashcard.priority = priority;
+    const formData = new FormData();
+    formData.append('command', 'flashcard-update');
+    formData.append('id', id);
+    formData.append('username', username);
+    formData.append('cue', cue);
+    formData.append('response', response);
+    formData.append('review_date', review_date);
+    formData.append('priority', priority);
+    alert("hi");
+    return fetch('/server.php', {
+      method: 'POST',
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(json => {
+      if (json.status === 'Success') {
+        return Promise.resolve();
+      } else {
+        return Promise.reject(json.message);
+      }
+    });
+  }
+  else {
+    return;
+  }
+}
+
+// button click listener
+if (updateFlashcardBtn){
+  updateFlashcardBtn.addEventListener('click', function(){ // reveal response
+  const flashcardID = document.getElementById('hiddenFlashcardId').value; // Get the note ID from the hidden input
+  updateThisFlashcard(flashcardID); // was hard coded before
+  });
+}
+
+
+
+
+
+
+
+
 
 // NOTE UPDATES
 // Front-end note view elements
@@ -684,43 +805,6 @@ Pre: state = "correct" or "incorrect"
   }
 }
 
-// flashcard data 
-function getFlashcards() { // get all the user's flashcards as (cue, response) objects
-  return fetch(`/server.php?command=flashcards&username=${encodeURIComponent(onlineUsers)}`)
-    .then(response => response.json())
-    .then(json => {
-      return json.message.map(entry => {
-        return {
-          id: entry.id,
-          username: entry.username,
-          cue: entry.cue,
-          response: entry.response,
-          review_date: entry.review_date,
-          priority: entry.priority
-        };
-      });
-    })
-    .catch(error => {
-      console.error('Error fetching flashcards:', error);
-      throw error;
-    });
-}
-
-// get the next flashcard to be reviewed, if available, based on chosen flashcardAlgorithm
-function getFlashcard(){
-  alert(flashcardAlgorithm);
-  if (flashcardAlgorithm == 'random'){
-    return getRandomFlashcard();
-  }
-  else if (flashcardAlgorithm == 'leitner'){
-    return getLeitnerFlashcard();
-  }
-  else{
-    alert("You must choose a flashcard algorithm first");
-    console.error("Invalid flashcard algorithm or none chosen");
-  }
-}
-
 function setPriorityAll(priority){
 
   // Get flashcards
@@ -737,37 +821,7 @@ function setPriorityAll(priority){
     });
 }
 
-function updateFlashcard(id, username, cue, response, review_date, priority) {
 
-  if (currentFlashcard) {
-    alert("flashcard found! - priority");
-    currentFlashcard.priority = priority;
-    const formData = new FormData();
-    formData.append('command', 'flashcard-update');
-    formData.append('id', id);
-    formData.append('username', username);
-    formData.append('cue', cue);
-    formData.append('response', response);
-    formData.append('review_date', review_date);
-    formData.append('priority', priority);
-    alert("hi");
-    return fetch('/server.php', {
-      method: 'POST',
-      body: formData,
-    })
-    .then(response => response.json())
-    .then(json => {
-      if (json.status === 'Success') {
-        return Promise.resolve();
-      } else {
-        return Promise.reject(json.message);
-      }
-    });
-  }
-  else {
-    return;
-  }
-}
 
 function getRandomFlashcard() {
   getFlashcards()

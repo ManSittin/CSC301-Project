@@ -389,7 +389,7 @@ class Model {
             return false;
         }
         $stmt = $conn->prepare("UPDATE Flashcards SET cue = ?, response = ?, review_date = ?, priority = ?, is_public = ? WHERE Flashcards.id = ? AND Flashcards.username = ?;");
-        $stmt->bind_param("sssiisi", $cue, $response, $review_date, $priority, $id, $username, $is_public);
+        $stmt->bind_param("sssiiis", $cue, $response, $review_date, $priority, $is_public, $id, $username);
 
         $result = $stmt->execute(); // check if query worked
         return $result;

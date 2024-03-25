@@ -161,8 +161,19 @@
                 <label for="response">Response:</label>
                 <textarea rows="4" cols="50" name="flashcardResponse" class="flashcard-response"><?php echo isset($flashcardForEditing['response']) ? $flashcardForEditing['response'] : ''; ?></textarea>
                 <br>
-                <!-- <label for="reviewDate">Review Date:</label>
-                <input type="date" id="reviewDate" name="flashcardReviewDate" value="<?php echo isset($flashcardForEditing['review_date']) ? $flashcardForEditing['review_date'] : ''; ?>"> -->
+                <label for="priority" >Priority:</label>
+                <select name="priority" id="priority" class="flashcard-priority">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                </select>
+                <br>
+                <label for="reviewDate">Review Date:</label>
+                <input type="date" id="reviewDate" name="flashcardReviewDate" class="flashcard-date" value="<?php echo isset($flashcardForEditing['review_date']) ? $flashcardForEditing['review_date'] : ''; ?>">
+                <br>
+                <label for="public">Public flashcard:</label>
+                <input type="checkbox" id="public" class="flashcard-ispublic">
                 <br>
                 <input type="submit" value="Update Flashcard" class="update-flashcard">
                 </form>
