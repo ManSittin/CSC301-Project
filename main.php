@@ -198,6 +198,11 @@
                     <p>Response:</p>
                     <textarea rows="4" cols="50" name="response" id="enter-response" placeholder="Type your response here..."></textarea>
                     <br>
+                    <p>Add course tag:</p>
+                    <select id='tag'>
+                        <option></option>
+                    </select>
+                    <br>
                     <input type="button" value="Add Flashcard" onclick="addFlashcard()">
                 </form>
             </div>

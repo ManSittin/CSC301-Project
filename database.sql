@@ -34,7 +34,9 @@ CREATE TABLE IF NOT EXISTS Flashcards (
     response VARCHAR(255) NOT NULL,
     review_date DATE NOT NULL,
     priority INT NOT NULL,
-    FOREIGN KEY (username) REFERENCES Users(username)
+    tag_id INT DEFAULT NULL,
+    FOREIGN KEY (username) REFERENCES Users(username),
+    FOREIGN KEY (tag_id) REFERENCES Courses(id)
 );
 
 -- Create table to store Courses added by Users
