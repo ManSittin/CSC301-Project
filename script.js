@@ -609,7 +609,8 @@ function addFlashcard() { // insert a flashcard
   formData.append('username', onlineUsers);
   formData.append('cue', document.getElementById("addFlashcardForm").elements[0].value);
   formData.append('response', document.getElementById("addFlashcardForm").elements[1].value);
-  formData.append('is_public', document.getElementById("addFlashcardForm").elements[2].checked ? 1 : 0);
+  formData.append('tag', document.getElementById("addFlashcardForm").elements[2].value)
+  formData.append('is_public', document.getElementById("addFlashcardForm").elements[3].checked ? 1 : 0);
 
   // default review_date to today
   const today = new Date();
@@ -1704,3 +1705,4 @@ function getCoursesLoad() {
           console.error('Error:', error);
       });
 }
+

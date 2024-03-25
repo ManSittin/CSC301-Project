@@ -364,7 +364,8 @@ class Model {
 
 
 
-    public function newFlashcard($username, $cue, $response, $review_date, $priority, $is_public) {
+
+    public function newFlashcard($username, $cue, $response, $review_date, $priority, $is_public, $tag) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
 
         if ($conn->connect_error) {
@@ -372,8 +373,9 @@ class Model {
             return false;
         }
 
-        $stmt = $conn->prepare("INSERT INTO Flashcards (username, cue, response, review_date, priority, is_public) VALUES (?,?,?,?,?,?)");
-        $stmt->bind_param("ssssii", $username, $cue, $response, $review_date, $priority, $is_public);
+
+        $stmt = $conn->prepare("INSERT INTO Flashcards (username, cue, response, review_date, priority, is_public, tag_id) VALUES (?,?,?,?,?,?,?)");
+        $stmt->bind_param("ssssii", $username, $cue, $response, $review_date, $priority, $is_public, $tag);
         $result = $stmt->execute(); // check if query worked
         return $result;
     }
