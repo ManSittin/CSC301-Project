@@ -43,8 +43,9 @@ class Controller {
                 $course = $_POST['course'];
                 $name = $_POST['deadline_name'];
                 $due_date = $_POST['duedate'];
+                $tag = $_POST['tag'];
 
-                $result = $model->newDeadline($username, $course, $name, $due_date);
+                $result = $model->newDeadline($username, $course, $name, $due_date, $tag);
 
                 break;
             
@@ -226,7 +227,7 @@ class Controller {
                 if($results) {
                     http_response_code(200);
                     header('Content-Type: application/json');
-                    echo json_encode($results);
+                    echo json_encode(['courses' => $results]);
                     exit();
                 } else {
                     http_response_code(500);

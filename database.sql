@@ -24,7 +24,9 @@ CREATE TABLE IF NOT EXISTS Deadlines (
     course VARCHAR(255) NOT NULL,
     deadline_name VARCHAR(255) NOT NULL,
     due_date date NOT NULL,
-    FOREIGN KEY (username) REFERENCES Users(username)
+    tag_id INT DEFAULT NULL,
+    FOREIGN KEY (username) REFERENCES Users(username),
+    FOREIGN KEY (tag_id) REFERENCES Courses(id)
 );
 -- Create table to store Flashcards created by Users
 CREATE TABLE IF NOT EXISTS Flashcards (

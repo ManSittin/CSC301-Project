@@ -62,7 +62,7 @@ class Model {
         return $result;
     }  
 
-    public function newDeadline($username, $course, $deadline_name, $due_date) {
+    public function newDeadline($username, $course, $deadline_name, $due_date, $tag) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
 
         if ($conn->connect_error) {
@@ -70,8 +70,8 @@ class Model {
             return false;
         }
         
-        $stmt = $conn->prepare("INSERT INTO Deadlines (username, course, deadline_name, due_date) VALUES (?,?,?,?)");
-        $stmt->bind_param("ssss", $username, $course, $deadline_name, $due_date);
+        $stmt = $conn->prepare("INSERT INTO Deadlines (username, course, deadline_name, due_date, tag_id) VALUES (?,?,?,?,?)");
+        $stmt->bind_param("ssssi", $username, $course, $deadline_name, $due_date, $tag);
         $result = $stmt->execute();
         $stmt->close();
 
@@ -118,7 +118,7 @@ class Model {
         $result = $stmt->execute();
         
         if ($result) {
-            $stmt->bind_result($id, $username, $course, $deadline_name, $due_date);
+            $stmt->bind_result($id, $username, $course, $deadline_name, $due_date, $tag);
     
             $results = [];
             while ($stmt->fetch()) {
