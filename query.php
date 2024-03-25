@@ -160,14 +160,16 @@ class Model {
         
     }
 
+ 
     public function getPreference($username) {
+      
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
 
         if ($conn->connect_error) {
             die("Connection to database failed: " . $conn->connect_error);
             return false;
         }
-
+       
         $stmt = $conn->prepare("SELECT * FROM Preferences, Users WHERE username = ?");
         $stmt->bind_param("s", $username);
         $result = $stmt->execute();
@@ -177,7 +179,7 @@ class Model {
         }
     }
 
-    public function newNote($username, $title, $content, $tag) {
+    public function newNote($username, $title, $content, $is_public, $tag) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
 
         if ($conn->connect_error) {
@@ -185,8 +187,8 @@ class Model {
             return false;
         }
 
-        $stmt = $conn->prepare("INSERT INTO Notes (username, title, content, tag_id) VALUES (?,?,?,?)");
-        $stmt->bind_param("sssi", $username, $title, $content, $tag);
+        $stmt = $conn->prepare("INSERT INTO Notes (username, title, content, is_public, tag_id) VALUES (?,?,?,?,?)");
+        $stmt->bind_param("sssii", $username, $title, $content, $is_public, $tag);
         $result = $stmt->execute(); // check if query worked
         return $result;
     }

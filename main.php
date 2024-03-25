@@ -109,6 +109,10 @@
                     <p>Enter your note:</p>
                     <textarea rows="4" cols="50" name="note" id="note" placeholder="Type your note here..."></textarea>
                     <br>
+                    <div>
+                        <p>Public note:</p>
+                        <input type="checkbox" id="public", value="public">
+                    </div>
                     <p>Add course tag:</p>
                     <select id="tag">
                         <option></option>
@@ -299,15 +303,14 @@
 
         case 'course_view':
             ?>
-            
+
             
             <?php
             break;
 
         case 'courses-all':
             ?>
-            
-            
+
             <?php
             break;
 

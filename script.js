@@ -256,6 +256,7 @@ function addNote() { // insert a note
   formData.append('username', onlineUsers);
   formData.append('title', document.getElementById("addNoteForm").elements[0].value);
   formData.append('content', document.getElementById("addNoteForm").elements[1].value);
+  formData.append('is_public', document.getElementById("addNoteForm").elements[2].checked ? 1 : 0);
   formData.append('tag', document.getElementById("addNoteForm").elements[2].value);
   fetch('/server.php', {
       method: 'POST',
@@ -1195,7 +1196,7 @@ function showCourses() {
     .then(console.log(response))
     .then(response => response.json())
     .then(data => {
-        const main = document.getElementById('course-main');
+        const main = document.getElementsByClassName('main')[0];
 
         data.forEach(item => {
 
@@ -1232,7 +1233,7 @@ function showTimeslots() {
     .then(console.log(response))
     .then(response => response.json())
     .then(data => {
-        const main = document.getElementById('course-main');
+        const main = document.getElementsByClassName('main')[0];
         const button = document.createElement('button');
         button.classList.add('edit-button');
         button.textContent = 'Add a timeslot';
