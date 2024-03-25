@@ -5,7 +5,7 @@ include('query.php');
 $model = new Model();
 $model->initDatabase();
 $model->initTables();
-$model->newUser('userAA', 'userAA@mail.com', 'A', 'A', 'password');
+ //$model->newUser('userAA', 'userAA@mail.com', 'A', 'A', 'password');
 // File where the time will be stored and modified
 $filename = 'time.txt';
 

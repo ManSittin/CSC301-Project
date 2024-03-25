@@ -34,9 +34,9 @@ class Controller {
                 $title = $_POST['title'];
                 $content = $_POST['content'];
                 $is_public = $_POST['is_public'];
-                $tag = $_POST['tag'];
+                $tag_id = $_POST['tag'];
             
-                $result = $model->newNote($username, $title, $content, $is_public, $tag);
+                $result = $model->newNote($username, $title, $content, $is_public, $tag_id);
                 break;
 
             case ('deadlines'):
