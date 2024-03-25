@@ -257,7 +257,7 @@ function addNote() { // insert a note
   formData.append('title', document.getElementById("addNoteForm").elements[0].value);
   formData.append('content', document.getElementById("addNoteForm").elements[1].value);
   formData.append('is_public', document.getElementById("addNoteForm").elements[2].checked ? 1 : 0);
-  formData.append('tag', document.getElementById("addNoteForm").elements[2].value);
+  formData.append('tag', document.getElementById("addNoteForm").elements[3].value);
   fetch('/server.php', {
       method: 'POST',
       body: formData,
@@ -304,7 +304,7 @@ function handleFlashcardDelete(event) {
 
 // DEADLINE UPDATES
 
-// Front-end note view elements
+// Front-end deadline view elements
 const course = document.querySelector('.deadline_course');
 const deadline_name = document.querySelector('.deadline_name');
 const date = document.querySelector('.deadline_date');
@@ -360,25 +360,7 @@ async function loadDeadline($deadlineID){
 }
 
 
-async function loadFlashcard($flashcardID){
-  try {
-    const data = await getFlashcard($flashcardID);
-    course.innerHTML = `${data.course}`;
-    flashcard_name.innerHTML = `${data.flashcard_name}`;
-    // Convert due_date to string format "yyyy-MM-ddThh:mm"
-    const dueDate = new Date(data.due_date);
-    const dateString = dueDate.toISOString().slice(0, 16);
-    date.value = dateString;
-    alert('Deadline Loaded!');
-  } catch (error) {
-    // Handle errors
-    console.error('Error:', error);
-  }
-}
-
-
 // update the user's deadline in the DB with this deadlineID based on the info stored in deadline_course, deadline_name, and deadline_date elements
-
 function updateDeadline($deadlineID) {
   var formData = new FormData();
   formData.append('command', 'deadline-update');
@@ -401,6 +383,145 @@ if (updateDeadlineBtn){
   updateDeadline(deadlineID); // was hard coded before
   });
 }
+
+
+// FLASHCARD UPDATES
+// Front-end deadline view elements
+const cueUpdate = document.querySelector('.flashcard-cue');
+const responseUpdate = document.querySelector('.flashcard-response');
+const reviewDateUpdate = document.querySelector('.flashcard-date');
+const priorityUpdate = document.querySelector('.flashcard-priority');
+const isPublicUpdate = document.querySelector('.flashcard-ispublic');
+const updateFlashcardBtn = document.querySelector('.update-flashcard');
+// flashcard data 
+function getFlashcards() { // get all the user's flashcards as (cue, response) objects
+  return fetch(`/server.php?command=flashcards&username=${encodeURIComponent(onlineUsers)}`)
+    .then(response => response.json())
+    .then(json => {
+      return json.message.map(entry => {
+        return {
+          id: entry.id,
+          username: entry.username,
+          cue: entry.cue,
+          response: entry.response,
+          review_date: entry.review_date,
+          priority: entry.priority
+        };
+      });
+    })
+    .catch(error => {
+      console.error('Error fetching flashcards:', error);
+      throw error;
+    });
+}
+
+// get the next flashcard to be reviewed, if available, based on chosen flashcardAlgorithm
+function getFlashcard(){
+  alert(flashcardAlgorithm);
+  if (flashcardAlgorithm == 'random'){
+    return getRandomFlashcard();
+  }
+  else if (flashcardAlgorithm == 'leitner'){
+    return getLeitnerFlashcard();
+  }
+  else{
+    alert("You must choose a flashcard algorithm first");
+    console.error("Invalid flashcard algorithm or none chosen");
+  }
+}
+
+// given a flashcard object, display its cue in the flashcard-cue section and response in the flashcard-response section
+async function loadFlashcard($flashcardID){
+  try {
+    const data = await getFlashcard($flashcardID);
+    course.innerHTML = `${data.course}`;
+    flashcard_name.innerHTML = `${data.flashcard_name}`;
+    // Convert due_date to string format "yyyy-MM-ddThh:mm"
+    const dueDate = new Date(data.due_date);
+    const dateString = dueDate.toISOString().slice(0, 16);
+    date.value = dateString;
+    alert('Deadline Loaded!');
+  } catch (error) {
+    // Handle errors
+    console.error('Error:', error);
+  }
+}
+
+
+// update the user's flashcard in the DB with this flashcardID based on the info stored in the flashcard-cue and flashcard-response elements
+function updateThisFlashcard($flashcardID) {
+  var formData = new FormData();
+  formData.append('command', 'flashcard-update');
+  formData.append('id', $flashcardID);
+  formData.append('username', onlineUsers);
+  formData.append('cue', cueUpdate.value);
+  formData.append('response', responseUpdate.value);
+  formData.append('review_date', reviewDateUpdate.value);
+  formData.append('priority', priorityUpdate.value);
+
+  let isPublic;
+  if (isPublicUpdate.ischecked){
+    isPublic = 1;
+  }
+  else{
+    isPublic = 0;
+  }
+  formData.append('is_public', isPublic);
+
+  fetch('/server.php', {
+      method: 'POST',
+      body: formData,
+  });
+  // alert('Flashcard updated!');
+}
+
+function updateFlashcard(id, username, cue, response, review_date, priority) {
+
+  if (currentFlashcard) {
+    alert("flashcard found! - priority");
+    currentFlashcard.priority = priority;
+    const formData = new FormData();
+    formData.append('command', 'flashcard-update');
+    formData.append('id', id);
+    formData.append('username', username);
+    formData.append('cue', cue);
+    formData.append('response', response);
+    formData.append('review_date', review_date);
+    formData.append('priority', priority);
+    alert("hi");
+    return fetch('/server.php', {
+      method: 'POST',
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(json => {
+      if (json.status === 'Success') {
+        return Promise.resolve();
+      } else {
+        return Promise.reject(json.message);
+      }
+    });
+  }
+  else {
+    return;
+  }
+}
+
+// button click listener
+if (updateFlashcardBtn){
+  updateFlashcardBtn.addEventListener('click', function(){ // reveal response
+  const flashcardID = document.getElementById('hiddenFlashcardId').value; // Get the note ID from the hidden input
+  updateThisFlashcard(flashcardID); // was hard coded before
+  });
+}
+
+
+
+
+
+
+
+
 
 // NOTE UPDATES
 // Front-end note view elements
@@ -488,7 +609,8 @@ function addFlashcard() { // insert a flashcard
   formData.append('username', onlineUsers);
   formData.append('cue', document.getElementById("addFlashcardForm").elements[0].value);
   formData.append('response', document.getElementById("addFlashcardForm").elements[1].value);
-  formData.append('is_public', document.getElementById("addFlashcardForm").elements[2].checked ? 1 : 0);
+  formData.append('tag', document.getElementById("addFlashcardForm").elements[2].value)
+  formData.append('is_public', document.getElementById("addFlashcardForm").elements[3].checked ? 1 : 0);
 
   // default review_date to today
   const today = new Date();
@@ -663,10 +785,10 @@ Pre: state = "correct" or "incorrect"
   alert(currentFlashcard.priority);
 
   if (state == "correct"){
-    setPriority(id, username, cue, response, review_date, Math.min(currentFlashcard.priority + 1, 3)); // currently 3 is the highest priority
+    updateFlashcard(id, username, cue, response, review_date, Math.min(currentFlashcard.priority + 1, 3)); // currently 3 is the highest priority
   }
   else {
-    setPriority(id, username, cue, response, review_date, 1); // set to the lowest priority (other than today)
+    updateFlashcard(id, username, cue, response, review_date, 1); // set to the lowest priority (other than today)
   }
 
   // update review date based on priority
@@ -684,43 +806,6 @@ Pre: state = "correct" or "incorrect"
   }
 }
 
-// flashcard data 
-function getFlashcards() { // get all the user's flashcards as (cue, response) objects
-  return fetch(`/server.php?command=flashcards&username=${encodeURIComponent(onlineUsers)}`)
-    .then(response => response.json())
-    .then(json => {
-      return json.message.map(entry => {
-        return {
-          id: entry.id,
-          username: entry.username,
-          cue: entry.cue,
-          response: entry.response,
-          review_date: entry.review_date,
-          priority: entry.priority
-        };
-      });
-    })
-    .catch(error => {
-      console.error('Error fetching flashcards:', error);
-      throw error;
-    });
-}
-
-// get the next flashcard to be reviewed, if available, based on chosen flashcardAlgorithm
-function getFlashcard(){
-  alert(flashcardAlgorithm);
-  if (flashcardAlgorithm == 'random'){
-    return getRandomFlashcard();
-  }
-  else if (flashcardAlgorithm == 'leitner'){
-    return getLeitnerFlashcard();
-  }
-  else{
-    alert("You must choose a flashcard algorithm first");
-    console.error("Invalid flashcard algorithm or none chosen");
-  }
-}
-
 function setPriorityAll(priority){
 
   // Get flashcards
@@ -728,7 +813,7 @@ function setPriorityAll(priority){
     .then(flashcards => {
       // Iterate over each flashcard and sets its review date to date
       flashcards.forEach(flashcard => {
-        setPriority(flashcard.id, flashcard.username, flashcard.cue, flashcard.response, flashcard.review_date, priority);
+        updateFlashcard(flashcard.id, flashcard.username, flashcard.cue, flashcard.response, flashcard.review_date, priority);
       });
     })
     .catch(error => {
@@ -737,37 +822,7 @@ function setPriorityAll(priority){
     });
 }
 
-function setPriority(id, username, cue, response, review_date, priority) {
 
-  if (currentFlashcard) {
-    alert("flashcard found! - priority");
-    currentFlashcard.priority = priority;
-    const formData = new FormData();
-    formData.append('command', 'flashcard-update');
-    formData.append('id', id);
-    formData.append('username', username);
-    formData.append('cue', cue);
-    formData.append('response', response);
-    formData.append('review_date', review_date);
-    formData.append('priority', priority);
-    alert("hi");
-    return fetch('/server.php', {
-      method: 'POST',
-      body: formData,
-    })
-    .then(response => response.json())
-    .then(json => {
-      if (json.status === 'Success') {
-        return Promise.resolve();
-      } else {
-        return Promise.reject(json.message);
-      }
-    });
-  }
-  else {
-    return;
-  }
-}
 
 function getRandomFlashcard() {
   getFlashcards()
@@ -1381,14 +1436,20 @@ function handleFlashcardSearch(event) {
 }
 
 function searchFlashcards(query) {
-  const flashcardsContainer = document.getElementById('flashcard-info');
+  const flashcardsContainer = document.getElementById('flashcard-list');
   flashcardsContainer.innerHTML = ''; // Always clear the current flashcards
   if (query.trim() === '') {
       flashcardsContainer.innerHTML = '<p>Please enter a search query.</p>';
       return; // Exit the function early if query is empty
   }
+  var request = `/server.php?command=search_flashcards&query=${encodeURIComponent(query)}&username=`;
+  if (window.location.pathname.includes('flashcard-all-public.php')) {
+    request += -1;
+  } else {
+    request += encodeURIComponent(onlineUsers);
+  }
   // Proceed with fetch if query is not empty
-  fetch(`/server.php?command=search_flashcards&query=${encodeURIComponent(query)}&username=${encodeURIComponent(onlineUsers)}`)
+  fetch(request)
       .then(response => response.json())
       .then(data => {
           if (data.flashcards && data.flashcards.length > 0) {
@@ -1411,9 +1472,15 @@ function resetFlashcardSearch() {
 }
 
 function loadFlashcards() {
-  const flashcardsContainer = document.getElementById('flashcard-info');
+  const flashcardsContainer = document.getElementById('flashcard-list');
   flashcardsContainer.innerHTML = '<p>Loading flashcards...</p>';
-  fetch('/server.php?command=load_all_flashcards&username=' + encodeURIComponent(onlineUsers))
+  var request = '/server.php?command=load_all_flashcards&username=';
+  if (window.location.pathname.includes('flashcard-all-public')) {
+    request += -1;
+  } else {
+    request += encodeURIComponent(onlineUsers);
+  }
+  fetch(request)
     .then(response => response.json())
     .then(data => {
       if (data.flashcards && data.flashcards.length > 0) {
@@ -1437,7 +1504,7 @@ function displayFlashcards(flashcards, container) {
       <div class="flashcard-cue">${flashcard.cue}</div>
       <div class="flashcard-response">${flashcard.response}</div>
       <div class="flashcard-review-date">Review Date: ${flashcard.review_date}</div>
-      <button class="edit-button" onclick="location.href='deadlines-view.php?id=${flashcard.id}'">View/Edit</button>
+      <button class="edit-button" onclick="location.href='flashcard-view.php?id=${flashcard.id}'">View/Edit</button>
     `;
     container.appendChild(flashcardDiv);
   });
@@ -1529,7 +1596,13 @@ function searchNotes(query) {
       return; // Exit the function early if query is empty
   }*/
   // Proceed with fetch if query is not empty
-  fetch(`/server.php?command=search_notes&tag=${tag}&query=${encodeURIComponent(query)}&username=${encodeURIComponent(onlineUsers)}`)
+  var request = `/server.php?command=search_notes&tag=${tag}&query=${encodeURIComponent(query)}&username=`;
+  if (window.location.pathname.includes('notes-all-public')) {
+    request += -1;
+  } else {
+    request += encodeURIComponent(onlineUsers);
+  }
+  fetch(request)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -1554,7 +1627,13 @@ function searchNotes(query) {
 function loadNotes() {
   const notesContainer = document.getElementById('note-info');
   notesContainer.innerHTML = '<p>Loading notes...</p>'; // Provide a loading indicator
-  fetch('/server.php?command=load_all_notes&username=' + encodeURIComponent(onlineUsers))
+  var request = '/server.php?command=load_all_notes&username=';
+  if (window.location.pathname.includes('notes-all-public')) {
+    request += '-1'
+  } else {
+    request += encodeURIComponent(onlineUsers);
+  }
+  fetch(request)
       .then(response => response.json())
       .then(data => {
           if (data.notes && data.notes.length > 0) {
@@ -1627,3 +1706,4 @@ function getCoursesLoad() {
           console.error('Error:', error);
       });
 }
+

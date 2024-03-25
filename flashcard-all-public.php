@@ -11,17 +11,18 @@
         /* Existing style here */
     </style>
 </head>
-<body onload='getCoursesLoad()'>
+<body onload="loadNote(4)">
     <?php include_once 'sidebar-content.php'; ?>
     <div class="not-sidebar">
         <?php include_once 'navbar.html';
-        $header_text = "Welcome to the flashcards page. Here you can add new flashcards or review the ones you have already added. ";
-        $page = "flashcard-insertion";
+        $header_text = "Welcome to the flashcards page. Here you can view all of your flashcards and edit them!";
+        $page = "flashcard-all";
         include_once 'main.php';
         ?>
     </div>
-
-    <script src="script.js">
-    </script>
+    <script src="script.js"></script>
 </body>
+    </div>
+</body>
+
 </html>
