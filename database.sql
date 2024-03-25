@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS Flashcards (
     response VARCHAR(255) NOT NULL,
     review_date DATE NOT NULL,
     priority INT NOT NULL,
+    is_public BIT,
     FOREIGN KEY (username) REFERENCES Users(username)
 );
 

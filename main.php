@@ -198,6 +198,9 @@
                     <p>Response:</p>
                     <textarea rows="4" cols="50" name="response" id="enter-response" placeholder="Type your response here..."></textarea>
                     <br>
+                    <p>Public flashcard:</p>
+                    <input type="checkbox" id="public">
+                    <br>
                     <input type="button" value="Add Flashcard" onclick="addFlashcard()">
                 </form>
             </div>
