@@ -1522,13 +1522,14 @@ function handleSearch(event) {
 
 function searchNotes(query) {
   const notesContainer = document.getElementById('note-info');
+  const tag = document.getElementById('tag').value;
   notesContainer.innerHTML = ''; // Always clear the current notes
-  if (query.trim() === '') {
+  /*if (query.trim() === '') {
       notesContainer.innerHTML = '<p>Please enter a search query.</p>';
       return; // Exit the function early if query is empty
-  }
+  }*/
   // Proceed with fetch if query is not empty
-  fetch(`/server.php?command=search_notes&query=${encodeURIComponent(query)}&username=${encodeURIComponent(onlineUsers)}`)
+  fetch(`/server.php?command=search_notes&tag=${tag}&query=${encodeURIComponent(query)}&username=${encodeURIComponent(onlineUsers)}`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');

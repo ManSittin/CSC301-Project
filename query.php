@@ -244,7 +244,7 @@ class Model {
         $stmt->bind_param("s", $username);
         $result = $stmt->execute();
         if ($result) {
-            $stmt->bind_result($id, $username, $title, $content, $tag);
+            $stmt->bind_result($id, $username, $title, $content, $is_public, $tag);
 
             $results = [];
             while ($stmt->fetch()) {
@@ -256,19 +256,19 @@ class Model {
             return false;
         }
     }
-    public function searchNotesByTitle($searchQuery, $username) {
+    public function searchNotesByTitle($searchQuery, $username, $tag) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
         if ($conn->connect_error) {
             die("Connection to database failed: " . $conn->connect_error);
             return false; // Connection failure
         }
-    
+
         // "SELECT * FROM Notes WHERE username = do AND title LIKE CONCAT('%', ?, '%')";
-        $sql = "SELECT * FROM Notes WHERE username = ? AND title LIKE CONCAT('%', ?, '%')";
+        $sql = "SELECT * FROM Notes WHERE username = ? AND title LIKE CONCAT('%', ?, '%') AND (? = '' OR tag_id = ?)";
         $stmt = $conn->prepare($sql);
 
         // Now, this matches the number of ? in the query
-        $stmt->bind_param("ss", $username, $searchQuery);
+        $stmt->bind_param("ssii", $username, $searchQuery, $tag, $tag);
         $result = $stmt->execute();    
         // Bind both the username and the search query parameters
         if ($result) {
