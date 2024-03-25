@@ -288,6 +288,18 @@ function handleNoteDelete(event) {
     alert('Note successfully deleted!');
 }
 
+function handleFlashcardDelete(event) {
+  var id = event.target.getAttribute('id');
+  
+  fetch('server.php/flashcards/' + id, {
+      method: 'DELETE'
+  });
+
+  // this is where the http req is made
+
+  alert('Flashcard successfully deleted!');
+}
+
 
 // DEADLINE UPDATES
 
@@ -335,6 +347,23 @@ async function loadDeadline($deadlineID){
     const data = await getDeadline($deadlineID);
     course.innerHTML = `${data.course}`;
     deadline_name.innerHTML = `${data.deadline_name}`;
+    // Convert due_date to string format "yyyy-MM-ddThh:mm"
+    const dueDate = new Date(data.due_date);
+    const dateString = dueDate.toISOString().slice(0, 16);
+    date.value = dateString;
+    alert('Deadline Loaded!');
+  } catch (error) {
+    // Handle errors
+    console.error('Error:', error);
+  }
+}
+
+
+async function loadFlashcard($flashcardID){
+  try {
+    const data = await getFlashcard($flashcardID);
+    course.innerHTML = `${data.course}`;
+    flashcard_name.innerHTML = `${data.flashcard_name}`;
     // Convert due_date to string format "yyyy-MM-ddThh:mm"
     const dueDate = new Date(data.due_date);
     const dateString = dueDate.toISOString().slice(0, 16);
