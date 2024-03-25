@@ -37,5 +37,6 @@
                 ?>
             </div>
             <div id = "result"> </div>
+            <div id = "flashcardnum"> </div>
         </div>
     </div>
