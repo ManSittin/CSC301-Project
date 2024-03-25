@@ -784,30 +784,42 @@ class FordFulkerson {
 function showCourses() {
 
     fetch(`/server.php?command=courses&username=${encodeURIComponent(onlineUsers)}`)
-    .then(console.log(response))
+    .then(console.log("starting"))
     .then(response => response.json())
+    .then(console.log(response))
+    .then(console.log("here"))
     .then(data => {
-        const main = document.getElementById('course-main');
-
+        const main = document.getElementById('course-main'); // course-main
+      
         data.forEach(item => {
-
+            console.log(item);
             const container = document.createElement('div');
+            console.log("here1");
             container.classList.add('note-container');
+            console.log("here2");
             const div = document.createElement('div');
+            console.log("here3");
             div.innerHTML = `
                 <div class='note-title'>${item.course_name}</div>
             `;
+            console.log("here4");
             const button = document.createElement('button');
+            console.log("here5");
             button.classList.add('edit-button');
+            console.log("here6");
             button.textContent = 'View/Add Timeslots';
+            console.log("here7");
 
             button.addEventListener('click', function() {
                 window.location.href = "course_view.php?id=" + item.id;
             });
-
+            console.log("here8");
             container.appendChild(div);
+            console.log("here9");
             container.appendChild(button);
+            console.log("here10");
             main.appendChild(container);
+            console.log("here11");
         });
     })
     .catch(error => {

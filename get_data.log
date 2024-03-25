@@ -1,5 +1,7 @@
 Array
 (
-    [command] => flashcards
-    [username] => null
+
+    [command] => courses
+    [username] => help
+
 )

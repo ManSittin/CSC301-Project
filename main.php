@@ -286,6 +286,10 @@
 
         case 'course_view':
             ?>
+            <h2>HI THIS IS OPTION 1</h2>
+            <div id="course-main">
+                <!-- Dynamically inserted courses will go here -->
+            </div>
             
             
             <?php
@@ -293,7 +297,10 @@
 
         case 'courses-all':
             ?>
-            
+            <h2>HI THIS IS OPTION 2</h2>
+            <div id="course-main">
+                <!-- Dynamically inserted courses will go here -->
+            </div>
             
             <?php
             break;
