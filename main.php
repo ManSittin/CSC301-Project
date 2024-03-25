@@ -11,7 +11,9 @@
             </div>
             <?php
             break;
-        case 'deadlines-insertion':
+        case 'deadlines-insertion':            
+            $currentDateTime = date('Y-m-d\TH:i'); // Format: YYYY-MM-DDTHH:MM
+
             ?>
             <!-- Add a Textbox Feature -->
             <div class="textbox-section">
@@ -63,7 +65,7 @@
                     class="deadline_date"
                 />
                 <br><br>
-                <input type="submit" value="Update Deadline" class="update-deadline">
+                <input type="submit" value="Update Deadline" class="update-deadline" onclick="resetWindowUnload()">
             </div>
         
             <?php
@@ -140,7 +142,7 @@
                 <input type="hidden" id="hiddenNoteId" value="<?php echo isset($noteForEditing['id']) ? $noteForEditing['id'] : ''; ?>">
                 <textarea rows="4" cols="50" name="noteContent" class="note-body"><?php echo isset($noteForEditing['content']) ? $noteForEditing['content'] : ''; ?></textarea>
                 <br>
-                <input type="submit" value="Update Note" class="update-note">
+                <input type="submit" value="Update Note" class="update-note" onclick="resetWindowUnload()">
                 </form>
             </div>
             
@@ -176,7 +178,7 @@
                 <label for="public">Public flashcard:</label>
                 <input type="checkbox" id="public" class="flashcard-ispublic">
                 <br>
-                <input type="submit" value="Update Flashcard" class="update-flashcard">
+                <input type="submit" value="Update Flashcard" class="update-flashcard" onclick="resetWindowUnload()">
                 </form>
             </div>
             <?php
@@ -341,13 +343,21 @@
 
         case 'course_view':
             ?>
-
+      
+            <div id="course-main">
+                <!-- Dynamically inserted courses will go here -->
+            </div>
+           
             
             <?php
             break;
 
         case 'courses-all':
             ?>
+            
+            <div id="course-main">
+                <!-- Dynamically inserted courses will go here -->
+            </div>
 
             <?php
             break;

@@ -196,6 +196,7 @@ class Controller {
         file_put_contents('get_data.log', print_r($_GET, true));
         $command = $_GET['command'];
         $model = new Model();
+        $results = null;
 
         switch ($command) {
             case 'notes':

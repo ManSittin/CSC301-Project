@@ -26,7 +26,9 @@ $command = "php -S 10.0.0.109:3000 -t . -f Index.php";
 
     // Write the modified content back to the file
     file_put_contents($filename, implode("\n", $fileContent));
+
 $command = "php -S localhost:3000 -t . -f Index.php";
+
 exec($command);
 
 

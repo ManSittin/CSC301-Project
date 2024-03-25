@@ -122,7 +122,19 @@ function handleSignInClick() {
 
 }
 
+function setWindowUnload(){
+  window.onbeforeunload = function(){
+    return "Unsaved data";
+  }
+}
 
+function setWindowPreload(){
+  window.onload = setWindowUnload();
+}
+
+function resetWindowUnload(){
+ window.onbeforeunload = null;
+}
 
 
 
@@ -233,6 +245,7 @@ fetch('/server.php', {
 
 function addDeadline() { // insert a deadline
   // need to collect all data and send to db..
+  resetWindowUnload();
   console.log(onlineUsers)
   var formData = new FormData();
   formData.append('command', 'deadlines');
@@ -251,6 +264,7 @@ function addDeadline() { // insert a deadline
 
 function addNote() { // insert a note
   // Add logic to send the note to the server and store it in the database
+  resetWindowUnload();
   var formData = new FormData();
   formData.append('command', 'notes');
   formData.append('username', onlineUsers);
@@ -378,6 +392,7 @@ function updateDeadline($deadlineID) {
 
 // button click listener
 if (updateDeadlineBtn){
+  setWindowUnload();
   updateDeadlineBtn.addEventListener('click', function(){ // reveal response
   const deadlineID = document.getElementById('hiddenDeadlineId').value; // Get the note ID from the hidden input
   updateDeadline(deadlineID); // was hard coded before
@@ -591,6 +606,7 @@ function updateNote($noteID) {
 }
 
 if (updateNoteBtn) {
+  setWindowUnload();
   updateNoteBtn.addEventListener('click', function(){
     const noteID = document.getElementById('hiddenNoteId').value; // Get the note ID from the hidden input
     updateNote(noteID);
@@ -604,6 +620,7 @@ var flashcardAlgorithm = sessionStorage.getItem('flashcardAlgorithm');
 
 function addFlashcard() { // insert a flashcard
   // Add logic to send the note to the server and store it in the database
+  resetWindowUnload();
   var formData = new FormData();
   formData.append('command', 'flashcards');
   formData.append('username', onlineUsers);
@@ -1216,6 +1233,7 @@ function notesInsertionLoad() {
 //   return [FFgraph,course_keys,course_nums,timeslot_keys,timeslot_nums];
 
 function addCourse() {
+    resetWindowUnload();
     var formData = new FormData();
     formData.append('command', 'courses');
     formData.append('username', onlineUsers);
@@ -1312,30 +1330,43 @@ class FordFulkerson {
 function showCourses() {
 
     fetch(`/server.php?command=courses&username=${encodeURIComponent(onlineUsers)}`)
-    .then(console.log(response))
+    .then(console.log("starting"))
     .then(response => response.json())
+    .then(console.log(response))
+    .then(console.log("here"))
     .then(data => {
-        const main = document.getElementsByClassName('main')[0];
 
+       const main = document.getElementById('course-main'); // course-main
+      
         data.forEach(item => {
-
+            console.log(item);
             const container = document.createElement('div');
+            console.log("here1");
             container.classList.add('note-container');
+            console.log("here2");
             const div = document.createElement('div');
+            console.log("here3");
             div.innerHTML = `
                 <div class='note-title'>${item.course_name}</div>
             `;
+            console.log("here4");
             const button = document.createElement('button');
+            console.log("here5");
             button.classList.add('edit-button');
+            console.log("here6");
             button.textContent = 'View/Add Timeslots';
+            console.log("here7");
 
             button.addEventListener('click', function() {
                 window.location.href = "course_view.php?id=" + item.id;
             });
-
+            console.log("here8");
             container.appendChild(div);
+            console.log("here9");
             container.appendChild(button);
+            console.log("here10");
             main.appendChild(container);
+            console.log("here11");
         });
     })
     .catch(error => {
@@ -1393,12 +1424,17 @@ function showTimeslots() {
 
 document.addEventListener('DOMContentLoaded', function() {
   // Example: Check if the URL path contains "notes-all"
-  if (window.location.pathname.includes('notes-all')) {
+  var name = window.location.pathname;
+  if (name.includes('notes-all')) {
       loadNotes(); // Initially load all notes
       const searchButton = document.querySelector('.search-box button[type="submit"]');
       if (searchButton) {
           searchButton.addEventListener('click', handleSearch);
       }
+  }
+
+  if (name.includes('insertion')){
+    setWindowUnload();
   }
   // Example: Check if the URL path contains "deadlines-all"
   if (window.location.pathname.includes('deadlines-all')) {
