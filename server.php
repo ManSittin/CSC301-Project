@@ -35,8 +35,9 @@ class Controller {
                 $username = $_POST['username'];
                 $title = $_POST['title'];
                 $content = $_POST['content'];
+                $tag = $_POST['tag'];
                 
-                $result = $model->newNote($username, $title, $content);
+                $result = $model->newNote($username, $title, $content, $tag);
 
                 break;
 
@@ -245,7 +246,7 @@ class Controller {
                 if($results) {
                     http_response_code(200);
                     header('Content-Type: application/json');
-                    echo json_encode($results);
+                    echo json_encode(['courses' => $results]);
                     exit();
                 } else {
                     http_response_code(500);

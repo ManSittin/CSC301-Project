@@ -104,6 +104,11 @@
                     <p>Enter your note:</p>
                     <textarea rows="4" cols="50" name="note" id="note" placeholder="Type your note here..."></textarea>
                     <br>
+                    <p>Add course tag:</p>
+                    <select id="tag">
+                        <option></option>
+                    </select>
+                    <br>
                     <input type="button" value="Add Note" onclick="addNote()">
                 </form>
             </div>

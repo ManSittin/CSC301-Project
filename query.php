@@ -177,7 +177,7 @@ class Model {
         }
     }
 
-    public function newNote($username, $title, $content) {
+    public function newNote($username, $title, $content, $tag) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
 
         if ($conn->connect_error) {
@@ -185,8 +185,8 @@ class Model {
             return false;
         }
 
-        $stmt = $conn->prepare("INSERT INTO Notes (username, title, content) VALUES (?,?,?)");
-        $stmt->bind_param("sss", $username, $title, $content);
+        $stmt = $conn->prepare("INSERT INTO Notes (username, title, content, tag_id) VALUES (?,?,?,?)");
+        $stmt->bind_param("sssi", $username, $title, $content, $tag);
         $result = $stmt->execute(); // check if query worked
         return $result;
     }
@@ -225,7 +225,7 @@ class Model {
         $stmt->bind_param("s", $username);
         $result = $stmt->execute();
         if ($result) {
-            $stmt->bind_result($id, $username, $title, $content);
+            $stmt->bind_result($id, $username, $title, $content, $tag);
 
             $results = [];
             while ($stmt->fetch()) {
