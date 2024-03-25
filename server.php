@@ -54,7 +54,8 @@ class Controller {
                 $response = $_POST['response'];
                 $review_date = $_POST['review_date'];
                 $priority = $_POST['priority'];
-                $result = $model->newFlashcard($username, $cue, $response, $review_date, $priority);
+                $tag = $_POST['tag'];
+                $result = $model->newFlashcard($username, $cue, $response, $review_date, $priority, $tag);
 
                 break;
 
@@ -247,7 +248,7 @@ class Controller {
                 if($results) {
                     http_response_code(200);
                     header('Content-Type: application/json');
-                    echo json_encode($results);
+                    echo json_encode(['courses' => $results]);
                     exit();
                 } else {
                     http_response_code(500);

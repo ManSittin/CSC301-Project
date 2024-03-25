@@ -324,7 +324,7 @@ class Model {
 
 
 
-    public function newFlashcard($username, $cue, $response, $review_date, $priority) {
+    public function newFlashcard($username, $cue, $response, $review_date, $priority, $tag) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
 
         if ($conn->connect_error) {
@@ -332,8 +332,8 @@ class Model {
             return false;
         }
 
-        $stmt = $conn->prepare("INSERT INTO Flashcards (username, cue, response, review_date, priority) VALUES (?,?,?,?,?)");
-        $stmt->bind_param("ssssi", $username, $cue, $response, $review_date, $priority);
+        $stmt = $conn->prepare("INSERT INTO Flashcards (username, cue, response, review_date, priority, tag_id) VALUES (?,?,?,?,?,?)");
+        $stmt->bind_param("ssssii", $username, $cue, $response, $review_date, $priority, $tag);
         $result = $stmt->execute(); // check if query worked
         return $result;
     }
@@ -349,7 +349,7 @@ class Model {
         $stmt->bind_param("s", $username);
         $result = $stmt->execute();
         if ($result) {
-            $stmt->bind_result($id, $username, $cue, $response, $review_date, $priority);
+            $stmt->bind_result($id, $username, $cue, $response, $review_date, $priority, $tag);
 
             $results = [];
             while ($stmt->fetch()) {

@@ -454,6 +454,7 @@ function addFlashcard() { // insert a flashcard
   formData.append('username', onlineUsers);
   formData.append('cue', document.getElementById("addFlashcardForm").elements[0].value);
   formData.append('response', document.getElementById("addFlashcardForm").elements[1].value);
+  formData.append('tag', document.getElementById("addFlashcardForm").elements[2].value)
 
   // default review_date to today
   const today = new Date();
@@ -1524,3 +1525,28 @@ function handleSignupClick() {
   }
 
 
+function addOptions(courses, container) {
+
+    courses.forEach(course => {
+        const newOption = document.createElement('option');
+        newOption.value = course.id;
+        newOption.text = course.course_name;
+        container.appendChild(newOption);
+    });
+}
+
+function getCoursesLoad() {
+  //const notesContainer = document.getElementById('note-info');
+  //notesContainer.innerHTML = '<p>Loading notes...</p>'; // Provide a loading indicator
+  const tagsContainer = document.getElementById('tag');
+  fetch('/server.php?command=courses&username=' + encodeURIComponent(onlineUsers))
+      .then(response => response.json())
+      .then(data => {
+          if (data.courses && data.courses.length > 0) {
+              addOptions(data.courses, tagsContainer);
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+      });
+}
