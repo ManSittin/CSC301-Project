@@ -151,18 +151,18 @@
             <div class="textbox-section">
                 <!-- Loaded flashcard info preloads here... -->
                 <h2 class="flashcard-title">Your Flashcard</h2> 
-                <form id="editFlashcardForm" method="post" action="flashcards-view.php">
+                <form id="editFlashcardForm" method="post" action="flashcard-view.php">
+                <br>
                 <input type="hidden" id="hiddenFlashcardId" value="<?php echo isset($flashcardForEditing['id']) ? $flashcardForEditing['id'] : ''; ?>">
-                    
+                <br>
                 <label for="cue">Cue:</label>
                 <textarea rows="2" cols="50" name="flashcardCue" class="flashcard-cue"><?php echo isset($flashcardForEditing['cue']) ? $flashcardForEditing['cue'] : ''; ?></textarea>
-                    
+                <br>
                 <label for="response">Response:</label>
                 <textarea rows="4" cols="50" name="flashcardResponse" class="flashcard-response"><?php echo isset($flashcardForEditing['response']) ? $flashcardForEditing['response'] : ''; ?></textarea>
-                    
-                <label for="reviewDate">Review Date:</label>
-                <input type="date" id="reviewDate" name="flashcardReviewDate" value="<?php echo isset($flashcardForEditing['review_date']) ? $flashcardForEditing['review_date'] : ''; ?>">
-                    
+                <br>
+                <!-- <label for="reviewDate">Review Date:</label>
+                <input type="date" id="reviewDate" name="flashcardReviewDate" value="<?php echo isset($flashcardForEditing['review_date']) ? $flashcardForEditing['review_date'] : ''; ?>"> -->
                 <br>
                 <input type="submit" value="Update Flashcard" class="update-flashcard">
                 </form>
