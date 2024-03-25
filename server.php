@@ -34,9 +34,9 @@ class Controller {
                 $title = $_POST['title'];
                 $content = $_POST['content'];
                 $is_public = $_POST['is_public'];
-                
-                $result = $model->newNote($username, $title, $content, $is_public);
-
+                $tag = $_POST['tag'];
+            
+                $result = $model->newNote($username, $title, $content, $is_public, $tag);
                 break;
 
             case ('deadlines'):
@@ -44,8 +44,9 @@ class Controller {
                 $course = $_POST['course'];
                 $name = $_POST['deadline_name'];
                 $due_date = $_POST['duedate'];
+                $tag = $_POST['tag'];
 
-                $result = $model->newDeadline($username, $course, $name, $due_date);
+                $result = $model->newDeadline($username, $course, $name, $due_date, $tag);
 
                 break;
             
@@ -54,7 +55,9 @@ class Controller {
                 $cue = $_POST['cue'];
                 $response = $_POST['response'];
                 $review_date = $_POST['review_date'];
-                $result = $model->newFlashcard($username, $cue, $response, $review_date);
+                $priority = $_POST['priority'];
+                $is_public = $_POST['is_public'];
+                $result = $model->newFlashcard($username, $cue, $response, $review_date, $priority, $is_public);
 
                 break;
 
@@ -98,7 +101,8 @@ class Controller {
                 $cue = $_POST['cue'];
                 $response = $_POST['response'];
                 $review_date = $_POST['review_date'];
-                $result = $model->updateFlashcard($id, $username, $cue, $response, $review_date);
+                $priority = $_POST['priority'];
+                $result = $model->updateFlashcard($id, $username, $cue, $response, $review_date, $priority);
 
                 break;
                 
@@ -112,6 +116,19 @@ class Controller {
                 $result = $model->newUser($username, $email, $first_name, $last_name, $password);
 
                 break;
+
+            case ('preferences'):
+                $flashcard_algorithm = $_POST['flashcard_algorithm'];
+                $username = $_POST['username'];
+                $result = $model->newPreference($username, $flashcard_algorithm);
+                    break;
+            
+            case ('preferences-update'):
+                $flashcard_algorithm = $_POST['flashcard_algorithm'];
+                $username = $_POST['username'];
+                $result = $model->updatePreference($username, $flashcard_algorithm);
+                break;
+
             case ('connect'):
                     $email = $_POST['email'];
                     $password = $_POST['password'];
@@ -124,6 +141,27 @@ class Controller {
                         } else {
                             http_response_code(200);
                             addUserToOnlineUsers($results);
+
+
+                    // File where the time will be stored and modified
+                    $filename = 'time.txt';
+
+                    // Get the current timestamp
+                        $currentTime = date('Y-m-d H:i:s');
+
+                        // Read the current content of the file
+                        $fileContent = file($filename, FILE_IGNORE_NEW_LINES); // Read each line of the file into an array
+
+                        // Ensure the file has at least two lines, padding with empty strings if necessary
+                        while (count($fileContent) < 2) {
+                        $fileContent[] = '';
+                        }
+
+                        // Update the second line with the current time
+                        $fileContent[1] = $currentTime;
+
+                        // Write the modified content back to the file
+                        file_put_contents($filename, implode("\n", $fileContent));
                             header('Content-Type: application/json');
                             echo json_encode(['status' => 'Success' . $command, 'message' => $results]);
                             exit();
@@ -212,7 +250,7 @@ class Controller {
                 if($results) {
                     http_response_code(200);
                     header('Content-Type: application/json');
-                    echo json_encode($results);
+                    echo json_encode(['courses' => $results]);
                     exit();
                 } else {
                     http_response_code(500);
@@ -236,7 +274,119 @@ class Controller {
                     exit();
                 }
                 break;
+
+            case 'preferences':
+                $username = $_GET['username'];
+                $results = $model->getPreference($username);
+                if($results) {
+                    http_response_code(200);
+                    header('Content-Type: application/json');
+                    echo json_encode(['status' => 'Success: ' . $command, 'message' => $results]);
+                    exit();
+                } else {
+                    http_response_code(500);
+                    header('Content-Type: application/json');
+                    echo json_encode(['status' => 'Failure: ' . $command, 'message' => ""]);
+                    exit();
+                }
+                break;
             
+
+
+                case 'search_notes':
+                    // Assuming the search query parameter is named 'query'
+                    $query = $_GET['query'];
+                    $username = $_GET['username'];
+                    $notesfiltered = $model->searchNotesByTitle($query, $username);
+                    if ($notesfiltered) {
+                        http_response_code(200);
+                        header('Content-Type: application/json');
+                        echo json_encode(['status' => 'Success', 'notes' => $notesfiltered]);
+                    } else {
+                        http_response_code(500); // Not Found if there are no results
+                        header('Content-Type: application/json');
+                        echo json_encode(['status' => 'Failure', 'message' => 'No notes found']);
+                    }
+                        exit();
+                        break;
+
+                    case 'search_deadlines':
+                        $query = $_GET['query']; // Assuming the search query parameter is named 'query'
+                        $username = $_GET['username']; // Assuming you also need to filter by username
+                        $deadlinesFiltered = $model->searchDeadlinesByName($query, $username);
+                        if ($deadlinesFiltered) {
+                            http_response_code(200);
+                            header('Content-Type: application/json');
+                            echo json_encode(['status' => 'Success', 'deadlines' => $deadlinesFiltered]);
+                        } else {
+                            http_response_code(404); // Use 404 for "Not Found" if there are no results
+                            header('Content-Type: application/json');
+                            echo json_encode(['status' => 'Failure', 'message' => 'No deadlines found']);
+                        }
+                        exit();
+                        break;
+
+                    case 'search_flashcards':
+                        $query = $_GET['query'];
+                        $username = $_GET['username'];
+                        $flashcardsFiltered = $model->searchFlashcardsByCue($query, $username);
+                        if ($flashcardsFiltered) {
+                            http_response_code(200);
+                            header('Content-Type: application/json');
+                            echo json_encode(['status' => 'Success', 'flashcards' => $flashcardsFiltered]);
+                            } else {
+                                http_response_code(404); // Use 404 for "Not Found" if there are no results
+                                header('Content-Type: application/json');
+                                echo json_encode(['status' => 'Failure', 'message' => 'No flashcards found']);
+                            }
+                        exit();
+                    break;
+
+                    case 'load_all_flashcards':
+                        $username = $_GET['username']; // Obtain the username
+                        $flashcards = $model->getFlashcards($username); // Assume this function exists and fetches flashcards for the user
+                        if ($flashcards) {
+                            http_response_code(200);
+                            header('Content-Type: application/json');
+                            echo json_encode(['flashcards' => $flashcards]);
+                        } else {
+                            http_response_code(404); // No flashcards found
+                            header('Content-Type: application/json');
+                            echo json_encode(['message' => 'No flashcards found']);
+                        }
+                        exit();
+                        break;
+
+                    case 'load_all_notes':
+                        $username = $_GET['username'];
+                        $notes = $model->getNotes($username);
+                        if ($notes) {
+                            http_response_code(200);
+                            header('Content-Type: application/json');
+                            echo json_encode(['notes' => $notes]);
+                        } else {
+                            http_response_code(404); // Or another appropriate status code
+                            header('Content-Type: application/json');
+                            echo json_encode(['message' => 'No notes found']);
+                        }
+                        exit();
+                        break;
+
+                    case 'load_all_deadlines':
+                        $username = $_GET['username'];
+                        $deadlines = $model->getDeadlines($username);
+                        if ($deadlines) {
+                            http_response_code(200);
+                            header('Content-Type: application/json');
+                            echo json_encode(['deadlines' => $deadlines]);
+                        } else {
+                            http_response_code(404); // Or another appropriate status code
+                            header('Content-Type: application/json');
+                            echo json_encode(['message' => 'No notes found']);
+                        }
+                        exit();
+                        break;
+
 
             default:
             

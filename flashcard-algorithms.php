@@ -8,19 +8,17 @@
     <link href='https://fonts.googleapis.com/css?family=Outfit' rel='stylesheet'>
     <title>CourseBind</title>
     <style>
-        /* Existing style here */
     </style>
 </head>
-<body onload='notesInsertionLoad()'>
+<body>
     <?php include_once 'sidebar-content.php'; ?>
     <div class="not-sidebar">
         <?php include_once 'navbar.html';
-        $header_text = "Welcome to the notes page. Here you can add new notes or view the ones you have already added.";
-        $page = "notes-insertion";
+        $header_text = "Choose a flashcard algorithm below. 'Random' will give you a random flashcard each time. 'Leitner' will prioritize flashcards you struggle the most with. Switching algorithms will reset the state of all flashcards.";
+        $page = "flashcard-algorithms";
         include_once 'main.php';
         ?>
     </div>
-
     <script src="script.js">
     </script>
 </body>

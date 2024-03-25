@@ -31,7 +31,12 @@
                         min="0000-00-00T00:00"
                         max="9999-12-31T23:59"
                      />
-                    <br><br>
+                    <br>
+                    <p>Add course tag:</p>
+                    <select id="tag">
+                        <option></option>
+                    </select>
+                    <br>
                     <input type="button" value="Submit deadline" onclick="addDeadline()">
                 </form>
             </div>
@@ -63,42 +68,20 @@
         
             <?php
             break;
+
         case 'deadlines-all':
             ?>
-            <div id="deadline info">
-        <h2>Recent Deadlines</h2>
-        <?php
-            if ($numDeadlines > 0) {
-                while ($deadline = mysqli_fetch_assoc($deadlines)) {
-                    echo '<div class="info-block">' . htmlspecialchars($deadline["course"]) . '</div>';
-                }
-                // Reset the data pointer for $notes
-                mysqli_data_seek($deadlines, 0);
-            }
-        ?>
-        </div>
-        <?php
-        if ($numDeadlines > 0) {
-            while ($deadline = mysqli_fetch_assoc($deadlines)) {
-                echo '<div class="note-container">';
-                echo '<div class="deadline-course">' . htmlspecialchars($deadline['course']) . '</div>';
-                echo '<div class="note-content">' . htmlspecialchars(substr($deadline['deadline_name'], 0, 50)) . '...</div>'; // preview
-                echo '<div class="deadline-date">Due: ' . htmlspecialchars($deadline['due_date']) . '</div>'; // Displaying the due date
-
-            
-                // Update the onclick attribute below
-                echo '<button class="edit-button" onclick="location.href=\'deadlines-view.php?id=' . $deadline['id'] . '\'">View/Edit</button>';
-                echo '</div>';
-            }
-        } else {
-            echo '<p>No deadlines found.</p>';
-        }
-    ?>
-    </div>
-            
+            <form action="javascript:void(0);" method="get" class="search-box" onsubmit="handleDeadlineSearch(event)">
+            <input type="hidden" name="action" value="deadlines-all">
+            <input type="text" name="search" placeholder="Search by course name..." id="deadline-search-input">
+            <button type="submit" id="search-button">Search</button>
+            <button type="button" id="reset-deadline-search-button" onclick="resetDeadlineSearch()">Reset Search</button>
+        </form>
+        <div id="deadline-info">
+            <!-- Dynamically inserted deadlines will go here -->
+        </div>  
             <?php
             break;
-
 
         // NOTES PAGES
         case 'notes':
@@ -130,6 +113,10 @@
                         <p>Public note:</p>
                         <input type="checkbox" id="public", value="public">
                     </div>
+                    <p>Add course tag:</p>
+                    <select id="tag">
+                        <option></option>
+                    </select>
                     <br>
                     <input type="button" value="Add Note" onclick="addNote()">
                 </form>
@@ -159,36 +146,42 @@
             <?php
             break;
 
-        case 'notes-all':
+        case 'flashcards-view':
             ?>
-            <div id="note info">
-        <?php
-            if ($numNotes > 0) {
-                while ($note = mysqli_fetch_assoc($notes)) {
-                    echo '<div class="info-block">' . htmlspecialchars($note["title"]) . '</div>';
-                }
-                // Reset the data pointer for $notes
-                mysqli_data_seek($notes, 0);
-            }
-        ?>
-        </div>
-        <?php
-        if ($numNotes > 0) {
-            while ($note = mysqli_fetch_assoc($notes)) {
-                echo '<div class="note-container">';
-                echo '<div class="note-title">' . htmlspecialchars($note['title']) . '</div>';
-                echo '<div class="note-content">' . htmlspecialchars(substr($note['content'], 0, 50)) . '...</div>'; // preview
-
-                // Update the onclick attribute below
-                echo '<button class="edit-button" onclick="location.href=\'notes-view.php?id=' . $note['id'] . '\'">View/Edit</button>';
-                echo '</div>';
-            }
-        } else {
-            echo '<p>No notes found.</p>';
-        }
-    ?>
-        </div>
+            <div class="textbox-section">
+                <!-- Loaded flashcard info preloads here... -->
+                <h2 class="flashcard-title">Your Flashcard</h2> 
+                <form id="editFlashcardForm" method="post" action="flashcards-view.php">
+                <input type="hidden" id="hiddenFlashcardId" value="<?php echo isset($flashcardForEditing['id']) ? $flashcardForEditing['id'] : ''; ?>">
+                    
+                <label for="cue">Cue:</label>
+                <textarea rows="2" cols="50" name="flashcardCue" class="flashcard-cue"><?php echo isset($flashcardForEditing['cue']) ? $flashcardForEditing['cue'] : ''; ?></textarea>
+                    
+                <label for="response">Response:</label>
+                <textarea rows="4" cols="50" name="flashcardResponse" class="flashcard-response"><?php echo isset($flashcardForEditing['response']) ? $flashcardForEditing['response'] : ''; ?></textarea>
+                    
+                <label for="reviewDate">Review Date:</label>
+                <input type="date" id="reviewDate" name="flashcardReviewDate" value="<?php echo isset($flashcardForEditing['review_date']) ? $flashcardForEditing['review_date'] : ''; ?>">
+                    
+                <br>
+                <input type="submit" value="Update Flashcard" class="update-flashcard">
+                </form>
+            </div>
+            <?php
+            break;
             
+            case 'notes-all':
+                ?>
+                <form action="javascript:void(0);" method="get" class="search-box" onsubmit="handleSearch(event)">
+                <input type="hidden" name="action" value="notes-all">
+                <input type="text" name="search" placeholder="Search by title..." id="search-input">
+                <button type="submit" id="search-button">Search</button>
+                <button type="button" id="reset-search-button" onclick="resetSearch()">Reset Search</button>
+            </form>
+            <div id="note-info">
+                <!-- Dynamically inserted notes will go here -->
+            </div>
+
             <?php
             break;
 
@@ -199,11 +192,14 @@
             <!-- Add a Textbox Feature -->
             <div class="textbox-section">
                 <div><a href="flashcard-insertion.php">Add Flashcards</a></div>
+                <div><a href="flashcard-all.php">View Flashcards</a></div>
                 <div><a href="flashcard-review.php">Review Flashcards</a></div>
+                <div><a href="flashcard-algorithms.php">Modify Flashcard Algorithm</a></div>
             </div>
             
             <?php
             break;
+            
         case 'flashcard-insertion':
             ?>
             <!-- Add a Textbox Feature -->
@@ -216,12 +212,31 @@
                     <p>Response:</p>
                     <textarea rows="4" cols="50" name="response" id="enter-response" placeholder="Type your response here..."></textarea>
                     <br>
+                    <p>Public flashcard:</p>
+                    <input type="checkbox" id="public">
+                    <br>
                     <input type="button" value="Add Flashcard" onclick="addFlashcard()">
                 </form>
             </div>
             
             <?php
             break;
+
+        case 'flashcard-all':
+                ?>
+                <form action="javascript:void(0);" method="get" class="search-box" onsubmit="handleSearch(event)">
+                <input type="hidden" name="action" value="notes-all">
+                <input type="text" name="search" placeholder="Search by title..." id="search-input">
+                <button type="submit" id="search-button">Search</button>
+                <button type="button" id="reset-search-button" onclick="resetFlashcardSearch()">Reset Search</button>
+            </form>
+            <div id="flashcard-info">
+                <!-- Dynamically inserted notes will go here -->
+            </div>
+
+            <?php
+            break;
+
         case 'flashcard-review':
             ?>
             <!-- Add a Textbox Feature -->
@@ -243,6 +258,18 @@
             
             <?php
             break;
+
+            case 'flashcard-algorithms':
+                ?>
+                <!-- Add a Textbox Feature -->
+                <div class="textbox-section">
+                    <div class="algorithm-buttons">
+                        <div class="randomAlg"><button>Random</button></div>
+                        <div class="leitnerAlg"><button>Leitner</button></div>
+                    </div>
+                </div>
+                <?php
+                break;
 
 
 
@@ -367,6 +394,7 @@
             <input type="password" id="password" placeholder="Enter your password" 
             />
           </div>
+          <div id="passwordWarning" style="color: red;"></div>
           <span className="password-length-info">(Password must be longer than 8 characters)</span>
           <button type="button" className="btnformReg" onClick="handleSignUpClick()">
             SIGN UP

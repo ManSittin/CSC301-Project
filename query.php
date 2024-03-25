@@ -34,8 +34,35 @@ class Model {
         return $result;
     }
 
+    public function newPreference($username, $flashcard_algorithm) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
 
-    public function newDeadline($username, $course, $deadline_name, $due_date) {
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false;
+        }
+
+        $stmt = $conn->prepare("INSERT INTO Preferences (username, flashcard_algorithm) VALUES (?,?)");
+        $stmt->bind_param("ss", $username, $flashcard_algorithm);
+        $result = $stmt->execute(); // check if query worked
+        return $result;
+    }
+
+    public function updatePreference($username, $flashcard_algorithm) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+      
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false;
+        }
+        $stmt = $conn->prepare("UPDATE Preferences SET flashcard_algorithm = ? WHERE username = ?;");
+        $stmt->bind_param("ss", $flashcard_algorithm, $username);
+
+        $result = $stmt->execute(); // check if query worked
+        return $result;
+    }  
+
+    public function newDeadline($username, $course, $deadline_name, $due_date, $tag) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
 
         if ($conn->connect_error) {
@@ -43,8 +70,8 @@ class Model {
             return false;
         }
         
-        $stmt = $conn->prepare("INSERT INTO Deadlines (username, course, deadline_name, due_date) VALUES (?,?,?,?)");
-        $stmt->bind_param("ssss", $username, $course, $deadline_name, $due_date);
+        $stmt = $conn->prepare("INSERT INTO Deadlines (username, course, deadline_name, due_date, tag_id) VALUES (?,?,?,?,?)");
+        $stmt->bind_param("ssssi", $username, $course, $deadline_name, $due_date, $tag);
         $result = $stmt->execute();
         $stmt->close();
 
@@ -81,7 +108,6 @@ class Model {
 
     public function getDeadlines($username) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
-
         if ($conn->connect_error) {
             die("Connection to database failed: " . $conn->connect_error);
             return false;
@@ -92,7 +118,7 @@ class Model {
         $result = $stmt->execute();
         
         if ($result) {
-            $stmt->bind_result($id, $username, $course, $deadline_name, $due_date);
+            $stmt->bind_result($id, $username, $course, $deadline_name, $due_date, $tag);
     
             $results = [];
             while ($stmt->fetch()) {
@@ -134,7 +160,26 @@ class Model {
         
     }
 
-    public function newNote($username, $title, $content, $is_public) {
+ 
+    public function getPreference($username) {
+      
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false;
+        }
+       
+        $stmt = $conn->prepare("SELECT * FROM Preferences, Users WHERE username = ?");
+        $stmt->bind_param("s", $username);
+        $result = $stmt->execute();
+        if ($result) {
+            $result = $stmt->execute(); // check if query worked
+            return $result;
+        }
+    }
+
+    public function newNote($username, $title, $content, $is_public, $tag) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
 
         if ($conn->connect_error) {
@@ -142,8 +187,8 @@ class Model {
             return false;
         }
 
-        $stmt = $conn->prepare("INSERT INTO Notes (username, title, content, is_public) VALUES (?,?,?, ?)");
-        $stmt->bind_param("sssi", $username, $title, $content, $is_public);
+        $stmt = $conn->prepare("INSERT INTO Notes (username, title, content, is_public, tag_id) VALUES (?,?,?,?,?)");
+        $stmt->bind_param("sssii", $username, $title, $content, $is_public, $tag);
         $result = $stmt->execute(); // check if query worked
         return $result;
     }
@@ -182,7 +227,7 @@ class Model {
         $stmt->bind_param("s", $username);
         $result = $stmt->execute();
         if ($result) {
-            $stmt->bind_result($id, $username, $title, $content);
+            $stmt->bind_result($id, $username, $title, $content, $tag);
 
             $results = [];
             while ($stmt->fetch()) {
@@ -194,8 +239,94 @@ class Model {
             return false;
         }
     }
+    public function searchNotesByTitle($searchQuery, $username) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false; // Connection failure
+        }
+    
+        // "SELECT * FROM Notes WHERE username = do AND title LIKE CONCAT('%', ?, '%')";
+        $sql = "SELECT * FROM Notes WHERE username = ? AND title LIKE CONCAT('%', ?, '%')";
+        $stmt = $conn->prepare($sql);
 
-    public function newFlashcard($username, $cue, $response, $review_date) {
+        // Now, this matches the number of ? in the query
+        $stmt->bind_param("ss", $username, $searchQuery);
+        $result = $stmt->execute();    
+        // Bind both the username and the search query parameters
+        if ($result) {
+            $res = $stmt->get_result(); // Use get_result() for flexibility in fetching
+            $results = [];
+            while ($row = $res->fetch_assoc()) { // Fetch as associative array
+                $results[] = $row;
+            }
+            $stmt->close();
+            return $results;
+        } else {
+            $stmt->close();
+            return false; // Execution failure or no results
+        }
+    }
+
+    public function searchDeadlinesByName($searchQuery, $username) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false; // Connection failure
+        }
+    
+        // Assuming the structure of your Deadlines table matches the expected columns
+        $sql = "SELECT * FROM Deadlines WHERE username = ? AND course LIKE CONCAT('%', ?, '%')";
+        $stmt = $conn->prepare($sql);
+    
+        // Bind the username and search query to the prepared statement
+        $stmt->bind_param("ss", $username, $searchQuery);
+        $result = $stmt->execute();
+    
+        if ($result) {
+            $res = $stmt->get_result(); // Fetch the results of the query
+            $results = [];
+            while ($row = $res->fetch_assoc()) { // Iterate through each row in the result set
+                $results[] = $row;
+            }
+            $stmt->close();
+            return $results; // Return the array of fetched deadlines
+        } else {
+            $stmt->close();
+            return false; // In case of execution failure or no results
+        }
+    }
+
+    public function searchFlashcardsByCue($searchQuery, $username) {
+    $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+    if ($conn->connect_error) {
+        die("Connection to database failed: " . $conn->connect_error);
+        return false; // Connection failure
+    }
+    
+    $sql = "SELECT * FROM Flashcards WHERE username = ? AND cue LIKE CONCAT('%', ?, '%')";
+    $stmt = $conn->prepare($sql);
+
+    $stmt->bind_param("ss", $username, $searchQuery);
+    $result = $stmt->execute();
+    
+    if ($result) {
+        $res = $stmt->get_result();
+        $results = [];
+        while ($row = $res->fetch_assoc()) {
+            $results[] = $row;
+        }
+        $stmt->close();
+        return $results;
+    } else {
+        $stmt->close();
+        return false; // Execution failure or no results
+    }
+}
+
+
+
+    public function newFlashcard($username, $cue, $response, $review_date, $priority, $is_public) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
 
         if ($conn->connect_error) {
@@ -203,8 +334,8 @@ class Model {
             return false;
         }
 
-        $stmt = $conn->prepare("INSERT INTO Flashcards (username, cue, response, review_date) VALUES (?,?,?,?)");
-        $stmt->bind_param("ssss", $username, $cue, $response, $review_date);
+        $stmt = $conn->prepare("INSERT INTO Flashcards (username, cue, response, review_date, priority, is_public) VALUES (?,?,?,?,?,?)");
+        $stmt->bind_param("ssssii", $username, $cue, $response, $review_date, $priority, $is_public);
         $result = $stmt->execute(); // check if query worked
         return $result;
     }
@@ -220,11 +351,11 @@ class Model {
         $stmt->bind_param("s", $username);
         $result = $stmt->execute();
         if ($result) {
-            $stmt->bind_result($id, $username, $cue, $response, $review_date);
+            $stmt->bind_result($id, $username, $cue, $response, $review_date, $priority);
 
             $results = [];
             while ($stmt->fetch()) {
-                $results[] = ['id' => $id, 'username' => $username, 'cue' => $cue, 'response' => $response, 'review_date' => $review_date];
+                $results[] = ['id' => $id, 'username' => $username, 'cue' => $cue, 'response' => $response, 'review_date' => $review_date, 'priority' => $priority];
             }
             $stmt->close();
             return $results;
@@ -233,15 +364,15 @@ class Model {
         }
     }
 
-    public function updateFlashcard($id, $username, $cue, $response, $review_date) {
+    public function updateFlashcard($id, $username, $cue, $response, $review_date, $priority) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
       
         if ($conn->connect_error) {
             die("Connection to database failed: " . $conn->connect_error);
             return false;
         }
-        $stmt = $conn->prepare("UPDATE Flashcards SET cue = ?, response = ?, review_date = ? WHERE Flashcards.id = ? AND Flashcards.username = ?;");
-        $stmt->bind_param("sssis", $cue, $response, $review_date, $id, $username);
+        $stmt = $conn->prepare("UPDATE Flashcards SET cue = ?, response = ?, review_date = ?, priority = ? WHERE Flashcards.id = ? AND Flashcards.username = ?;");
+        $stmt->bind_param("sssiis", $cue, $response, $review_date, $priority, $id, $username);
 
         $result = $stmt->execute(); // check if query worked
         return $result;
