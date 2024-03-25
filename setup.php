@@ -9,6 +9,7 @@ $model->newUser('userAA', 'userAA@mail.com', 'A', 'A', 'password');
 // File where the time will be stored and modified
 $filename = 'time.txt';
 
+$command = "php -S 10.0.0.109:3000 -t . -f Index.php";
 // Get the current timestamp
     $currentTime = date('Y-m-d H:i:s');
 

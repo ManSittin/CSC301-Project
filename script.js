@@ -240,6 +240,7 @@ function addDeadline() { // insert a deadline
   formData.append('course', document.getElementById("addDeadlineForm").elements[0].value);
   formData.append('deadline_name', document.getElementById("addDeadlineForm").elements[1].value);
   formData.append('duedate', document.getElementById("addDeadlineForm").elements[2].value);
+  formData.append('tag', document.getElementById("addDeadlineForm").elements[3].value);
   
   fetch('/server.php', {
       method: 'POST',
@@ -255,6 +256,8 @@ function addNote() { // insert a note
   formData.append('username', onlineUsers);
   formData.append('title', document.getElementById("addNoteForm").elements[0].value);
   formData.append('content', document.getElementById("addNoteForm").elements[1].value);
+  formData.append('is_public', document.getElementById("addNoteForm").elements[2].checked ? 1 : 0);
+  formData.append('tag', document.getElementById("addNoteForm").elements[3].value);
   fetch('/server.php', {
       method: 'POST',
       body: formData,
@@ -283,6 +286,19 @@ function handleNoteDelete(event) {
     // this is where the http req is made
 
     alert('Note successfully deleted!');
+}
+
+
+function handleFlashcardDelete(event) {
+  var id = event.target.getAttribute('id');
+
+  fetch('server.php/flashcards/' + id, {
+      method: 'DELETE'
+  });
+
+  // this is where the http req is made
+
+  alert('Flashcard successfully deleted!');
 }
 
 
@@ -342,6 +358,24 @@ async function loadDeadline($deadlineID){
     console.error('Error:', error);
   }
 }
+
+
+async function loadFlashcard($flashcardID){
+  try {
+    const data = await getFlashcard($flashcardID);
+    course.innerHTML = `${data.course}`;
+    flashcard_name.innerHTML = `${data.flashcard_name}`;
+    // Convert due_date to string format "yyyy-MM-ddThh:mm"
+    const dueDate = new Date(data.due_date);
+    const dateString = dueDate.toISOString().slice(0, 16);
+    date.value = dateString;
+    alert('Deadline Loaded!');
+  } catch (error) {
+    // Handle errors
+    console.error('Error:', error);
+  }
+}
+
 
 // update the user's deadline in the DB with this deadlineID based on the info stored in deadline_course, deadline_name, and deadline_date elements
 
@@ -455,6 +489,7 @@ function addFlashcard() { // insert a flashcard
   formData.append('cue', document.getElementById("addFlashcardForm").elements[0].value);
   formData.append('response', document.getElementById("addFlashcardForm").elements[1].value);
   formData.append('tag', document.getElementById("addFlashcardForm").elements[2].value)
+  formData.append('is_public', document.getElementById("addFlashcardForm").elements[3].checked ? 1 : 0);
 
   // default review_date to today
   const today = new Date();
@@ -499,6 +534,40 @@ document.getElementById("result").innerHTML = "The number of flashcards is: " + 
   // Optionally, you can set a default value if there's an error
   document.getElementById("result").innerHTML = " The number of flashcards is: 0" ;
 });
+
+
+
+document.getElementById("flashcardnum").innerHTML = "The number of flashcard left to do is : " + Last_flashcard()
+.then(num => {
+  // This code block will execute once the promise is resolved
+  document.getElementById("flashcardnum").innerHTML = "The number of flashcard left to do is : " +  num.toString();
+})
+.catch(error => {
+  // Handle any errors that might occur during the promise chain
+  console.error('Error:', error);
+  // Optionally, you can set a default value if there's an error
+  document.getElementById("flashcardnum").innerHTML = " Please connect and create flashcards to study" ;
+})
+
+function Last_flashcard(){
+ return  getFlashcards()
+  .then(data => {
+    // Filter flashcards with review dates on or before today
+    const validFlashcards = data.filter(flashcard => {
+      const reviewDate = new Date(flashcard.review_date);
+      return reviewDate <= new Date(); // Compare review date with today
+    });
+    return validFlashcards.length;
+
+
+  })
+  .catch(error => {
+    // Handle errors
+    console.error('Error:', error);
+  });
+
+}
+
 
 
 const cue = document.querySelector('.cue');
@@ -742,7 +811,7 @@ function groupBy(array, property) {
 }
 
 function getLeitnerFlashcard(){
-  getFlashcards()
+   getFlashcards()
   .then(data => {
     // Filter flashcards with review dates on or before today
     const validFlashcards = data.filter(flashcard => {
@@ -912,7 +981,6 @@ function incrementReviewDate(days) {
 function getFlashcardsnum() {
   return getFlashcards()
       .then(flashcards => {
-          console.log(flashcards);
           return flashcards.length;
       })
       .catch(error => {
@@ -921,22 +989,31 @@ function getFlashcardsnum() {
       });
 }
 
-// function getCourses() {
-//   return fetch('/server.php?commmand=courses&username=userAA') 
-//     .then(response => response.json())
-//     .then(json => {
-//       return json.message.map(entry => {
-//         return {
-//           id: entry.id,
-//           course_name: entry.course_name,
-//         };
-//       });
-//     })
-//     .catch(error => {
-//       console.error('Error fetching courses:', error);
-//       throw error;
-//     });
-// }
+function addOptions(courses, container) {
+
+    courses.forEach(course => {
+        const newOption = document.createElement('option');
+        newOption.value = course.id;
+        newOption.text = course.course_name;
+        container.appendChild(newOption);
+    });
+}
+
+function notesInsertionLoad() {
+  //const notesContainer = document.getElementById('note-info');
+  //notesContainer.innerHTML = '<p>Loading notes...</p>'; // Provide a loading indicator
+  const tagsContainer = document.getElementById('tag');
+  fetch('/server.php?command=courses&username=' + encodeURIComponent(onlineUsers))
+      .then(response => response.json())
+      .then(data => {
+          if (data.courses && data.courses.length > 0) {
+              addOptions(data.courses, tagsContainer);
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+      });
+}
 
 // function getTimeslots($courseID){
 //   return fetch('/server.php?command=timeslots&course_id=' + $courseID) // these commands don't exist???
@@ -1184,7 +1261,7 @@ function showCourses() {
     .then(console.log(response))
     .then(response => response.json())
     .then(data => {
-        const main = document.getElementById('course-main');
+        const main = document.getElementsByClassName('main')[0];
 
         data.forEach(item => {
 
@@ -1221,7 +1298,7 @@ function showTimeslots() {
     .then(console.log(response))
     .then(response => response.json())
     .then(data => {
-        const main = document.getElementById('course-main');
+        const main = document.getElementsByClassName('main')[0];
         const button = document.createElement('button');
         button.classList.add('edit-button');
         button.textContent = 'Add a timeslot';
@@ -1311,8 +1388,14 @@ function searchFlashcards(query) {
       flashcardsContainer.innerHTML = '<p>Please enter a search query.</p>';
       return; // Exit the function early if query is empty
   }
+  var request = `/server.php?command=search_flashcards&query=${encodeURIComponent(query)}&username=`;
+  if (window.location.pathname.includes('flashcard-all-public.php')) {
+    request += -1;
+  } else {
+    request += encodeURIComponent(onlineUsers);
+  }
   // Proceed with fetch if query is not empty
-  fetch(`/server.php?command=search_flashcards&query=${encodeURIComponent(query)}&username=${encodeURIComponent(onlineUsers)}`)
+  fetch(request)
       .then(response => response.json())
       .then(data => {
           if (data.flashcards && data.flashcards.length > 0) {
@@ -1337,7 +1420,13 @@ function resetFlashcardSearch() {
 function loadFlashcards() {
   const flashcardsContainer = document.getElementById('flashcard-info');
   flashcardsContainer.innerHTML = '<p>Loading flashcards...</p>';
-  fetch('/server.php?command=load_all_flashcards&username=' + encodeURIComponent(onlineUsers))
+  var request = '/server.php?command=load_all_flashcards&username=';
+  if (window.location.pathname.includes('flashcard-all-public')) {
+    request += -1;
+  } else {
+    request += encodeURIComponent(onlineUsers);
+  }
+  fetch(request)
     .then(response => response.json())
     .then(data => {
       if (data.flashcards && data.flashcards.length > 0) {
@@ -1452,7 +1541,13 @@ function searchNotes(query) {
       return; // Exit the function early if query is empty
   }
   // Proceed with fetch if query is not empty
-  fetch(`/server.php?command=search_notes&query=${encodeURIComponent(query)}&username=${encodeURIComponent(onlineUsers)}`)
+  var request = `/server.php?command=search_notes&query=${encodeURIComponent(query)}&username=`;
+  if (window.location.pathname.includes('notes-all-public')) {
+    request += -1;
+  } else {
+    request += encodeURIComponent(onlineUsers);
+  }
+  fetch(request)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -1477,7 +1572,13 @@ function searchNotes(query) {
 function loadNotes() {
   const notesContainer = document.getElementById('note-info');
   notesContainer.innerHTML = '<p>Loading notes...</p>'; // Provide a loading indicator
-  fetch('/server.php?command=load_all_notes&username=' + encodeURIComponent(onlineUsers))
+  var request = '/server.php?command=load_all_notes&username=';
+  if (window.location.pathname.includes('notes-all-public')) {
+    request += '-1'
+  } else {
+    request += encodeURIComponent(onlineUsers);
+  }
+  fetch(request)
       .then(response => response.json())
       .then(data => {
           if (data.notes && data.notes.length > 0) {
@@ -1550,3 +1651,4 @@ function getCoursesLoad() {
           console.error('Error:', error);
       });
 }
+

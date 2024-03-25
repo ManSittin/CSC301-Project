@@ -33,9 +33,10 @@ class Controller {
                 $username = $_POST['username'];
                 $title = $_POST['title'];
                 $content = $_POST['content'];
-                
-                $result = $model->newNote($username, $title, $content);
-
+                $is_public = $_POST['is_public'];
+                $tag = $_POST['tag'];
+            
+                $result = $model->newNote($username, $title, $content, $is_public, $tag);
                 break;
 
             case ('deadlines'):
@@ -43,8 +44,9 @@ class Controller {
                 $course = $_POST['course'];
                 $name = $_POST['deadline_name'];
                 $due_date = $_POST['duedate'];
+                $tag = $_POST['tag'];
 
-                $result = $model->newDeadline($username, $course, $name, $due_date);
+                $result = $model->newDeadline($username, $course, $name, $due_date, $tag);
 
                 break;
             
@@ -53,10 +55,10 @@ class Controller {
                 $cue = $_POST['cue'];
                 $response = $_POST['response'];
                 $review_date = $_POST['review_date'];
-                $priority = $_POST['priority'];
+                $priority = $_POST['priority'];  
+                $is_public = $_POST['is_public'];
                 $tag = $_POST['tag'];
-                $result = $model->newFlashcard($username, $cue, $response, $review_date, $priority, $tag);
-
+                $result = $model->newFlashcard($username, $cue, $response, $review_date, $priority, $is_public, $tag);
                 break;
 
             case ('courses'):
@@ -422,6 +424,9 @@ class Controller {
                 break;
             case 'notes':
                 $results = $model->deleteNote($id);
+                break;
+            case 'flashcards':
+                $results = $model->deleteFlashcard($id);
                 break;
             default:
                 http_response_code(400);

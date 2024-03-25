@@ -11,17 +11,17 @@
         /* Existing style here */
     </style>
 </head>
-<body onload='notesInsertionLoad()'>
+<body onload="loadNote(4)">
     <?php include_once 'sidebar-content.php'; ?>
     <div class="not-sidebar">
         <?php include_once 'navbar.html';
-        $header_text = "Welcome to the notes page. Here you can add new notes or view the ones you have already added.";
-        $page = "notes-insertion";
+        $header_text = "Welcome to the notes page. Here you can view all of your notes and edit them!";
+        $page = "notes-all";
         include_once 'main.php';
         ?>
     </div>
-
-    <script src="script.js">
-    </script>
+    <script src="script.js"></script>
+</body>
+    </div>
 </body>
 </html>

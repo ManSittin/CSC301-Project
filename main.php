@@ -31,7 +31,12 @@
                         min="0000-00-00T00:00"
                         max="9999-12-31T23:59"
                      />
-                    <br><br>
+                    <br>
+                    <p>Add course tag:</p>
+                    <select id="tag">
+                        <option></option>
+                    </select>
+                    <br>
                     <input type="button" value="Submit deadline" onclick="addDeadline()">
                 </form>
             </div>
@@ -85,6 +90,7 @@
             <div class="textbox-section">
                 <div><a href="notes-insertion.php">Add Notes</a></div>
                 <div><a href="notes-all.php">View Notes</a></div>
+                <div><a href="notes-all-public.php">Public Notes</a></div>
             </div>
             
             <?php
@@ -103,6 +109,15 @@
                     </select>
                     <p>Enter your note:</p>
                     <textarea rows="4" cols="50" name="note" id="note" placeholder="Type your note here..."></textarea>
+                    <br>
+                    <div>
+                        <p>Public note:</p>
+                        <input type="checkbox" id="public", value="public">
+                    </div>
+                    <p>Add course tag:</p>
+                    <select id="tag">
+                        <option></option>
+                    </select>
                     <br>
                     <input type="button" value="Add Note" onclick="addNote()">
                 </form>
@@ -156,13 +171,28 @@
             <?php
             break;
             
-            case 'notes-all':
-                ?>
-                <form action="javascript:void(0);" method="get" class="search-box" onsubmit="handleSearch(event)">
-                <input type="hidden" name="action" value="notes-all">
-                <input type="text" name="search" placeholder="Search by title..." id="search-input">
-                <button type="submit" id="search-button">Search</button>
-                <button type="button" id="reset-search-button" onclick="resetSearch()">Reset Search</button>
+        case 'notes-all':
+            ?>
+            <form action="javascript:void(0);" method="get" class="search-box" onsubmit="handleSearch(event)">
+            <input type="hidden" name="action" value="notes-all">
+            <input type="text" name="search" placeholder="Search by title..." id="search-input">
+            <button type="submit" id="search-button">Search</button>
+            <button type="button" id="reset-search-button" onclick="resetSearch()">Reset Search</button>
+            </form>
+            <div id="note-info">
+                <!-- Dynamically inserted notes will go here -->
+            </div>
+
+            <?php
+            break;
+
+        case 'notes-public':
+            ?>
+            <form action="javascript:void(0);" method="get" class="search-box" onsubmit="handleSearch(event)">
+            <input type="hidden" name="action" value="notes-all">
+            <input type="text" name="search" placeholder="Search by title..." id="search-input">
+            <button type="submit" id="search-button">Search</button>
+            <button type="button" id="reset-search-button" onclick="resetSearch()">Reset Search</button>
             </form>
             <div id="note-info">
                 <!-- Dynamically inserted notes will go here -->
@@ -172,6 +202,7 @@
             break;
 
 
+
         // FLASHCARDS PAGES
         case 'flashcards':
             ?>
@@ -179,6 +210,7 @@
             <div class="textbox-section">
                 <div><a href="flashcard-insertion.php">Add Flashcards</a></div>
                 <div><a href="flashcard-all.php">View Flashcards</a></div>
+                <div><a href="flashcard-all-public.php">Public Flashcards</a></div>
                 <div><a href="flashcard-review.php">Review Flashcards</a></div>
                 <div><a href="flashcard-algorithms.php">Modify Flashcard Algorithm</a></div>
             </div>
@@ -202,6 +234,9 @@
                     <select id='tag'>
                         <option></option>
                     </select>
+                    <br>
+                    <p>Public flashcard:</p>
+                    <input type="checkbox" id="public">
                     <br>
                     <input type="button" value="Add Flashcard" onclick="addFlashcard()">
                 </form>
@@ -291,15 +326,14 @@
 
         case 'course_view':
             ?>
-            
+
             
             <?php
             break;
 
         case 'courses-all':
             ?>
-            
-            
+
             <?php
             break;
 
