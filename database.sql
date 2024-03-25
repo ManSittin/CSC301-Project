@@ -15,7 +15,9 @@ CREATE TABLE IF NOT EXISTS Notes (
     -- file_path VARCHAR(255) NOT NULL UNIQUE, 
     -- use this later
     content VARCHAR(255),
-    FOREIGN KEY (username) REFERENCES Users(username)
+    tag_id INT DEFAULT NULL,
+    FOREIGN KEY (username) REFERENCES Users(username),
+    FOREIGN KEY (tag_id) REFERENCES Courses(id)
 );
 -- Create table to store Deadlines created by Users
 CREATE TABLE IF NOT EXISTS Deadlines (

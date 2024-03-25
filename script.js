@@ -255,6 +255,7 @@ function addNote() { // insert a note
   formData.append('username', onlineUsers);
   formData.append('title', document.getElementById("addNoteForm").elements[0].value);
   formData.append('content', document.getElementById("addNoteForm").elements[1].value);
+  formData.append('tag', document.getElementById("addNoteForm").elements[2].value);
   fetch('/server.php', {
       method: 'POST',
       body: formData,
@@ -921,22 +922,31 @@ function getFlashcardsnum() {
       });
 }
 
-// function getCourses() {
-//   return fetch('/server.php?commmand=courses&username=userAA') 
-//     .then(response => response.json())
-//     .then(json => {
-//       return json.message.map(entry => {
-//         return {
-//           id: entry.id,
-//           course_name: entry.course_name,
-//         };
-//       });
-//     })
-//     .catch(error => {
-//       console.error('Error fetching courses:', error);
-//       throw error;
-//     });
-// }
+function addOptions(courses, container) {
+
+    courses.forEach(course => {
+        const newOption = document.createElement('option');
+        newOption.value = course.id;
+        newOption.text = course.course_name;
+        container.appendChild(newOption);
+    });
+}
+
+function notesInsertionLoad() {
+  //const notesContainer = document.getElementById('note-info');
+  //notesContainer.innerHTML = '<p>Loading notes...</p>'; // Provide a loading indicator
+  const tagsContainer = document.getElementById('tag');
+  fetch('/server.php?command=courses&username=' + encodeURIComponent(onlineUsers))
+      .then(response => response.json())
+      .then(data => {
+          if (data.courses && data.courses.length > 0) {
+              addOptions(data.courses, tagsContainer);
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+      });
+}
 
 // function getTimeslots($courseID){
 //   return fetch('/server.php?command=timeslots&course_id=' + $courseID) // these commands don't exist???
