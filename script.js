@@ -117,7 +117,6 @@ function handleSignInClick() {
       location.reload();
       getFlashcardAlgorithm(flashcardAlgorithm);
       sessionStorage.setItem('flashcardAlgorithm', flashcardAlgorithm);
-      alert(flashcardAlgorithm);
 })
 
 }
@@ -432,7 +431,6 @@ function getFlashcards() { // get all the user's flashcards as (cue, response) o
 
 // get the next flashcard to be reviewed, if available, based on chosen flashcardAlgorithm
 function getFlashcard(){
-  alert(flashcardAlgorithm);
   if (flashcardAlgorithm == 'random'){
     return getRandomFlashcard();
   }
@@ -493,7 +491,6 @@ function updateThisFlashcard($flashcardID) {
 function updateFlashcard(id, username, cue, response, review_date, priority) {
 
   if (currentFlashcard) {
-    alert("flashcard found! - priority");
     currentFlashcard.priority = priority;
     const formData = new FormData();
     formData.append('command', 'flashcard-update');
@@ -503,7 +500,6 @@ function updateFlashcard(id, username, cue, response, review_date, priority) {
     formData.append('response', response);
     formData.append('review_date', review_date);
     formData.append('priority', priority);
-    alert("hi");
     return fetch('/server.php', {
       method: 'POST',
       body: formData,
@@ -656,7 +652,6 @@ function updateFlashcardAlgorithm(algo) {
       method: 'POST',
       body: formData,
   });
-  alert('Flashcard Algorithm Updated!');
 }
 
 
@@ -781,10 +776,10 @@ function updateFlashcardReviewData(algorithm, state){
 
   else if (algorithm == 'random'){
     if (state == "correct"){
-      incrementReviewDate(1);
+      incrementReviewDate(3);
     }
     else if (state == "incorrect"){
-      incrementReviewDate(3);
+      incrementReviewDate(1);
     }
   }
 }
@@ -799,7 +794,6 @@ Pre: state = "correct" or "incorrect"
   const cue = currentFlashcard.cue;
   const response = currentFlashcard.response;
   const review_date = currentFlashcard.review_date;
-  alert(currentFlashcard.priority);
 
   if (state == "correct"){
     updateFlashcard(id, username, cue, response, review_date, Math.min(currentFlashcard.priority + 1, 3)); // currently 3 is the highest priority
@@ -858,7 +852,6 @@ function getRandomFlashcard() {
       // display the flashcard
       cue.innerHTML = `<h3>${currentFlashcard.cue}</h3>`;
       response.innerHTML = `<h3>${currentFlashcard.response}</h3>`;
-      alert('Flashcards Loaded!');
     } else {
       // No valid flashcards found
       alert('No flashcards available for review.');
@@ -908,7 +901,6 @@ function getLeitnerFlashcard(){
       // display the flashcard
       cue.innerHTML = `<h3>${currentFlashcard.cue}</h3>`;
       response.innerHTML = `<h3>${currentFlashcard.response}</h3>`;
-      alert('Flashcards Loaded!');
     } else {
       // No valid flashcards found
       alert('No flashcards available for review.');
@@ -925,7 +917,6 @@ function setFlashcards(algorithm){
 
   // set all flashcards review_date to today (all algorithms)
   dateToday = todaysDate();
-  alert(dateToday);
   setReviewDateAll(dateToday);
 
   // set all priorities to 0 (leitner algorithm)
@@ -1005,13 +996,11 @@ function setReviewDate(date, username, id, cue, response, priority){
 function incrementReviewDate(days) {
 
   if (currentFlashcard) {
-    alert("flashcard found! - review date");
     const id = currentFlashcard.id;
     const username = currentFlashcard.username;
     const cue = currentFlashcard.cue;
     const response = currentFlashcard.response;
     const priority = currentFlashcard.priority;
-    alert(cue);
 
     const formData = new FormData();
     formData.append('command', 'flashcard-update');
@@ -1025,7 +1014,6 @@ function incrementReviewDate(days) {
     newReviewDate.setDate(newReviewDate.getDate() + days); // Increment review date by days
     const isoDateString = newReviewDate.toISOString();
     const dateOnlyString = isoDateString.split('T')[0]; // Extract date part before 'T'
-    alert(dateOnlyString);
     formData.append('review_date', dateOnlyString);
 
     return fetch('/server.php', {
@@ -1450,7 +1438,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (window.location.pathname.includes('flashcard-review.php')) {
       // Code specific to 'flashcard-review.php'
       getFlashcard();
-      alert('This is the flashcard review page.');
       // Fetch and display flashcard, etc.
   } 
 
