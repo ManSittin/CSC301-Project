@@ -394,7 +394,7 @@ class Model {
         }
         $result = $stmt->execute();
         if ($result) {
-            $stmt->bind_result($id, $username, $cue, $response, $review_date, $priority, $is_public, $tag);
+            $stmt->bind_result($id, $username, $cue, $response, $review_date, $priority, $is_public);
             $results = [];
             while ($stmt->fetch()) {
                 $results[] = ['id' => $id, 'username' => $username, 'cue' => $cue, 'response' => $response, 'review_date' => $review_date, 'priority' => $priority, 'is_public' => $is_public];
