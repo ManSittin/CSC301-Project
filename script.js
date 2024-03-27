@@ -117,7 +117,6 @@ function handleSignInClick() {
       location.reload();
       getFlashcardAlgorithm(flashcardAlgorithm);
       sessionStorage.setItem('flashcardAlgorithm', flashcardAlgorithm);
-      alert(flashcardAlgorithm);
 })
 
 }
@@ -420,7 +419,8 @@ function getFlashcards() { // get all the user's flashcards as (cue, response) o
           cue: entry.cue,
           response: entry.response,
           review_date: entry.review_date,
-          priority: entry.priority
+          priority: entry.priority,
+          is_public: entry.is_public
         };
       });
     })
@@ -432,7 +432,6 @@ function getFlashcards() { // get all the user's flashcards as (cue, response) o
 
 // get the next flashcard to be reviewed, if available, based on chosen flashcardAlgorithm
 function getFlashcard(){
-  alert(flashcardAlgorithm);
   if (flashcardAlgorithm == 'random'){
     return getRandomFlashcard();
   }
@@ -490,10 +489,9 @@ function updateThisFlashcard($flashcardID) {
   // alert('Flashcard updated!');
 }
 
-function updateFlashcard(id, username, cue, response, review_date, priority) {
+function updateFlashcard(id, username, cue, response, review_date, priority, is_public) {
 
   if (currentFlashcard) {
-    alert("flashcard found! - priority");
     currentFlashcard.priority = priority;
     const formData = new FormData();
     formData.append('command', 'flashcard-update');
@@ -503,7 +501,7 @@ function updateFlashcard(id, username, cue, response, review_date, priority) {
     formData.append('response', response);
     formData.append('review_date', review_date);
     formData.append('priority', priority);
-    alert("hi");
+    formData.append('is_public', is_public);
     return fetch('/server.php', {
       method: 'POST',
       body: formData,
@@ -656,7 +654,6 @@ function updateFlashcardAlgorithm(algo) {
       method: 'POST',
       body: formData,
   });
-  alert('Flashcard Algorithm Updated!');
 }
 
 
@@ -781,10 +778,10 @@ function updateFlashcardReviewData(algorithm, state){
 
   else if (algorithm == 'random'){
     if (state == "correct"){
-      incrementReviewDate(1);
+      incrementReviewDate(3);
     }
     else if (state == "incorrect"){
-      incrementReviewDate(3);
+      incrementReviewDate(1);
     }
   }
 }
@@ -799,13 +796,13 @@ Pre: state = "correct" or "incorrect"
   const cue = currentFlashcard.cue;
   const response = currentFlashcard.response;
   const review_date = currentFlashcard.review_date;
-  alert(currentFlashcard.priority);
+  const is_public = currentFlashcard.is_public;
 
   if (state == "correct"){
-    updateFlashcard(id, username, cue, response, review_date, Math.min(currentFlashcard.priority + 1, 3)); // currently 3 is the highest priority
+    updateFlashcard(id, username, cue, response, review_date, Math.min(currentFlashcard.priority + 1, 3), is_public); // currently 3 is the highest priority
   }
   else {
-    updateFlashcard(id, username, cue, response, review_date, 1); // set to the lowest priority (other than today)
+    updateFlashcard(id, username, cue, response, review_date, 1, is_public); // set to the lowest priority (other than today)
   }
 
   // update review date based on priority
@@ -830,7 +827,7 @@ function setPriorityAll(priority){
     .then(flashcards => {
       // Iterate over each flashcard and sets its review date to date
       flashcards.forEach(flashcard => {
-        updateFlashcard(flashcard.id, flashcard.username, flashcard.cue, flashcard.response, flashcard.review_date, priority);
+        updateFlashcard(flashcard.id, flashcard.username, flashcard.cue, flashcard.response, flashcard.review_date, priority, flashcard.is_public);
       });
     })
     .catch(error => {
@@ -858,7 +855,6 @@ function getRandomFlashcard() {
       // display the flashcard
       cue.innerHTML = `<h3>${currentFlashcard.cue}</h3>`;
       response.innerHTML = `<h3>${currentFlashcard.response}</h3>`;
-      alert('Flashcards Loaded!');
     } else {
       // No valid flashcards found
       alert('No flashcards available for review.');
@@ -908,7 +904,6 @@ function getLeitnerFlashcard(){
       // display the flashcard
       cue.innerHTML = `<h3>${currentFlashcard.cue}</h3>`;
       response.innerHTML = `<h3>${currentFlashcard.response}</h3>`;
-      alert('Flashcards Loaded!');
     } else {
       // No valid flashcards found
       alert('No flashcards available for review.');
@@ -925,7 +920,6 @@ function setFlashcards(algorithm){
 
   // set all flashcards review_date to today (all algorithms)
   dateToday = todaysDate();
-  alert(dateToday);
   setReviewDateAll(dateToday);
 
   // set all priorities to 0 (leitner algorithm)
@@ -968,7 +962,7 @@ function setReviewDateAll(date){
     .then(flashcards => {
       // Iterate over each flashcard and sets its review date to date
       flashcards.forEach(flashcard => {
-        setReviewDate(date, flashcard.username, flashcard.id, flashcard.cue, flashcard.response, flashcard.priority);
+        setReviewDate(date, flashcard.username, flashcard.id, flashcard.cue, flashcard.response, flashcard.priority, flashcard.is_public);
       });
     })
     .catch(error => {
@@ -978,7 +972,7 @@ function setReviewDateAll(date){
 }
 
 // set the review date of a flashcard with a given username, id, cue, and response to date
-function setReviewDate(date, username, id, cue, response, priority){
+function setReviewDate(date, username, id, cue, response, priority, is_public){
   const formData = new FormData();
   formData.append('command', 'flashcard-update');
   formData.append('id', id);
@@ -987,6 +981,7 @@ function setReviewDate(date, username, id, cue, response, priority){
   formData.append('response', response);
   formData.append('review_date', date);
   formData.append('priority', priority);
+  formData.append('is_public', is_public);
 
   return fetch('/server.php', {
     method: 'POST',
@@ -1005,13 +1000,12 @@ function setReviewDate(date, username, id, cue, response, priority){
 function incrementReviewDate(days) {
 
   if (currentFlashcard) {
-    alert("flashcard found! - review date");
     const id = currentFlashcard.id;
     const username = currentFlashcard.username;
     const cue = currentFlashcard.cue;
     const response = currentFlashcard.response;
     const priority = currentFlashcard.priority;
-    alert(cue);
+    const is_public = currentFlashcard.is_public;
 
     const formData = new FormData();
     formData.append('command', 'flashcard-update');
@@ -1020,12 +1014,12 @@ function incrementReviewDate(days) {
     formData.append('cue', cue);
     formData.append('response', response);
     formData.append('priority', priority);
+    formData.append('is_public', is_public);
 
     const newReviewDate = new Date();
     newReviewDate.setDate(newReviewDate.getDate() + days); // Increment review date by days
     const isoDateString = newReviewDate.toISOString();
     const dateOnlyString = isoDateString.split('T')[0]; // Extract date part before 'T'
-    alert(dateOnlyString);
     formData.append('review_date', dateOnlyString);
 
     return fetch('/server.php', {
@@ -1450,7 +1444,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (window.location.pathname.includes('flashcard-review.php')) {
       // Code specific to 'flashcard-review.php'
       getFlashcard();
-      alert('This is the flashcard review page.');
       // Fetch and display flashcard, etc.
   } 
 
