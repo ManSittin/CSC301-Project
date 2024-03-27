@@ -419,7 +419,8 @@ function getFlashcards() { // get all the user's flashcards as (cue, response) o
           cue: entry.cue,
           response: entry.response,
           review_date: entry.review_date,
-          priority: entry.priority
+          priority: entry.priority,
+          is_public: entry.is_public
         };
       });
     })
@@ -488,7 +489,7 @@ function updateThisFlashcard($flashcardID) {
   // alert('Flashcard updated!');
 }
 
-function updateFlashcard(id, username, cue, response, review_date, priority) {
+function updateFlashcard(id, username, cue, response, review_date, priority, is_public) {
 
   if (currentFlashcard) {
     currentFlashcard.priority = priority;
@@ -500,6 +501,7 @@ function updateFlashcard(id, username, cue, response, review_date, priority) {
     formData.append('response', response);
     formData.append('review_date', review_date);
     formData.append('priority', priority);
+    formData.append('is_public', is_public);
     return fetch('/server.php', {
       method: 'POST',
       body: formData,
@@ -794,12 +796,13 @@ Pre: state = "correct" or "incorrect"
   const cue = currentFlashcard.cue;
   const response = currentFlashcard.response;
   const review_date = currentFlashcard.review_date;
+  const is_public = currentFlashcard.is_public;
 
   if (state == "correct"){
-    updateFlashcard(id, username, cue, response, review_date, Math.min(currentFlashcard.priority + 1, 3)); // currently 3 is the highest priority
+    updateFlashcard(id, username, cue, response, review_date, Math.min(currentFlashcard.priority + 1, 3), is_public); // currently 3 is the highest priority
   }
   else {
-    updateFlashcard(id, username, cue, response, review_date, 1); // set to the lowest priority (other than today)
+    updateFlashcard(id, username, cue, response, review_date, 1, is_public); // set to the lowest priority (other than today)
   }
 
   // update review date based on priority
@@ -824,7 +827,7 @@ function setPriorityAll(priority){
     .then(flashcards => {
       // Iterate over each flashcard and sets its review date to date
       flashcards.forEach(flashcard => {
-        updateFlashcard(flashcard.id, flashcard.username, flashcard.cue, flashcard.response, flashcard.review_date, priority);
+        updateFlashcard(flashcard.id, flashcard.username, flashcard.cue, flashcard.response, flashcard.review_date, priority, flashcard.is_public);
       });
     })
     .catch(error => {
@@ -959,7 +962,7 @@ function setReviewDateAll(date){
     .then(flashcards => {
       // Iterate over each flashcard and sets its review date to date
       flashcards.forEach(flashcard => {
-        setReviewDate(date, flashcard.username, flashcard.id, flashcard.cue, flashcard.response, flashcard.priority);
+        setReviewDate(date, flashcard.username, flashcard.id, flashcard.cue, flashcard.response, flashcard.priority, flashcard.is_public);
       });
     })
     .catch(error => {
@@ -969,7 +972,7 @@ function setReviewDateAll(date){
 }
 
 // set the review date of a flashcard with a given username, id, cue, and response to date
-function setReviewDate(date, username, id, cue, response, priority){
+function setReviewDate(date, username, id, cue, response, priority, is_public){
   const formData = new FormData();
   formData.append('command', 'flashcard-update');
   formData.append('id', id);
@@ -978,6 +981,7 @@ function setReviewDate(date, username, id, cue, response, priority){
   formData.append('response', response);
   formData.append('review_date', date);
   formData.append('priority', priority);
+  formData.append('is_public', is_public);
 
   return fetch('/server.php', {
     method: 'POST',
@@ -1001,6 +1005,7 @@ function incrementReviewDate(days) {
     const cue = currentFlashcard.cue;
     const response = currentFlashcard.response;
     const priority = currentFlashcard.priority;
+    const is_public = currentFlashcard.is_public;
 
     const formData = new FormData();
     formData.append('command', 'flashcard-update');
@@ -1009,6 +1014,7 @@ function incrementReviewDate(days) {
     formData.append('cue', cue);
     formData.append('response', response);
     formData.append('priority', priority);
+    formData.append('is_public', is_public);
 
     const newReviewDate = new Date();
     newReviewDate.setDate(newReviewDate.getDate() + days); // Increment review date by days
