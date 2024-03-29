@@ -228,7 +228,7 @@
                 <div><a href="flashcard-insertion.php">Add Flashcards</a></div>
                 <div><a href="flashcard-all.php">View Flashcards</a></div>
                 <div><a href="flashcard-all-public.php">Public Flashcards</a></div>
-                <div><a href="flashcard-review.php">Review Flashcards</a></div>
+                <div><a href="flashcard-review.php" class="flashcard-review">Review Flashcards</a></div>
                 <div><a href="flashcard-algorithms.php">Modify Flashcard Algorithm</a></div>
             </div>
             
@@ -319,7 +319,7 @@
             <!-- Add a Textbox Feature -->
             <div class="textbox-section">
                 <div><a href="course-insertion.php">Add Course</a></div>
-                <div><a href="courses-all.php">View Courses</a></div>
+                <div><a href="courses-all.php" class="view-courses">View Courses</a></div>
                 <div><a href="#">Generate Schedule</a></div>
             </div>
             
