@@ -1623,9 +1623,8 @@ function beginReviewSession(){
 
 
 // check if the user tries to leave the page while on review page
-if (window.location.href == "http://localhost:3000/flashcard-review.php"){ // if on flashcard review page
+if (window.location.pathname.includes('flashcard-review.php')){ // if on flashcard review page
 window.onbeforeunload = function() {
-  event.preventDefault();
   sessionStorage.setItem('review-end', new Date());
   endReviewSession();
   }
