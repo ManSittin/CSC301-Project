@@ -1626,8 +1626,23 @@ if (modifyAlgBtn) {
     alert(sessionStorage.getItem("review-start"));
     alert(sessionStorage.getItem("num_correct"));
     alert(sessionStorage.getItem("num_incorrect"));
+    alert(sessionStorage.getItem('review-end'));
     });
 }
+
+
+// check if the user tries to leave the page while on review page
+if (window.location.href == "http://localhost:3000/flashcard-review.php"){ // if on flashcard review page
+window.onbeforeunload = function() {
+  sessionStorage.setItem('review-end', new Date());
+  }
+}
+
+
+
+// next steps:
+// 1. when the user leaves the page, store review-end correctly
+// 2. when the user leaves the page, insert currently stored info into review_sessions DB
 
 
 
