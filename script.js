@@ -728,14 +728,25 @@ if (next){
   });
 }
 
+// update flashcard review data and review session data
 if (correct){
-    correct.addEventListener('click', function(){ // update flashcard review date and/or priority if loaded
+    correct.addEventListener('click', function(){ 
+    // increment num_correct for this review session
+    const num_correct = Number(sessionStorage.getItem("num_correct"));
+    sessionStorage.setItem("num_correct", num_correct + 1);
+
+    // update review data for the flashcard
     updateFlashcardReviewData(flashcardAlgorithm, "correct");
   });
 }
 
 if (incorrect){
   incorrect.addEventListener('click', function(){ // update flashcard review date and/or priority if loaded
+    // increment num_correct for this review session
+    const num_incorrect = Number(sessionStorage.getItem("num_incorrect"));
+    sessionStorage.setItem("num_incorrect", num_incorrect + 1);
+
+    // update review data for the flashcard
     updateFlashcardReviewData(flashcardAlgorithm, "incorrect");
   });
 }
@@ -1593,13 +1604,30 @@ function getCoursesLoad() {
 
 // PERFORMANCE METRICS
 const reviewBtn = document.querySelector(".flashcard-review"); // button to begin reviewing flashcards
+const modifyAlgBtn = document.querySelector(".modify-algorithm"); // button to modify flashcard algorithm
 
 if (reviewBtn) {
   reviewBtn.addEventListener('click', function(){ // reveal response
-    alert(new Date());
+    beginReviewSession();
     });
 }
 
+function beginReviewSession(){
+  // create variables for the current session on local storage
+  sessionStorage.setItem("review-start", new Date()); // current date is review_start
+  sessionStorage.setItem("num_correct", 0);
+  sessionStorage.setItem("num_incorrect", 0);
+  sessionStorage.setItem("review_end", null);
+  alert("Review Session Started");
+}
+
+if (modifyAlgBtn) {
+  modifyAlgBtn.addEventListener('click', function(){ // reveal response
+    alert(sessionStorage.getItem("review-start"));
+    alert(sessionStorage.getItem("num_correct"));
+    alert(sessionStorage.getItem("num_incorrect"));
+    });
+}
 
 
 

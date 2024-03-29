@@ -229,7 +229,7 @@
                 <div><a href="flashcard-all.php">View Flashcards</a></div>
                 <div><a href="flashcard-all-public.php">Public Flashcards</a></div>
                 <div><a href="flashcard-review.php" class="flashcard-review">Review Flashcards</a></div>
-                <div><a href="flashcard-algorithms.php">Modify Flashcard Algorithm</a></div>
+                <div><a href="flashcard-algorithms.php" class="modify-algorithm">Modify Flashcard Algorithm</a></div>
             </div>
             
             <?php
