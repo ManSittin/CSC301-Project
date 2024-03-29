@@ -373,7 +373,7 @@ class Model {
 
 
         $stmt = $conn->prepare("INSERT INTO Flashcards (username, cue, response, review_date, priority, is_public, tag_id) VALUES (?,?,?,?,?,?,?)");
-        $stmt->bind_param("ssssii", $username, $cue, $response, $review_date, $priority, $is_public, $tag);
+        $stmt->bind_param("ssssiii", $username, $cue, $response, $review_date, $priority, $is_public, $tag);
         $result = $stmt->execute(); // check if query worked
         return $result;
     }
@@ -431,6 +431,20 @@ class Model {
         $stmt = $conn->prepare("INSERT INTO Courses (username, course_name) VALUES (?,?)");
         $stmt->bind_param("ss", $username, $course_name);
 
+        $result = $stmt->execute(); // check if query worked
+        return $result;
+    }
+
+    public function addReviewSession($username, $start_time, $end_time, $num_correct, $num_incorrect) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false;
+        }
+
+        $stmt = $conn->prepare("INSERT INTO Review_Sessions (username, start_time, end_time, num_correct, num_incorrect) VALUES (?,?,?,?,?)");
+        $stmt->bind_param("sssii", $username, $start_time, $end_time, $num_correct, $num_incorrect);
         $result = $stmt->execute(); // check if query worked
         return $result;
     }

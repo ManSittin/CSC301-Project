@@ -76,6 +76,16 @@ class Controller {
                 
                 $result = $model->addTimeslot($course_id, $day_of_week, $num_hours, $start_time);
                 break;
+
+            case ('review_session'):
+                $username = $_POST['username'];
+                $start_time = $_POST['start_time'];
+                $end_time = $_POST['end_time'];
+                $num_correct = $_POST['num_correct'];
+                $num_incorrect = $_POST['num_incorrect'];
+                
+                $result = $model->addReviewSession($username, $start_time, $end_time, $num_correct, $num_incorrect);
+                break;
             case ('note-update'):
                 $id = $_POST['id'];
                 $username = $_POST['username'];

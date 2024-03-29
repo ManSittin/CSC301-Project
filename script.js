@@ -728,14 +728,25 @@ if (next){
   });
 }
 
+// update flashcard review data and review session data
 if (correct){
-    correct.addEventListener('click', function(){ // update flashcard review date and/or priority if loaded
+    correct.addEventListener('click', function(){ 
+    // increment num_correct for this review session
+    const num_correct = Number(sessionStorage.getItem("num_correct"));
+    sessionStorage.setItem("num_correct", num_correct + 1);
+
+    // update review data for the flashcard
     updateFlashcardReviewData(flashcardAlgorithm, "correct");
   });
 }
 
 if (incorrect){
   incorrect.addEventListener('click', function(){ // update flashcard review date and/or priority if loaded
+    // increment num_correct for this review session
+    const num_incorrect = Number(sessionStorage.getItem("num_incorrect"));
+    sessionStorage.setItem("num_incorrect", num_incorrect + 1);
+
+    // update review data for the flashcard
     updateFlashcardReviewData(flashcardAlgorithm, "incorrect");
   });
 }
@@ -1079,152 +1090,6 @@ function notesInsertionLoad() {
           console.error('Error:', error);
       });
 }
-
-// function getTimeslots($courseID){
-//   return fetch('/server.php?command=timeslots&course_id=' + $courseID) // these commands don't exist???
-//     .then(response => response.json())
-//     .then(json => {
-      
-//     })
-// }
-
-// function createSchedule() { // this assumes they have inserted courses with appropriate times.
-//   getCourses()
-//     .then(data => {
-
-
-//     })
-//     .catch(error => {
-//       console.error('Error creating schedule:', error);
-//     })
-// }
-
-// // times will be stored as hour in the week
-// function createFFGraph(courses){ // courses is a dictionary with courseid as key and a list of all timeslot/length pairs as a value
-//   let timeslots = {}; //timeslots is a dictionary with all possible (used) timeslots as keys, and all courses using that timeslot as values
-//   let slots = {};
-//   var course_keys = Object.keys(courses); // enter course_keys[num] to get the corresponding courseid, used at end when translating back
-//   var course_nums = {}; // enter course_nums[courseid] to get the corresponding position of the course
-//   for(let i = 0; i < course_keys.length; i++){
-//     course_nums[i] = course_keys[i];
-//   }
-
-
-//   for(let course in course_keys){ // MAKING TIMESLOTS DICTIONARY
-//     var tempSlots = courses[course]; // tempslots is a list of all timeslots for the current course
-//     for(let time in tempSlots){ // time is a section for the course
-//       time = time[day]*24 + time[start_time];
-//       for(let i = 0; i < time[length];i++){
-//         timeslots[time[start]+i].push(course);
-//       }
-//     }
-//   }
-
-//   var timeslot_keys = Object.keys(timeslots); // enter timeslot_keys[num] to get the corresponding time, used at end when translating back
-//   var timeslot_nums = {}; // enter timeslot_nums[time] to get the corresponding location of the time used to find locations in the graph creation
-//   for(let i = 0; i < timeslot_keys.length; i++){
-//     timeslot_nums[i] = timeslot_keys[i];
-//   }
-
-//   let numNodes = 2+timeslot_keys.length+course_keys.length;
-//   var FFgraph = Array(numNodes).fill(Array(numNodes).fill(0));
-  
-//   for(let i = 2; i < timeslots.length+2;i++){ // creating all edges to times from source
-//     FFgraph[0][i] = 1;
-//   }
-
-//   for(let time in timeslots){  // timeslots has all times, time is a possible time
-//     for(let tempcourse in timeslots[time]){ // timeslots[time] is all courses at time, tempcourse is a course at the time
-//       FFgraph[timeslot_nums[time]+2][course_nums[tempcourse]+2] = 1; // creating all edges from times to courses
-//     }
-//   }
-
-//   for(let course in courses){
-//     FFgraph[course_nums[course]+timeslot_keys.length+2][1] = courses[course][length];
-//   }
-
-//   return [FFgraph,course_keys,course_nums,timeslot_keys,timeslot_nums];
-// function getCourses() {
-//   return fetch('/server.php?commmand=courses&username=userAA') 
-//     .then(response => response.json())
-//     .then(json => {
-//       return json.message.map(entry => {
-//         return {
-//           id: entry.id,
-//           course_name: entry.course_name,
-//         };
-//       });
-//     })
-//     .catch(error => {
-//       console.error('Error fetching courses:', error);
-//       throw error;
-//     });
-// }
-
-// function getTimeslots($courseID){
-//   return fetch('/server.php?command=timeslots&course_id=' + $courseID) // these commands don't exist???
-//     .then(response => response.json())
-//     .then(json => {
-      
-//     })
-// }
-
-// function createSchedule() { // this assumes they have inserted courses with appropriate times.
-//   getCourses()
-//     .then(data => {
-
-
-//     })
-//     .catch(error => {
-//       console.error('Error creating schedule:', error);
-//     })
-// }
-
-// // times will be stored as hour in the week
-// function createFFGraph(courses){ // courses is a dictionary with courseid as key and a list of all timeslot/length pairs as a value
-//   let timeslots = {}; //timeslots is a dictionary with all possible (used) timeslots as keys, and all courses using that timeslot as values
-//   let slots = {};
-//   var course_keys = Object.keys(courses); // enter course_keys[num] to get the corresponding courseid, used at end when translating back
-//   var course_nums = {}; // enter course_nums[courseid] to get the corresponding position of the course
-//   for(let i = 0; i < course_keys.length; i++){
-//     course_nums[i] = course_keys[i];
-//   }
-
-
-//   for(let course in course_keys){ // MAKING TIMESLOTS DICTIONARY
-//     var tempSlots = courses[course]; // tempslots is a list of all timeslots for the current course
-//     for(let time in tempSlots){ // time is a section for the course
-//       time = time[day]*24 + time[start_time];
-//       for(let i = 0; i < time[length];i++){
-//         timeslots[time[start]+i].push(course);
-//       }
-//     }
-//   }
-
-//   var timeslot_keys = Object.keys(timeslots); // enter timeslot_keys[num] to get the corresponding time, used at end when translating back
-//   var timeslot_nums = {}; // enter timeslot_nums[time] to get the corresponding location of the time used to find locations in the graph creation
-//   for(let i = 0; i < timeslot_keys.length; i++){
-//     timeslot_nums[i] = timeslot_keys[i];
-//   }
-
-//   let numNodes = 2+timeslot_keys.length+course_keys.length;
-//   var FFgraph = Array(numNodes).fill(Array(numNodes).fill(0));
-  
-//   for(let i = 2; i < timeslots.length+2;i++){ // creating all edges to times from source
-//     FFgraph[0][i] = 1;
-//   }
-
-//   for(let time in timeslots){  // timeslots has all times, time is a possible time
-//     for(let tempcourse in timeslots[time]){ // timeslots[time] is all courses at time, tempcourse is a course at the time
-//       FFgraph[timeslot_nums[time]+2][course_nums[tempcourse]+2] = 1; // creating all edges from times to courses
-//     }
-//   }
-
-//   for(let course in courses){
-//     FFgraph[course_nums[course]+timeslot_keys.length+2][1] = courses[course][length];
-//   }
-
-//   return [FFgraph,course_keys,course_nums,timeslot_keys,timeslot_nums];
 
 function addCourse() {
     resetWindowUnload();
@@ -1735,4 +1600,81 @@ function getCoursesLoad() {
           console.error('Error:', error);
       });
 }
+
+
+// PERFORMANCE METRICS
+const reviewBtn = document.querySelector(".flashcard-review"); // button to begin reviewing flashcards
+const modifyAlgBtn = document.querySelector(".modify-algorithm"); // button to modify flashcard algorithm
+
+if (reviewBtn) {
+  reviewBtn.addEventListener('click', function(){ // reveal response
+    beginReviewSession();
+    });
+}
+
+function beginReviewSession(){
+  // create variables for the current session on local storage
+  sessionStorage.setItem("review-start", new Date()); // current date is review_start
+  sessionStorage.setItem("num_correct", 0);
+  sessionStorage.setItem("num_incorrect", 0);
+  sessionStorage.setItem("review_end", null);
+  alert("Review Session Started");
+}
+
+
+// check if the user tries to leave the page while on review page
+if (window.location.pathname.includes('flashcard-review.php')){ // if on flashcard review page
+window.onbeforeunload = function() {
+  sessionStorage.setItem('review-end', new Date());
+  endReviewSession();
+  }
+}
+
+ // create review session based on stored info and send it to DB
+function endReviewSession(){
+  var formData = new FormData();
+  formData.append('command', 'review_session');
+  formData.append('username', onlineUsers);
+  var num_correct = sessionStorage.getItem('num_correct');
+  var num_incorrect = sessionStorage.getItem('num_incorrect');
+  formData.append('num_correct', num_correct);
+  formData.append('num_incorrect', num_incorrect);
+
+  // Convert start and end times to the SQL DATETIME format
+  var start_time = new Date(sessionStorage.getItem('review-start')).toISOString();
+  var end_time = new Date(sessionStorage.getItem('review-end')).toISOString();
+
+  formData.append('start_time', formatDateTime(start_time));
+  formData.append('end_time', formatDateTime(end_time));
+  
+  fetch('/server.php', {
+      method: 'POST',
+      body: formData,
+  })
+  .then(response => response.json())
+  .catch(error => {
+      console.error('Error:', error);
+  });
+}
+
+// turn a JS date object into a SQL DATETIME string to make HTTP requests with it
+function formatDateTime(datetimeString) {
+  const dateObj = new Date(datetimeString);
+  const year = dateObj.getFullYear();
+  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const day = String(dateObj.getDate()).padStart(2, '0');
+  const hours = String(dateObj.getHours()).padStart(2, '0');
+  const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+  const seconds = String(dateObj.getSeconds()).padStart(2, '0');
+  
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
+
+// next steps:
+// 1. when the user leaves the page, store review-end correctly
+// 2. when the user leaves the page, insert currently stored info into review_sessions DB
+
+
+
 
