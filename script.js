@@ -1635,7 +1635,31 @@ if (modifyAlgBtn) {
 if (window.location.href == "http://localhost:3000/flashcard-review.php"){ // if on flashcard review page
 window.onbeforeunload = function() {
   sessionStorage.setItem('review-end', new Date());
+  endReviewSession();
   }
+}
+
+ // create review session based on stored info and send it to DB
+function endReviewSession(){
+  var formData = new FormData();
+  formData.append('command', 'review_session');
+  formData.append('username', onlineUsers);
+  formData.append('num_correct',sessionStorage.getItem('num_correct'));
+  formData.append('num_incorrect',sessionStorage.getItem('num_incorrect'));
+
+  // Convert start and end times to ISO 8601 datetime strings
+  var startTime = new Date(sessionStorage.getItem('review-start')).toISOString();
+  var endTime = new Date(sessionStorage.getItem('review-end')).toISOString();
+
+  formData.append('start_time', startTime);
+  formData.append('end_time', endTime);
+  
+  fetch('/server.php', {
+      method: 'POST',
+      body: formData,
+  });
+  alert('review session stored.');
+ 
 }
 
 

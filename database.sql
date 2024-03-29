@@ -73,8 +73,8 @@ CREATE TABLE IF NOT EXISTS Preferences (
 -- Create table to store Review Sessions that Users have
 CREATE TABLE IF NOT EXISTS Review_Sessions (
     username VARCHAR(16),
-    start_time TIME,
-    end_time TIME NOT NULL,
+    start_time DATETIME,
+    end_time DATETIME NOT NULL,
     num_correct INT NOT NULL,
     num_incorrect INT NOT NULL,
     PRIMARY KEY (username, start_time),
