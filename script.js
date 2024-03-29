@@ -1621,19 +1621,11 @@ function beginReviewSession(){
   alert("Review Session Started");
 }
 
-if (modifyAlgBtn) {
-  modifyAlgBtn.addEventListener('click', function(){ // reveal response
-    alert(sessionStorage.getItem("review-start"));
-    alert(sessionStorage.getItem("num_correct"));
-    alert(sessionStorage.getItem("num_incorrect"));
-    alert(sessionStorage.getItem('review-end'));
-    });
-}
-
 
 // check if the user tries to leave the page while on review page
 if (window.location.href == "http://localhost:3000/flashcard-review.php"){ // if on flashcard review page
 window.onbeforeunload = function() {
+  event.preventDefault();
   sessionStorage.setItem('review-end', new Date());
   endReviewSession();
   }
@@ -1644,24 +1636,40 @@ function endReviewSession(){
   var formData = new FormData();
   formData.append('command', 'review_session');
   formData.append('username', onlineUsers);
-  formData.append('num_correct',sessionStorage.getItem('num_correct'));
-  formData.append('num_incorrect',sessionStorage.getItem('num_incorrect'));
+  var num_correct = sessionStorage.getItem('num_correct');
+  var num_incorrect = sessionStorage.getItem('num_incorrect');
+  formData.append('num_correct', num_correct);
+  formData.append('num_incorrect', num_incorrect);
 
-  // Convert start and end times to ISO 8601 datetime strings
-  var startTime = new Date(sessionStorage.getItem('review-start')).toISOString();
-  var endTime = new Date(sessionStorage.getItem('review-end')).toISOString();
+  // Convert start and end times to the SQL DATETIME format
+  var start_time = new Date(sessionStorage.getItem('review-start')).toISOString();
+  var end_time = new Date(sessionStorage.getItem('review-end')).toISOString();
 
-  formData.append('start_time', startTime);
-  formData.append('end_time', endTime);
+  formData.append('start_time', formatDateTime(start_time));
+  formData.append('end_time', formatDateTime(end_time));
   
   fetch('/server.php', {
       method: 'POST',
       body: formData,
+  })
+  .then(response => response.json())
+  .catch(error => {
+      console.error('Error:', error);
   });
-  alert('review session stored.');
- 
 }
 
+// turn a JS date object into a SQL DATETIME string to make HTTP requests with it
+function formatDateTime(datetimeString) {
+  const dateObj = new Date(datetimeString);
+  const year = dateObj.getFullYear();
+  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const day = String(dateObj.getDate()).padStart(2, '0');
+  const hours = String(dateObj.getHours()).padStart(2, '0');
+  const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+  const seconds = String(dateObj.getSeconds()).padStart(2, '0');
+  
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
 
 
 // next steps:
