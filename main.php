@@ -192,7 +192,7 @@
                 <select id="tag">
                     <option></option>
                 </select>
-                <input type="text" name="search" placeholder="Search by title..." id="search-input">
+                <input type="text" name="search" placeholder="Search by content..." id="search-input">
                 <button type="submit" id="search-button">Search</button>
                 <button type="button" id="reset-search-button" onclick="resetSearch()">Reset Search</button>
             </form>

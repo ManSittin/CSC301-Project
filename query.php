@@ -260,42 +260,65 @@ class Model {
             return false;
         }
     }
-    public function searchNotesByTitle($searchQuery, $username, $tag) {
+    public function searchNotesByContent($searchQuery, $username, $tag) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
         if ($conn->connect_error) {
             die("Connection to database failed: " . $conn->connect_error);
-            return false; // Connection failure
-        }
-        if ($username == -1) {
-            $sql = "SELECT * FROM Notes WHERE is_public = 1 AND title LIKE CONCAT('%', ?, '%') AND (? = '' OR tag_id = ?)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sii", $searchQuery, $tag, $tag);
-        } else {
-            $sql = "SELECT * FROM Notes WHERE username = ? AND title LIKE CONCAT('%', ?, '%') AND (? = '' OR tag_id = ?)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ssii", $username, $searchQuery, $tag, $tag);
         }
     
-        // "SELECT * FROM Notes WHERE username = do AND title LIKE CONCAT('%', ?, '%')";
+        // Choose a SQL statement based on the username condition
+        $sql = $username == -1
+            ? "SELECT * FROM Notes WHERE is_public = 1"
+            : "SELECT * FROM Notes WHERE username = ?";
 
+        $stmt = $conn->prepare($sql);
+        // If username is not '-1', bind the username parameter
+        if ($username != -1) {
+            $stmt->bind_param("s", $username);
+        }
+    
+        $result = $stmt->execute();
+        if (!$result) {
+            echo "Query execution failed: " . $stmt->error . "\n"; //debug
+            $stmt->close();
+            return false; // failed
+        }
+        $res = $stmt->get_result(); 
+        $results = [];
+        $maxDistance = 3; // This number can be edited to allow up to 'x' mismatches between the strings :))
+        $searchWords = explode(' ', $searchQuery); // Break the search query into words
 
-        // Now, this matches the number of ? in the query
-
-        $result = $stmt->execute();    
-        // Bind both the username and the search query parameters
-        if ($result) {
-            $res = $stmt->get_result(); // Use get_result() for flexibility in fetching
-            $results = [];
-            while ($row = $res->fetch_assoc()) { // Fetch as associative array
+        // Fetch each row from the query result   
+        while ($row = $res->fetch_assoc()) {
+            // Check if the note matches the specified tag, if provided
+            if (!empty($tag) && $row['tag_id'] != $tag) {
+                continue; 
+            }
+            $contentWords = explode(' ', $row['content']); // Break the content into words
+            $wordMatches = 0; // Counter for words in the search query that find a match
+            foreach ($searchWords as $searchWord) {
+                foreach ($contentWords as $contentWord) {
+                    // checjing if the search word is a substring of the content word
+                    if (strpos($contentWord, $searchWord) !== false) {
+                        $wordMatches++;
+                        break; // there is a match!
+                    }
+                    // If the beginning of the content word closely matches the search word
+                    else if (levenshtein(substr($contentWord, 0, strlen($searchWord)), $searchWord) <= $maxDistance) {
+                        $wordMatches++;
+                        break; // Found a match for this search word, no need to check further
+                    }
+                }
+            }
+            // If each word in the search query found a match, add the note to results
+            if ($wordMatches == count($searchWords)) {
                 $results[] = $row;
             }
-            $stmt->close();
-            return $results;
-        } else {
-            $stmt->close();
-            return false; // Execution failure or no results
         }
-    }
+
+    $stmt->close();
+    return !empty($results) ? $results : false; // Return the results, or false if no matches were found
+}
 
     public function searchDeadlinesByName($searchQuery, $username) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
