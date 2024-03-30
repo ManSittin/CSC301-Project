@@ -260,42 +260,43 @@ class Model {
             return false;
         }
     }
-    public function searchNotesByTitle($searchQuery, $username, $tag) {
+    public function searchNotesByContent($searchQuery, $username, $tag) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
         if ($conn->connect_error) {
             die("Connection to database failed: " . $conn->connect_error);
-            return false; // Connection failure
-        }
-        if ($username == -1) {
-            $sql = "SELECT * FROM Notes WHERE is_public = 1 AND title LIKE CONCAT('%', ?, '%') AND (? = '' OR tag_id = ?)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sii", $searchQuery, $tag, $tag);
-        } else {
-            $sql = "SELECT * FROM Notes WHERE username = ? AND title LIKE CONCAT('%', ?, '%') AND (? = '' OR tag_id = ?)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ssii", $username, $searchQuery, $tag, $tag);
         }
     
-        // "SELECT * FROM Notes WHERE username = do AND title LIKE CONCAT('%', ?, '%')";
+        // Choose a SQL statement based on the username condition
+        $sql = $username == -1
+            ? "SELECT * FROM Notes WHERE is_public = 1"
+            : "SELECT * FROM Notes WHERE username = ?";
 
-
-        // Now, this matches the number of ? in the query
-
-        $result = $stmt->execute();    
-        // Bind both the username and the search query parameters
-        if ($result) {
-            $res = $stmt->get_result(); // Use get_result() for flexibility in fetching
-            $results = [];
-            while ($row = $res->fetch_assoc()) { // Fetch as associative array
+        $stmt = $conn->prepare($sql);
+        // If username is not '-1', bind the username parameter
+        if ($username != -1) {
+            $stmt->bind_param("s", $username);
+        }
+    
+        $result = $stmt->execute();
+        if (!$result) {
+            echo "Query execution failed: " . $stmt->error . "\n"; //debug
+            $stmt->close();
+            return false; // failed
+        }
+        $res = $stmt->get_result(); 
+        $results = [];
+        $maxDistance = 5; // This number can be edited to allow up to 'x' mismatches between the strings :))
+    
+        while ($row = $res->fetch_assoc()) {
+            $distance = levenshtein($searchQuery, $row['content']);
+            if ($distance <= $maxDistance) {
                 $results[] = $row;
             }
-            $stmt->close();
-            return $results;
-        } else {
-            $stmt->close();
-            return false; // Execution failure or no results
         }
+        $stmt->close();
+        return $results;
     }
+    
 
     public function searchDeadlinesByName($searchQuery, $username) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);

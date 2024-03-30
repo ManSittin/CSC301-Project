@@ -311,7 +311,7 @@ class Controller {
                     $query = $_GET['query'];
                     $username = $_GET['username'];
                     $tag = $_GET['tag'];
-                    $notesfiltered = $model->searchNotesByTitle($query, $username, $tag);
+                    $notesfiltered = $model->searchNotesByContent($query, $username, $tag);
                     if ($notesfiltered) {
                         http_response_code(200);
                         header('Content-Type: application/json');
