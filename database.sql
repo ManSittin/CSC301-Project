@@ -97,6 +97,9 @@ CREATE TABLE IF NOT EXISTS Metrics (
 -- review sessions will last one day
 -- if they start late at night and end the next day, the previous day is used
 -- overall, start_time is what is used 
+
+DELIMITER //
+
 CREATE TRIGGER update_metrics 
 AFTER INSERT ON Review_Sessions
 FOR EACH ROW 
@@ -134,7 +137,7 @@ BEGIN
     -- get the time of day of the review session
     IF TIME(NEW.start_time) BETWEEN '06:00:00' AND '12:00:00' THEN
         SET time_of_day = 'Morning';
-    ELSIF TIME(NEW.start_time) BETWEEN '12:00:01' AND '18:00:00' THEN
+    ELSEIF TIME(NEW.start_time) BETWEEN '12:00:01' AND '18:00:00' THEN
         SET time_of_day = 'Afternoon';
     ELSE
         SET time_of_day = 'Evening';
@@ -226,3 +229,6 @@ BEGIN
         WHERE NEW.username = Metrics.username AND context = time_of_day;
     END IF;
 END;
+//
+
+DELIMITER ;
