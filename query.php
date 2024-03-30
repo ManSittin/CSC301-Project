@@ -306,7 +306,8 @@ class Model {
                     // If the beginning of the content word closely matches the search word
                     else if (levenshtein(substr($contentWord, 0, strlen($searchWord)), $searchWord) <= $maxDistance) {
                         $wordMatches++;
-                        break;
+                        break; // Found a match for this search word, no need to check further
+                    }
                 }
             }
             // If each word in the search query found a match, add the note to results
