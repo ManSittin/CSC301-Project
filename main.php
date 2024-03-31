@@ -324,21 +324,37 @@
         
         case 'metrics':
             ?>
-            <div class="textbox-section">
-            <h2>Weekly Metrics</h2>
-            <table id="weeklyMetricsTable">
-                <thead>
-                <tr>
-                    <th>Day</th>
-                    <th>Average Accuracy</th>
-                    <th>Average Speed</th>
-                    <th>Average Volume</th>
-                </tr>
-                </thead>
-                <tbody id="weeklyMetricsBody">
-                <!-- Metrics data will be dynamically inserted here -->
-                </tbody>
-            </table>
+            <h4>Accuracy: % of flashcards correctly recalled | Speed: # of flashcards recalled per minute</h4>
+            <h4>Volume: # of flashcards recalled per review session</h4>
+            <div class="textbox-section tables-container">
+                <table id="dailyMetricsTable" class="content-table">
+                    <caption>Daily Metrics</caption>
+                    <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Average Accuracy</th>
+                        <th>Average Speed</th>
+                        <th>Average Volume</th>
+                    </tr>
+                    </thead>
+                    <tbody id="dailyMetricsBody">
+                    <!-- Metrics data will be dynamically inserted here -->
+                    </tbody>
+                </table>
+                <table id="weeklyMetricsTable" class="content-table">
+                    <caption>Weekly Metrics</caption>
+                    <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Average Accuracy</th>
+                        <th>Average Speed</th>
+                        <th>Average Volume</th>
+                    </tr>
+                    </thead>
+                    <tbody id="weeklyMetricsBody">
+                    <!-- Metrics data will be dynamically inserted here -->
+                    </tbody>
+                </table>
             </div>
 
             <?php

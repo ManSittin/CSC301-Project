@@ -15,7 +15,7 @@
     <?php include_once 'sidebar-content.php'; ?>
     <div class="not-sidebar">
         <?php include_once 'navbar.html';
-        $header_text = "Here are your current metrics...";
+        $header_text = "";
         $page = "metrics";
         include_once 'main.php';
         ?>

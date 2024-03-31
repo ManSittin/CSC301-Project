@@ -1729,28 +1729,52 @@ function getMetrics() { // get all the user's metrics
     });
 }
 
-function displayMetrics() { // display the user's metrics on the metrics summary page
+function displayMetrics() {
   const weeklyMetricsBody = document.getElementById('weeklyMetricsBody');
+  const dailyMetricsBody = document.getElementById('dailyMetricsBody');
 
   // Clear existing rows
   weeklyMetricsBody.innerHTML = '';
+  dailyMetricsBody.innerHTML = '';
 
-  return getMetrics()
-    .then(metrics => {
-      metrics.forEach(metric => {
+  getMetrics()
+    .then(metricsArray => {
+      // Sort metrics by context (day of the week or time of day)
+      metricsArray.sort((a, b) => {
+        // Define custom sorting order
+        const order = {
+          'Morning': 0,
+          'Afternoon': 1,
+          'Evening': 2,
+          'Monday': 3,
+          'Tuesday': 4,
+          'Wednesday': 5,
+          'Thursday': 6,
+          'Friday': 7,
+          'Saturday': 8,
+          'Sunday': 9
+        };
+        return order[a.context] - order[b.context];
+      });
+
+      // Iterate over sorted metrics and populate tables
+      metricsArray.forEach(metric => {
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${metric.context}</td>
-          <td>${metric.avg_accuracy}</td>
-          <td>${metric.avg_speed}</td>
-          <td>${metric.avg_volume}</td>
+          <td>${metric.avg_accuracy || 'null'}</td>
+          <td>${metric.avg_speed || 'null'}</td>
+          <td>${metric.avg_volume || 'null'}</td>
         `;
-        weeklyMetricsBody.appendChild(row);
+        if (['Morning', 'Afternoon', 'Evening'].includes(metric.context)) {
+          dailyMetricsBody.appendChild(row);
+        } else {
+          weeklyMetricsBody.appendChild(row);
+        }
       });
     })
     .catch(error => {
-      console.error('Error iterating over metrics:', error);
-      throw error;
+      console.error('Error fetching metrics:', error);
     });
 }
 
