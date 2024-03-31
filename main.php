@@ -218,8 +218,6 @@
             <?php
             break;
 
-
-
         // FLASHCARDS PAGES
         case 'flashcards':
             ?>
@@ -227,9 +225,9 @@
             <div class="textbox-section">
                 <div><a href="flashcard-insertion.php">Add Flashcards</a></div>
                 <div><a href="flashcard-all.php">View Flashcards</a></div>
-                <div><a href="flashcard-all-public.php">Public Flashcards</a></div>
                 <div><a href="flashcard-review.php" class="flashcard-review">Review Flashcards</a></div>
-                <div><a href="flashcard-algorithms.php" class="modify-algorithm">Modify Flashcard Algorithm</a></div>
+                <div><a href="flashcard-all-public.php">Public Flashcards</a></div>
+                <div><a href="algorithms-and-metrics.php">Algorithms & Metrics</a></div>
             </div>
             
             <?php
@@ -299,20 +297,69 @@
             <?php
             break;
 
-            case 'flashcard-algorithms':
-                ?>
-                <!-- Add a Textbox Feature -->
-                <div class="textbox-section">
-                    <div class="algorithm-buttons">
-                        <div class="randomAlg"><button>Random</button></div>
-                        <div class="leitnerAlg"><button>Leitner</button></div>
-                    </div>
+        case 'flashcard-algorithms':
+            ?>
+            <!-- Add a Textbox Feature -->
+            <div class="textbox-section">
+                <div class="algorithm-buttons">
+                    <div class="randomAlg"><button>Random</button></div>
+                    <div class="leitnerAlg"><button>Leitner</button></div>
                 </div>
-                <?php
-                break;
+            </div>
+            <?php
+            break;
 
+        case 'algorithms-and-metrics':
+            ?>
+            <!-- Add a Textbox Feature -->
+            <div class="textbox-section">
+            <div><a href="flashcard-algorithms.php" class="modify-algorithm">Modify Flashcard Algorithm</a></div>
+            <div><a class="start-metrics">Start Tracking Metrics</a></div>
+            <div><a href="metrics-summary.php">Review Metrics</a></div>
+            <div><a class="reset-metrics">Reset Metrics (CANNOT BE UNDONE)</a></div>
+                
+            </div>
+            <?php
+            break;
+        
+        case 'metrics':
+            ?>
+            <h4>Accuracy: % of flashcards correctly recalled | Speed: # of flashcards recalled per minute</h4>
+            <h4>Volume: # of flashcards recalled per review session</h4>
+            <div class="textbox-section tables-container">
+                <table id="dailyMetricsTable" class="content-table">
+                    <caption>Daily Metrics</caption>
+                    <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Average Accuracy</th>
+                        <th>Average Speed</th>
+                        <th>Average Volume</th>
+                    </tr>
+                    </thead>
+                    <tbody id="dailyMetricsBody">
+                    <!-- Metrics data will be dynamically inserted here -->
+                    </tbody>
+                </table>
+                <table id="weeklyMetricsTable" class="content-table">
+                    <caption>Weekly Metrics</caption>
+                    <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Average Accuracy</th>
+                        <th>Average Speed</th>
+                        <th>Average Volume</th>
+                    </tr>
+                    </thead>
+                    <tbody id="weeklyMetricsBody">
+                    <!-- Metrics data will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
 
-
+            <?php
+            break;
+                
         // SCHEDULE PAGES
         case 'schedule':
             ?>

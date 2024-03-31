@@ -429,6 +429,31 @@ class Model {
         }
     }
 
+    public function getMetrics($username) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false; // TODO
+        }
+
+        $stmt = $conn->prepare("SELECT context, avg_accuracy, avg_speed, avg_volume FROM Metrics WHERE username = ?");
+        $stmt->bind_param("s", $username);
+
+        $result = $stmt->execute();
+        if ($result) {
+            $stmt->bind_result($context, $avg_accuracy, $avg_speed, $avg_volume);
+            $results = [];
+            while ($stmt->fetch()) {
+                $results[] = ['context' => $context, 'avg_accuracy' => $avg_accuracy, 'avg_speed' => $avg_speed, 'avg_volume' => $avg_volume];
+            }
+            $stmt->close();
+            return $results;
+        } else {
+            return false;
+        }
+    }
+
     public function updateFlashcard($id, $username, $cue, $response, $review_date, $priority, $is_public) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
       
@@ -453,6 +478,49 @@ class Model {
 
         $stmt = $conn->prepare("INSERT INTO Courses (username, course_name) VALUES (?,?)");
         $stmt->bind_param("ss", $username, $course_name);
+
+        $result = $stmt->execute(); // check if query worked
+        return $result;
+    }
+
+    public function startMetrics($username) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false;
+        }
+
+        $stmt = $conn->prepare(
+            "INSERT INTO Metrics (username, context, occurrences, avg_accuracy, avg_speed, avg_volume)
+            VALUES
+                (?, 'Monday', 0, NULL, NULL, NULL),
+                (?, 'Tuesday', 0, NULL, NULL, NULL),
+                (?, 'Wednesday', 0, NULL, NULL, NULL),
+                (?, 'Thursday', 0, NULL, NULL, NULL),
+                (?, 'Friday', 0, NULL, NULL, NULL),
+                (?, 'Saturday', 0, NULL, NULL, NULL),
+                (?, 'Sunday', 0, NULL, NULL, NULL),
+                (?, 'Morning', 0, NULL, NULL, NULL),
+                (?, 'Afternoon', 0, NULL, NULL, NULL),
+                (?, 'Evening', 0, NULL, NULL, NULL)
+        ");
+        $stmt->bind_param("ssssssssss", $username, $username, $username, $username, $username, $username, $username, $username, $username, $username);
+
+        $result = $stmt->execute(); // check if query worked
+        return $result;
+    }
+
+    public function resetMetrics($username) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false;
+        }
+
+        $stmt = $conn->prepare("DELETE FROM Metrics WHERE username = ?");
+        $stmt->bind_param("s", $username);
 
         $result = $stmt->execute(); // check if query worked
         return $result;

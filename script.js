@@ -408,7 +408,7 @@ const priorityUpdate = document.querySelector('.flashcard-priority');
 const isPublicUpdate = document.querySelector('.flashcard-ispublic');
 const updateFlashcardBtn = document.querySelector('.update-flashcard');
 // flashcard data 
-function getFlashcards() { // get all the user's flashcards as (cue, response) objects
+function getFlashcards() { // get all the user's flashcards
   return fetch(`/server.php?command=flashcards&username=${encodeURIComponent(onlineUsers)}`)
     .then(response => response.json())
     .then(json => {
@@ -688,7 +688,7 @@ function Last_flashcard(){
  return  getFlashcards()
   .then(data => {
     // Filter flashcards with review dates on or before today
-    const validFlashcards = data.filter(flashcard => {
+      const validFlashcards = data.filter(flashcard => {
       const reviewDate = new Date(flashcard.review_date);
       return reviewDate <= new Date(); // Compare review date with today
     });
@@ -1670,10 +1670,113 @@ function formatDateTime(datetimeString) {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
+// Metrics!
 
-// next steps:
-// 1. when the user leaves the page, store review-end correctly
-// 2. when the user leaves the page, insert currently stored info into review_sessions DB
+// buttons on algorithms & metrics page to start tracking metrics / reset them
+const startBtn = document.querySelector(".start-metrics");
+const resetBtn = document.querySelector(".reset-metrics");
+
+if (startBtn){
+  startBtn.addEventListener('click', function(){
+    startMetrics();
+  });
+}
+
+if (resetBtn){
+  resetBtn.addEventListener('click', function(){
+    resetMetrics();
+  });
+}
+
+function startMetrics(){
+  var formData = new FormData();
+  formData.append('command', 'start-metrics');
+  formData.append('username',onlineUsers);
+
+  fetch('/server.php', {
+      method: 'POST',
+      body: formData,
+  });
+}
+
+function resetMetrics(){
+  var formData = new FormData();
+  formData.append('command', 'reset-metrics');
+  formData.append('username',onlineUsers);
+
+  fetch('/server.php', {
+      method: 'POST',
+      body: formData,
+  });
+}
+
+function getMetrics() { // get all the user's metrics
+  return fetch(`/server.php?command=metrics&username=${encodeURIComponent(onlineUsers)}`)
+    .then(response => response.json())
+    .then(json => {
+      return json.metrics.map(entry => {
+        return {
+          context: entry.context,
+          avg_accuracy: entry.avg_accuracy,
+          avg_speed: entry.avg_speed,
+          avg_volume: entry.avg_volume
+        };
+      });
+    })
+    .catch(error => {
+      console.error('Error fetching metrics:', error);
+      throw error;
+    });
+}
+
+function displayMetrics() {
+  const weeklyMetricsBody = document.getElementById('weeklyMetricsBody');
+  const dailyMetricsBody = document.getElementById('dailyMetricsBody');
+
+  // Clear existing rows
+  weeklyMetricsBody.innerHTML = '';
+  dailyMetricsBody.innerHTML = '';
+
+  getMetrics()
+    .then(metricsArray => {
+      // Sort metrics by context (day of the week or time of day)
+      metricsArray.sort((a, b) => {
+        // Define custom sorting order
+        const order = {
+          'Morning': 0,
+          'Afternoon': 1,
+          'Evening': 2,
+          'Monday': 3,
+          'Tuesday': 4,
+          'Wednesday': 5,
+          'Thursday': 6,
+          'Friday': 7,
+          'Saturday': 8,
+          'Sunday': 9
+        };
+        return order[a.context] - order[b.context];
+      });
+
+      // Iterate over sorted metrics and populate tables
+      metricsArray.forEach(metric => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${metric.context}</td>
+          <td>${metric.avg_accuracy || 'null'}</td>
+          <td>${metric.avg_speed || 'null'}</td>
+          <td>${metric.avg_volume || 'null'}</td>
+        `;
+        if (['Morning', 'Afternoon', 'Evening'].includes(metric.context)) {
+          dailyMetricsBody.appendChild(row);
+        } else {
+          weeklyMetricsBody.appendChild(row);
+        }
+      });
+    })
+    .catch(error => {
+      console.error('Error fetching metrics:', error);
+    });
+}
 
 
 
