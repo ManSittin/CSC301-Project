@@ -324,7 +324,22 @@
         
         case 'metrics':
             ?>
-
+            <div class="textbox-section">
+            <h2>Weekly Metrics</h2>
+            <table id="weeklyMetricsTable">
+                <thead>
+                <tr>
+                    <th>Day</th>
+                    <th>Average Accuracy</th>
+                    <th>Average Speed</th>
+                    <th>Average Volume</th>
+                </tr>
+                </thead>
+                <tbody id="weeklyMetricsBody">
+                <!-- Metrics data will be dynamically inserted here -->
+                </tbody>
+            </table>
+            </div>
 
             <?php
             break;

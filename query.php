@@ -429,6 +429,31 @@ class Model {
         }
     }
 
+    public function getMetrics($username) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false; // TODO
+        }
+
+        $stmt = $conn->prepare("SELECT context, avg_accuracy, avg_speed, avg_volume FROM Metrics WHERE username = ?");
+        $stmt->bind_param("s", $username);
+
+        $result = $stmt->execute();
+        if ($result) {
+            $stmt->bind_result($context, $avg_accuracy, $avg_speed, $avg_volume);
+            $results = [];
+            while ($stmt->fetch()) {
+                $results[] = ['context' => $context, 'avg_accuracy' => $avg_accuracy, 'avg_speed' => $avg_speed, 'avg_volume' => $avg_volume];
+            }
+            $stmt->close();
+            return $results;
+        } else {
+            return false;
+        }
+    }
+
     public function updateFlashcard($id, $username, $cue, $response, $review_date, $priority, $is_public) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
       

@@ -408,7 +408,7 @@ const priorityUpdate = document.querySelector('.flashcard-priority');
 const isPublicUpdate = document.querySelector('.flashcard-ispublic');
 const updateFlashcardBtn = document.querySelector('.update-flashcard');
 // flashcard data 
-function getFlashcards() { // get all the user's flashcards as (cue, response) objects
+function getFlashcards() { // get all the user's flashcards
   return fetch(`/server.php?command=flashcards&username=${encodeURIComponent(onlineUsers)}`)
     .then(response => response.json())
     .then(json => {
@@ -688,7 +688,7 @@ function Last_flashcard(){
  return  getFlashcards()
   .then(data => {
     // Filter flashcards with review dates on or before today
-    const validFlashcards = data.filter(flashcard => {
+      const validFlashcards = data.filter(flashcard => {
       const reviewDate = new Date(flashcard.review_date);
       return reviewDate <= new Date(); // Compare review date with today
     });
@@ -1708,6 +1708,50 @@ function resetMetrics(){
       method: 'POST',
       body: formData,
   });
+}
+
+function getMetrics() { // get all the user's metrics
+  return fetch(`/server.php?command=metrics&username=${encodeURIComponent(onlineUsers)}`)
+    .then(response => response.json())
+    .then(json => {
+      return json.metrics.map(entry => {
+        return {
+          context: entry.context,
+          avg_accuracy: entry.avg_accuracy,
+          avg_speed: entry.avg_speed,
+          avg_volume: entry.avg_volume
+        };
+      });
+    })
+    .catch(error => {
+      console.error('Error fetching metrics:', error);
+      throw error;
+    });
+}
+
+function displayMetrics() { // display the user's metrics on the metrics summary page
+  const weeklyMetricsBody = document.getElementById('weeklyMetricsBody');
+
+  // Clear existing rows
+  weeklyMetricsBody.innerHTML = '';
+
+  return getMetrics()
+    .then(metrics => {
+      metrics.forEach(metric => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${metric.context}</td>
+          <td>${metric.avg_accuracy}</td>
+          <td>${metric.avg_speed}</td>
+          <td>${metric.avg_volume}</td>
+        `;
+        weeklyMetricsBody.appendChild(row);
+      });
+    })
+    .catch(error => {
+      console.error('Error iterating over metrics:', error);
+      throw error;
+    });
 }
 
 
