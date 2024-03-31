@@ -140,6 +140,16 @@ class Controller {
                 $username = $_POST['username'];
                 $result = $model->updatePreference($username, $flashcard_algorithm);
                 break;
+            
+            case ('start-metrics'):
+                $username = $_POST['username'];
+                $result = $model->startMetrics($username);
+                break;
+            
+            case ('reset-metrics'):
+                $username = $_POST['username'];
+                $result = $model->resetMetrics($username);
+                break;
 
             case ('connect'):
                     $email = $_POST['email'];

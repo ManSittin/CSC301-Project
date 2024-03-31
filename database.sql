@@ -149,7 +149,7 @@ BEGIN
 
     -- compute metrics
     SET accuracy = NEW.num_correct / total_flashcards;
-    SET speed = total_flashcards / (seconds_taken * 60);
+    SET speed = total_flashcards * 60 / (seconds_taken);
     SET volume = total_flashcards;
 
     -- get current metrics

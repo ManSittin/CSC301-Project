@@ -458,6 +458,49 @@ class Model {
         return $result;
     }
 
+    public function startMetrics($username) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false;
+        }
+
+        $stmt = $conn->prepare(
+            "INSERT INTO Metrics (username, context, occurrences, avg_accuracy, avg_speed, avg_volume)
+            VALUES
+                (?, 'Monday', 0, NULL, NULL, NULL),
+                (?, 'Tuesday', 0, NULL, NULL, NULL),
+                (?, 'Wednesday', 0, NULL, NULL, NULL),
+                (?, 'Thursday', 0, NULL, NULL, NULL),
+                (?, 'Friday', 0, NULL, NULL, NULL),
+                (?, 'Saturday', 0, NULL, NULL, NULL),
+                (?, 'Sunday', 0, NULL, NULL, NULL),
+                (?, 'Morning', 0, NULL, NULL, NULL),
+                (?, 'Afternoon', 0, NULL, NULL, NULL),
+                (?, 'Evening', 0, NULL, NULL, NULL)
+        ");
+        $stmt->bind_param("ssssssssss", $username, $username, $username, $username, $username, $username, $username, $username, $username, $username);
+
+        $result = $stmt->execute(); // check if query worked
+        return $result;
+    }
+
+    public function resetMetrics($username) {
+        $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
+
+        if ($conn->connect_error) {
+            die("Connection to database failed: " . $conn->connect_error);
+            return false;
+        }
+
+        $stmt = $conn->prepare("DELETE FROM Metrics WHERE username = ?");
+        $stmt->bind_param("s", $username);
+
+        $result = $stmt->execute(); // check if query worked
+        return $result;
+    }
+
     public function addReviewSession($username, $start_time, $end_time, $num_correct, $num_incorrect) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
 

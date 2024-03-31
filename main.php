@@ -314,9 +314,9 @@
             <!-- Add a Textbox Feature -->
             <div class="textbox-section">
             <div><a href="flashcard-algorithms.php" class="modify-algorithm">Modify Flashcard Algorithm</a></div>
-            <div><a>Start Tracking Metrics</a></div>
+            <div><a class="start-metrics">Start Tracking Metrics</a></div>
             <div><a href="metrics-summary.php">Review Metrics</a></div>
-            <div><a>Reset Metrics (CANNOT BE UNDONE)</a></div>
+            <div><a class="reset-metrics">Reset Metrics (CANNOT BE UNDONE)</a></div>
                 
             </div>
             <?php
@@ -324,7 +324,7 @@
         
         case 'metrics':
             ?>
-            
+
 
             <?php
             break;

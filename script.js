@@ -1670,10 +1670,45 @@ function formatDateTime(datetimeString) {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
+// Metrics!
 
-// next steps:
-// 1. when the user leaves the page, store review-end correctly
-// 2. when the user leaves the page, insert currently stored info into review_sessions DB
+// buttons on algorithms & metrics page to start tracking metrics / reset them
+const startBtn = document.querySelector(".start-metrics");
+const resetBtn = document.querySelector(".reset-metrics");
+
+if (startBtn){
+  startBtn.addEventListener('click', function(){
+    startMetrics();
+  });
+}
+
+if (resetBtn){
+  resetBtn.addEventListener('click', function(){
+    resetMetrics();
+  });
+}
+
+function startMetrics(){
+  var formData = new FormData();
+  formData.append('command', 'start-metrics');
+  formData.append('username',onlineUsers);
+
+  fetch('/server.php', {
+      method: 'POST',
+      body: formData,
+  });
+}
+
+function resetMetrics(){
+  var formData = new FormData();
+  formData.append('command', 'reset-metrics');
+  formData.append('username',onlineUsers);
+
+  fetch('/server.php', {
+      method: 'POST',
+      body: formData,
+  });
+}
 
 
 
