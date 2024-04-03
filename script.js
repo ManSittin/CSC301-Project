@@ -1106,15 +1106,17 @@ function addCourse() {
 }
 
 function addTimeslot() {
-    var urlParams = new URLSearchParams(window.location.search);
-    var id = urlParams.get('id');
+    var allOptions = document.getElementById("addTimeslotForm").elements[0];
+    var name = allOptions.options[allOptions.selectedIndex].text;
 
     var formData = new FormData();
     formData.append('command', 'timeslots');
-    formData.append('course_id', id);
-    formData.append('day_of_week', document.getElementById("addTimeslotForm").elements[0].value);
-    formData.append('start_time', document.getElementById("addTimeslotForm").elements[1].value);
-    formData.append('num_hours', document.getElementById("addTimeslotForm").elements[2].value);
+    formData.append('username', onlineUsers);
+
+    formData.append('course_name', name);
+    formData.append('day_of_week', document.getElementById("addTimeslotForm").elements[1].value);
+    formData.append('start_time', document.getElementById("addTimeslotForm").elements[2].value);
+    formData.append('num_hours', document.getElementById("addTimeslotForm").elements[3].value);
   
    fetch('/server.php', {
         method: 'POST',
@@ -1124,67 +1126,6 @@ function addTimeslot() {
 
  }
 
-
-class FordFulkerson {
-  constructor(graph, source, sink) {
-    this.graph = graph;
-    this.source = source;
-    this.sink = sink;
-  }
-
-  maxFlow() {
-    let residualGraph = this.graph.map(row => row.slice()); // Create a copy of the original graph'
-    let parent = Array(this.graph.length).fill(-1);
-
-    let maxFlow = 0;
-    let iteration = 1;
-    let paths = [];
-
-    while (this.bfs(residualGraph,parent)) {
-      let pathFlow = Infinity;
-      let path = [];
-
-      for (let v = this.sink; v != this.source; v = parent[v]) {
-        let u = parent[v];
-        pathFlow = Math.min(pathFlow, residualGraph[u][v]);
-        path.unshift({ from: u, to: v });
-      }
-
-      for (let v = this.sink; v != this.source; v = parent[v]) {
-        let u = parent[v];
-        residualGraph[u][v] -= pathFlow;
-        residualGraph[v][u] += pathFlow;
-      }
-      paths.unshift(path[1]);
-      maxFlow += pathFlow;
-
-      iteration++;
-    }
-
-    return [paths, maxFlow];
-  }
-
-  bfs(graph,parent) {
-    let visited = Array(graph.length).fill(false);
-    let queue = [this.source];
-    visited[this.source] = true;
-    //let parent = Array(graph.length).fill(-1);
-
-    while (queue.length !== 0) {
-      let u = queue.shift();
-
-      for (let v = 0; v < graph.length; v++) {
-        if (!visited[v] && graph[u][v] > 0) {
-          queue.push(v);
-          parent[v] = u;
-          visited[v] = true;
-        }
-      }
-    }
-
-    return visited[this.sink];
-  }
-}
 
 function showCourses() {
 
@@ -1762,9 +1703,9 @@ function displayMetrics() {
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${metric.context}</td>
-          <td>${metric.avg_accuracy || 'null'}</td>
-          <td>${metric.avg_speed || 'null'}</td>
-          <td>${metric.avg_volume || 'null'}</td>
+          <td>${metric.avg_accuracy || 'no data'}</td>
+          <td>${metric.avg_speed || 'no data'}</td>
+          <td>${metric.avg_volume || 'no data'}</td>
         `;
         if (['Morning', 'Afternoon', 'Evening'].includes(metric.context)) {
           dailyMetricsBody.appendChild(row);
@@ -1778,6 +1719,313 @@ function displayMetrics() {
     });
 }
 
+function getTimeslots() { // get all the user's timeslots
+  return fetch(`/server.php?command=timeslots&username=${encodeURIComponent(onlineUsers)}`)
+    .then(response => response.json())
+    .then(json => {
+      return json.timeslots.map(entry => {
+        return { // 'course_name' => $course_name, 'day_of_week' => $day_of_week, 'num_hours' => $num_hours, 'start_time' => $start_time]
+          course_name : entry.course_name,
+          day_of_week: entry.day_of_week,
+          num_hours: entry.num_hours,
+          start_time: entry.start_time
+        };
+      });
+    })
+    .catch(error => {
+      console.error('Error fetching timeslots:', error);
+      throw error;
+    });
+}
+
+function parseDay(day){
+  var val = 0
+  switch(day) {
+    case "Sunday":
+      val++;
+    case "Saturday":
+      val++;
+    case "Friday":
+      val++;
+    case "Thursday":
+      val++;
+    case "Wednesday":
+      val++;
+    case "Tuesday":
+      val++;
+    case "Monday":
+      return val;
+    default:
+      return val;
+  }
+}
+
+function displaySchedule(schedule) {
+  const weeklyScheduleBody = document.getElementById('weeklyScheduleBody');
+
+  // Clear existing rows
+  weeklyScheduleBody.innerHTML = '';
+
+  //var schedule = sessionStorage.getItem('schedule');
+  var numCourses = schedule.length;
+
+  var currCourseTime;
+
+  var earliest = 23;
+  var latest = 0;
+
+  var currStart;
+  var currEnd;
+
+  for (let i=0;i<numCourses;i++){ // this gets latest end and earliest start to make the schedule table
+    currCourseTime = schedule[i][1]; // currCourseTime[0] = time from monday 12am in hours
+    currStart = currCourseTime[0] % 24; // currCourseTime[1] = length of course in hours
+    currEnd = currStart + currCourseTime[1]; 
+    if (currStart < earliest){
+      earliest = currStart;
+    }
+    if (currEnd > latest){
+      latest = currEnd;
+    }  
+  }
+
+  var totalHours = latest - earliest; // this is the number of rows we need, 7 columns always
+  var currDay;
+  var currRow;
+  var currHour;
+
+  for (let j=0;j<totalHours;j++){
+    currHour = earliest + j;
+    currRow = [parseTime(currHour),"","","","","","",""];
+    for (let k=0;k<numCourses;k++){
+      currCourseTime = schedule[k][1]; // currCourseTime[0] = time from monday 12am in hours
+      currStart = currCourseTime[0] % 24;
+      currDay = Math.floor(currCourseTime[0]/24);
+      if(currStart <= earliest+j && earliest+j < currStart+currCourseTime[1]){
+        console.log(schedule[k][0]);
+        console.log(currStart.toString() + ":" + (earliest+j).toString() + ":" + (currStart+currCourseTime[1]).toString());
+        currRow[currDay+1] = schedule[k][0];
+      }
+    }
+    console.log(currRow);
+    const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${currRow[0]}</td>
+          <td>${currRow[1]}</td>
+          <td>${currRow[2]}</td>
+          <td>${currRow[3]}</td>
+          <td>${currRow[4]}</td>
+          <td>${currRow[5]}</td>
+          <td>${currRow[6]}</td>
+          <td>${currRow[7]}</td>
+        `;
+    weeklyScheduleBody.appendChild(row);
+  }
+}
+
+function parseTime(hour){
+  var m = ":00 am";
+  if (hour > 12){
+    m = ":00 pm"
+    hour = hour % 12;
+  }
+  return hour.toString() + m;
+}
+
+function createSchedule() { // this assumes they have inserted courses with appropriate times.
+  // if (sessionStorage.getItem('schedule') != null){
+  //   displaySchedule();
+  //   return;
+  // }
+  getTimeslots() // 'course_name' => $course_name, 'day_of_week' => $day_of_week, 'num_hours' => $num_hours, 'start_time' => $start_time]
+    .then(data => {
+    var currentTimeslot = "";
+    var currentTimeStart = 0;
+    var currentLength = 0;
+    var timeslotDict = {};
+    var courseList = [];
+    var currentList;
+    var tempTime;
+
+    data.forEach(item => {
+      tempTime = item.start_time.split(":");
+      //currentTimeStart = parseDay(item.day_of_week)*24*60 + 60*parseInt(tempTime[0]) + parseInt(tempTime[1]);
+      currentTimeStart = parseDay(item.day_of_week)*24 + parseInt(tempTime[0]);
+      
+
+      currentLength = item.num_hours;
+      currentTimeslot = String(currentTimeStart) + "," + String(currentLength);
+
+      currentList = timeslotDict[currentTimeslot];
+
+      if (currentList == null){
+        timeslotDict[currentTimeslot] = [item.course_name];
+      }
+      else {
+        currentList.push(item.course_name)
+        timeslotDictp[currentTimeslot] = currentList;
+      }
+
+      if (!courseList.includes(item.course_name)){
+        courseList.push(item.course_name);
+      }
+    })
+    console.log(timeslotDict);
+    console.log(courseList);
+    var schedule = createScheduleList(timeslotDict, courseList, true);
+    
+    //sessionStorage.setItem('schedule',schedule);
+    displaySchedule(schedule);
+    })
+    .catch(error => {
+      console.error('Error creating schedule:', error);
+    })
+}
+
+function sortCourses(dict, by_start){
+  var keylist = Object.keys(dict);
+  var tempkey;
+  if(by_start){
+    for (let i=0;i<keylist.length;i++){ // If going from here we have [start_time, length], ready for picking latest start time
+      tempkey = keylist[i].split(",");
+      keylist[i] = [parseInt(tempkey[0]),parseInt(tempkey[1])];
+    }
+    mergeSort(keylist,0,keylist.length-1);
+    keylist.reverse();
+  } 
+  else{
+    for (let i=0;i<keylist.length;i++){ // If going from here we have [end_time, length], ready for picking earliest end time
+      tempkey = keylist[i].split(",");
+      keylist[i] = [parseInt(tempkey[0])+parseInt(tempkey[1]),parseInt(tempkey[1])];
+    }
+    mergeSort(keylist,0,keylist.length-1);
+    for (let j=0;j<keylist.length;j++){
+        tempkey = keylist[j];
+        keylist[j] = [tempkey[0]-tempkey[1],tempkey[1]];
+    }
+  }
+  return keylist;
+}
+
+function greedyCourseSelector(courses, by_start){ // courses is [[time,length]] sorted by the appropriate method
+    if (courses.length == 0){
+        return null;
+    }
+    if (courses.length == 1){
+        return courses;
+    }
+    if(by_start){
+        return greedyLateStart(courses);
+    }
+    else{
+        return greedyEarlyEnd(courses);
+    }
+}
+
+function greedyEarlyEnd(timeslots){ // timeslots is [[end_time, length]], sorted by earliest end time
+    var schedule = [timeslots[0]];
+    var lastEndPoint = timeslots[0][0];
+    for (let i=1;i<timeslots.length;i++){
+        if (lastEndPoint <= timeslots[i][0] - timeslots[i][1]) { // if the last end time is before or at the current start, add the current course
+            schedule.push(timeslots[i]);
+            lastEndPoint = timeslots[i][0]; // 
+        }
+    }
+    return schedule;
+}
+
+function greedyLateStart(timeslots){ // timeslots is [[start_time, length]], sorted by latest start time
+    var schedule = [timeslots[0]];
+    var lastStartPoint = timeslots[0][0];
+    for (let i=1;i<timeslots.length;i++){
+        if (lastStartPoint >= timeslots[i][0] + timeslots[i][1]) { // if the last start time is after or at the current end, add the current course
+            schedule.push(timeslots[i]);
+            lastStartPoint = timeslots[i][0];
+        }
+    }
+    return schedule;
+}
+
+function merge(arr, l, m, r) {
+    var n1 = m - l + 1;
+    var n2 = r - m;
+ 
+    var L = new Array(n1); 
+    var R = new Array(n2);
+ 
+    for (var i = 0; i < n1; i++)
+        L[i] = arr[l + i];
+    for (var j = 0; j < n2; j++)
+        R[j] = arr[m + 1 + j];
+ 
+    var i = 0;
+    var j = 0;
+    var k = l;
+ 
+    while (i < n1 && j < n2) {
+        if (L[i][0] < R[j][0]) {
+            arr[k] = L[i];
+            i++;
+        } else if(L[i][0] == R[j][0] && L[i][1] <= R[j][1]){
+            arr[k] = L[i];
+            i++;
+        }
+        else {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+    while (i < n1) {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+ 
+    while (j < n2) {
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
+}
+
+function mergeSort(arr,l, r){
+    if(l>=r){
+        return;
+    }
+    var m = l + parseInt((r-l)/2);
+    mergeSort(arr,l,m);
+    mergeSort(arr,m+1,r);
+    merge(arr,l,m,r);
+}
+
+function pickSlots(timeslots, courses, dict){ // pickslots takes the timeslots from greedy algorithm and returns a list
+    var choices = [];                         // of those timeslots with one course for each timeslot.
+    var picked = []
+    var currOptions;
+    for (let i=0;i<timeslots.length;i++){
+        currOptions = dict[timeslots[i]];
+        console.log(picked);
+        for (let j=0;j<currOptions.length;j++){
+            if (!picked.includes(currOptions[j]) && choices.length < courses.length){
+                console.log(currOptions[j]);
+                choices.push([currOptions[j],timeslots[i]]);
+                picked.push(currOptions[j])
+                break;
+            }
+            
+        }
+    }
+    return choices;
+}
+
+function createScheduleList(dict, courses, by_start){
+    var sorted = sortCourses(dict, by_start);
+    console.log(sorted);
+    var slots = greedyCourseSelector(sorted, by_start);
+    console.log(slots);
+    return pickSlots(slots, courses, dict);
+}
 
 
 

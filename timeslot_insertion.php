@@ -11,7 +11,7 @@
         /* Existing style here */
     </style>
 </head>
-<body>
+<body onload='getCoursesLoad()'>
     <?php include_once 'sidebar-content.php'; ?>
     <div class="not-sidebar">
         <?php include_once 'navbar.html';
@@ -26,6 +26,10 @@
             <div class="textbox-section">
                 <h2>Enter timeslot below</h2>
                 <form id="addTimeslotForm">
+                    <p>Course:</p>
+                    <select id="tag">
+                        <option></option>
+                    </select>
                     <p>Enter Day of Week: </p>
                     <select id="dayOfWeek">
                         <option value="Monday">Monday</option>

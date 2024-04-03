@@ -564,7 +564,7 @@ class Model {
         }
     }
 
-    public function addTimeslot($course_id, $day_of_week, $num_hours, $start_time) {
+    public function addTimeslot($course_name, $username, $day_of_week, $num_hours, $start_time) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
 
         if ($conn->connect_error) {
@@ -572,28 +572,28 @@ class Model {
             return false;
         }
 
-        $stmt = $conn->prepare("INSERT INTO Course_Timeslots (course_id, day_of_week, num_hours, start_time) VALUES (?,?,?,?)");
-        $stmt->bind_param("isis", $course_id, $day_of_week, $num_hours, $start_time);
+        $stmt = $conn->prepare("INSERT INTO Course_Timeslots (course_name, username, day_of_week, num_hours, start_time) VALUES (?,?,?,?,?)");
+        $stmt->bind_param("sssis", $course_name, $username, $day_of_week, $num_hours, $start_time);
         $result = $stmt->execute(); // check if query worked
         return $result;
     }
 
-    public function getTimeslots($course_id) {
+    public function getTimeslots($username) {
         $conn = new mysqli(HOST, USERNAME, PASSWORD, DB);
 
         if ($conn->connect_error) {
             die("Connection to database failed: " . $conn->connect_error);
             return false; // TODO
         }
-        $stmt = $conn->prepare("SELECT * FROM Course_Timeslots WHERE course_id = ?");
-        $stmt->bind_param("i", $course_id);
+        $stmt = $conn->prepare("SELECT course_name, day_of_week, num_hours, start_time FROM Course_Timeslots WHERE username = ?");
+        $stmt->bind_param("s", $username);
         $result = $stmt->execute();
         if ($result) {
-            $stmt->bind_result($temp, $day_of_week, $num_hours, $start_time);
+            $stmt->bind_result($course_name, $day_of_week, $num_hours, $start_time);
 
             $results = [];
             while ($stmt->fetch()) {
-                $results[] = ['course_id' => $course_id, 'day_of_week' => $day_of_week, 'num_hours' => $num_hours, 'start_time' => $start_time];
+                $results[] = ['course_name' => $course_name, 'day_of_week' => $day_of_week, 'num_hours' => $num_hours, 'start_time' => $start_time];
             }
             $stmt->close();
             return $results;

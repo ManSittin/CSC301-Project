@@ -69,12 +69,13 @@ class Controller {
                 break;
             
             case ('timeslots'):
-                $course_id = $_POST['course_id'];
+                $course_name = $_POST['course_name'];
                 $day_of_week = $_POST['day_of_week'];
                 $num_hours = $_POST['num_hours'];
                 $start_time = $_POST['start_time'];
+                $username = $_POST['username'];
                 
-                $result = $model->addTimeslot($course_id, $day_of_week, $num_hours, $start_time);
+                $result = $model->addTimeslot($course_name, $username, $day_of_week, $num_hours, $start_time);
                 break;
 
             case ('review_session'):
@@ -283,12 +284,12 @@ class Controller {
                 }
                 break;
             case 'timeslots':
-                $course_id = $_GET['course_id'];
-                $results = $model->getTimeslots($course_id);
+                $username = $_GET['username'];
+                $results = $model->getTimeslots($username);
                 if($results) {
                     http_response_code(200);
                     header('Content-Type: application/json');
-                    echo json_encode($results);
+                    echo json_encode(['timeslots' => $results]);
                     exit();
                 } else {
                     http_response_code(500);
