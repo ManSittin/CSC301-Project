@@ -1863,7 +1863,7 @@ function createSchedule() { // this assumes they have inserted courses with appr
       }
       else {
         currentList.push(item.course_name)
-        timeslotDictp[currentTimeslot] = currentList;
+        timeslotDict[currentTimeslot] = currentList;
       }
 
       if (!courseList.includes(item.course_name)){
