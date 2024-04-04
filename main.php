@@ -367,7 +367,8 @@
             <div class="textbox-section">
                 <div><a href="course-insertion.php">Add Course</a></div>
                 <div><a href="courses-all.php" class="view-courses">View Courses</a></div>
-                <div><a href="#">Generate Schedule</a></div>
+                <div><a href="timeslot_insertion.php">Add Timeslot</a></div>
+                <div><a href="schedule-view.php">Generate Schedule</a></div>
             </div>
             
             <?php
@@ -387,6 +388,49 @@
             
             <?php
             break;
+
+        case 'schedule-view':
+            ?>
+            <!-- Add a Textbox Feature -->
+            <h2>Weekly Schedule</h2>
+            <div class="textbox-section tables-container">
+                <table id="weeklyScheduleTable" class="content-table">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>Monday</th>
+                        <th>Tuesday</th>
+                        <th>Wednesday</th>
+                        <th>Thursday</th>
+                        <th>Friday</th>
+                        <th>Saturday</th>
+                        <th>Sunday</th>
+                    </tr>
+                    </thead>
+                    <tbody id="weeklyScheduleBody">
+                    <!-- Metrics data will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+            </div>
+            
+            <?php
+            break;
+
+        case 'timeslot_insertion':
+            ?>
+            <!-- Add a Textbox Feature -->
+            <div class="textbox-section">
+                <h2>Enter a new timeslot below</h2>
+                <form id="addTimeslotForm">
+                    <p>Enter Course Name: </p>
+                    <textarea rows="1" cols="50" name="tags" id="tags" placeholder="Type your course name here..."></textarea>
+                    <br><br>
+                    <input type="button" value="Add course" onclick="addTimeslot()">
+                </form>
+            </div>
+            
+            <?php
 
         case 'course_view':
             ?>

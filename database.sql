@@ -7,6 +7,29 @@ CREATE TABLE IF NOT EXISTS Users (
     last_name VARCHAR(40) NOT NULL,
     password VARCHAR(255) NOT NULL
 );
+-- Create table to store Courses added by Users
+CREATE TABLE IF NOT EXISTS Courses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(16),
+    course_name VARCHAR(255),
+    FOREIGN KEY (username) REFERENCES Users(username)
+);
+
+-- Create table to store Flashcards created by Users
+CREATE TABLE IF NOT EXISTS Flashcards (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(16),
+    cue VARCHAR(50) NOT NULL,
+    response VARCHAR(255) NOT NULL,
+    review_date DATE NOT NULL,
+    priority INT NOT NULL,
+
+    is_public BIT,
+    tag_id INT DEFAULT NULL,
+    FOREIGN KEY (username) REFERENCES Users(username),
+    FOREIGN KEY (tag_id) REFERENCES Courses(id)
+);
+
 -- Create table to store Notes created by Users
 CREATE TABLE IF NOT EXISTS Notes (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -31,35 +54,14 @@ CREATE TABLE IF NOT EXISTS Deadlines (
     FOREIGN KEY (username) REFERENCES Users(username),
     FOREIGN KEY (tag_id) REFERENCES Courses(id)
 );
--- Create table to store Flashcards created by Users
-CREATE TABLE IF NOT EXISTS Flashcards (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(16),
-    cue VARCHAR(50) NOT NULL,
-    response VARCHAR(255) NOT NULL,
-    review_date DATE NOT NULL,
-    priority INT NOT NULL,
-
-    is_public BIT,
-    tag_id INT DEFAULT NULL,
-    FOREIGN KEY (username) REFERENCES Users(username),
-    FOREIGN KEY (tag_id) REFERENCES Courses(id)
-);
-
--- Create table to store Courses added by Users
-CREATE TABLE IF NOT EXISTS Courses (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(16),
-    course_name VARCHAR(255),
-    FOREIGN KEY (username) REFERENCES Users(username)
-);
 
 CREATE TABLE IF NOT EXISTS Course_Timeslots (
-    course_id INT,
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    course_name VARCHAR(255),
+    username VARCHAR(16),
     day_of_week VARCHAR(10),
     num_hours INT,
-    start_time TIME,
-    FOREIGN KEY (course_id) REFERENCES Courses(id)
+    start_time TIME
 );
 
 -- Create table to store Preferences that Users have
